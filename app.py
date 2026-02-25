@@ -3,6 +3,7 @@ import random
 import pandas as pd
 import math
 import time
+import datetime  # NEW: Needed for time-traveling logic
 from streamlit_gsheets import GSheetsConnection
 
 # --- 1. SETTINGS & THEMING ---
@@ -31,7 +32,7 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 # --- 3. LOGIN SCREEN ---
 if "player_name" not in st.session_state:
     try:
-        st.image("Sorcerer Login.png", width="stretch")
+        st.image("Sorcerer Login.png")
     except:
         st.write("✨ **Portal Opening...** ✨")
     name = st.text_input("Enter your name:")
@@ -62,7 +63,7 @@ if 'current_q' not in st.session_state:
 
 # --- 5. MAIN INTERFACE ---
 try:
-    st.image("Sorcery Sums.png", width="stretch")
+    st.image("Sorcery Sums.png")
 except:
     st.title("Sorcery Sums")
 
@@ -74,37 +75,69 @@ if st.button("🪄 Cast Spell!"):
     if math.isclose(user_answer, st.session_state.target_ans, rel_tol=0.1):
         st.balloons()
         try:
-            # FORCE READ (ttl=0)
             df = conn.read(ttl=0)
             
-            # ADD DATA
-            new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50}])
+            # STAMP THE DATE (YYYY-MM-DD)
+            current_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            
+            # ADD DATA WITH DATE COLUMN
+            new_row = pd.DataFrame([{
+                "Name": st.session_state.player_name, 
+                "Score": 50, 
+                "Date": current_date
+            }])
             updated_df = pd.concat([df, new_row], ignore_index=True)
             
-            # SAVE DATA
             conn.update(data=updated_df)
             st.success("✨ Score recorded! ✨")
-            time.sleep(1) # Give it a second to show success
+            time.sleep(1)
             
         except Exception as e:
             st.error(f"⚠️ DATABASE ERROR: {e}")
-            st.info("Check if your Google Sheet is set to 'Anyone with the link can EDIT'")
-            time.sleep(10) # PAUSE SO YOU CAN READ THE ERROR
+            time.sleep(5)
         
         st.session_state.current_q, st.session_state.target_ans = generate_advanced_spell()
         st.rerun()
     else:
         st.error("The magic failed!")
 
-# --- 6. LEADERBOARD ---
+# --- 6. LEADERBOARD (WEEK, MONTH, YEAR) ---
 st.sidebar.markdown("# 🏆 Hall of Wizards")
 try:
     scores_df = conn.read(ttl=0)
     if not scores_df.empty:
-        # We group by name so one person can have multiple entries that add up
-        leaderboard = scores_df.groupby("Name")["Score"].sum().sort_values(ascending=False).head(10)
-        st.sidebar.table(leaderboard)
+        # Convert 'Date' column to actual datetime objects for filtering
+        scores_df['Date'] = pd.to_datetime(scores_df['Date'])
+        now = datetime.datetime.now()
+
+        # Create the Tabs
+        tab_week, tab_month, tab_year = st.sidebar.tabs(["Week", "Month", "Year"])
+
+        with tab_week:
+            # Last 7 days
+            week_filter = now - datetime.timedelta(days=7)
+            week_data = scores_df[scores_df['Date'] >= week_filter]
+            if not week_data.empty:
+                st.table(week_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+            else:
+                st.write("No spells cast this week.")
+
+        with tab_month:
+            # Current calendar month
+            month_data = scores_df[scores_df['Date'].dt.month == now.month]
+            if not month_data.empty:
+                st.table(month_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+            else:
+                st.write("No spells cast this month.")
+
+        with tab_year:
+            # Current calendar year
+            year_data = scores_df[scores_df['Date'].dt.year == now.year]
+            if not year_data.empty:
+                st.table(year_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+            else:
+                st.write("No spells cast this year.")
     else:
         st.sidebar.write("The scrolls are empty.")
-except:
-    st.sidebar.write("Can't reach the scrolls.")
+except Exception as e:
+    st.sidebar.write(f"Can't reach the scrolls: {e}")
