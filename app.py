@@ -16,38 +16,30 @@ except ImportError:
 
 st.markdown(f"""
     <style>
-    /* Background of the whole app */
+    /* Main Background */
     .stApp {{
         background-color: #fde4f2;
     }}
     
-    /* The Math Card */
-    .math-card {{
-        background-color: white;
-        padding: 30px;
-        border-radius: 20px;
-        border: 4px solid #c6c7ff;
-        text-align: center;
-        margin-bottom: 20px;
-    }}
-    
-    /* General Text Color */
+    /* General Text */
     h1, h2, h3, p, span, label, .stMarkdown {{
         color: #7b7dbd !important;
         font-family: 'Helvetica', sans-serif;
     }}
 
     /* CUSTOM LOGIN BOX STYLE */
-    /* Target the input box background and text color */
+    /* Target the container for the input box */
     div[data-baseweb="input"] {{
-        background-color: #9eb6ff !important;
+        background-color: #e6fff8 !important; /* The minty color for the box */
         border: 2px solid #c6c7ff !important;
         border-radius: 10px;
     }}
     
+    /* Target the actual text inside the input box */
     input {{
-        color: #9eb6ff !important; /* This is the font color you requested */
-        caret-color: white !important; /* Makes the blinking cursor visible */
+        color: #9eb6ff !important; /* Your specific blue font color */
+        background-color: transparent !important;
+        caret-color: #7b7dbd !important; /* Cursor color */
     }}
 
     /* Buttons */
@@ -79,7 +71,6 @@ if "player_name" not in st.session_state:
     except:
         st.write("✨ **The Portal is Opening...** ✨")
         
-    # The CSS above will automatically style this input box
     name = st.text_input("Enter your name to join the duel:")
     
     if st.button("Enter Realm"):
@@ -114,7 +105,7 @@ except:
     st.title("Sorcery Sums")
 
 st.markdown(f"## Welcome, Archmage {st.session_state.player_name}")
-st.markdown(f'<div class="math-card"><h1>{st.session_state.current_q}</h1></div>', unsafe_allow_html=True)
+st.markdown(f'<div style="background-color: white; padding: 30px; border-radius: 20px; border: 4px solid #c6c7ff; text-align: center; margin-bottom: 20px;"><h1>{st.session_state.current_q}</h1></div>', unsafe_allow_html=True)
 
 user_answer = st.number_input("Your Answer:", step=0.1)
 
