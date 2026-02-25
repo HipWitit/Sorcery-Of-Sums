@@ -16,9 +16,12 @@ except ImportError:
 
 st.markdown(f"""
     <style>
+    /* Background of the whole app */
     .stApp {{
         background-color: #fde4f2;
     }}
+    
+    /* The Math Card */
     .math-card {{
         background-color: white;
         padding: 30px;
@@ -27,10 +30,27 @@ st.markdown(f"""
         text-align: center;
         margin-bottom: 20px;
     }}
+    
+    /* General Text Color */
     h1, h2, h3, p, span, label, .stMarkdown {{
         color: #7b7dbd !important;
         font-family: 'Helvetica', sans-serif;
     }}
+
+    /* CUSTOM LOGIN BOX STYLE */
+    /* Target the input box background and text color */
+    div[data-baseweb="input"] {{
+        background-color: #9eb6ff !important;
+        border: 2px solid #c6c7ff !important;
+        border-radius: 10px;
+    }}
+    
+    input {{
+        color: #9eb6ff !important; /* This is the font color you requested */
+        caret-color: white !important; /* Makes the blinking cursor visible */
+    }}
+
+    /* Buttons */
     .stButton>button {{
         background-color: #c6c7ff;
         color: white;
@@ -39,7 +59,7 @@ st.markdown(f"""
         font-weight: bold;
         width: 100%;
     }}
-    /* Removes the padding at the top of the page for a cleaner look */
+
     .block-container {{
         padding-top: 2rem;
     }}
@@ -55,12 +75,13 @@ except:
 # --- 3. LOGIN SCREEN ---
 if "player_name" not in st.session_state:
     try:
-        # This replaces the text/emoji header
         st.image("Sorcerer Login.png", width="stretch")
     except:
         st.write("✨ **The Portal is Opening...** ✨")
         
+    # The CSS above will automatically style this input box
     name = st.text_input("Enter your name to join the duel:")
+    
     if st.button("Enter Realm"):
         if name:
             st.session_state.player_name = name
@@ -93,7 +114,6 @@ except:
     st.title("Sorcery Sums")
 
 st.markdown(f"## Welcome, Archmage {st.session_state.player_name}")
-
 st.markdown(f'<div class="math-card"><h1>{st.session_state.current_q}</h1></div>', unsafe_allow_html=True)
 
 user_answer = st.number_input("Your Answer:", step=0.1)
