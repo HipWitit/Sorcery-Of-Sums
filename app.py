@@ -44,8 +44,12 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 
 # --- 3. LOGIN SCREEN ---
 if "player_name" not in st.session_state:
-    # USING YOUR NEW LOGIN IMAGE HERE
-    st.image("1000036422.png", width="stretch") 
+    # UPDATED FILENAME HERE WITH SAFETY SHIELD
+    try:
+        st.image("Sorcerer Login.png", width="stretch")
+    except:
+        st.write("✨ **The Sorcery Portal is Opening...** ✨")
+        
     st.title("🧙‍♂️ Sorcerer Login")
     name = st.text_input("Enter your name to join the duel:")
     if st.button("Enter Realm"):
@@ -74,7 +78,11 @@ if 'current_q' not in st.session_state:
     st.session_state.current_q, st.session_state.target_ans = generate_advanced_spell()
 
 # --- 5. MAIN INTERFACE ---
-st.image("Sorcery Sums.png", width="stretch")
+try:
+    st.image("Sorcery Sums.png", width="stretch")
+except:
+    st.title("🪄 Sorcery Sums")
+
 st.markdown(f"## Welcome, Archmage {st.session_state.player_name}")
 
 st.markdown(f'<div class="math-card"><h1>{st.session_state.current_q}</h1></div>', unsafe_allow_html=True)
