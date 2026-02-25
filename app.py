@@ -1,72 +1,68 @@
 import streamlit as st
 import random
+import pandas as pd
+from streamlit_gsheets import GSheetsConnection
 
 # --- 1. SETTINGS & THEMING ---
-st.set_page_config(page_title="Sorcery Sums: High School Edition", page_icon="🪄")
+st.set_page_config(page_title="Sorcery Sums", page_icon="🪄")
 
-st.markdown(f"""
-    <style>
-    .stApp {{
-        background-color: #fde4f2;
-    }}
-    .math-text {{
-        color: #7b7dbd;
-        font-size: 32px;
-        font-weight: bold;
-        text-align: center;
-        background: white;
-        padding: 20px;
-        border-radius: 15px;
-        border: 3px dashed #c6c7ff;
-    }}
-    h1, h2, h3, p, span, label {{
-        color: #7b7dbd !important;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
-    }}
-    .stButton>button {{
-        background-color: #c6c7ff;
-        color: white;
-        border-radius: 20px;
-        width: 100%;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
+# (Keep your existing CSS here for the pink background and fonts)
 
-# --- 2. THE HEADER ---
-st.image("Sorcery Sums.png", use_container_width=True)
+# --- 2. DATABASE CONNECTION ---
+# Note: You'll need to add your Google Sheet URL in Streamlit Secrets
+conn = st.connection("gsheets", type=GSheetsConnection)
 
-# --- 3. HIGH SCHOOL MATH GENERATOR ---
+# --- 3. LOGIN & STATE ---
+if "player_name" not in st.session_state:
+    st.image("Sorcery Sums.png")
+    st.title("Enter the Magic Realm")
+    name = st.text_input("What is your Sorcerer Name?")
+    if st.button("Begin Ritual"):
+        st.session_state.player_name = name
+        st.rerun()
+    st.stop() # Prevents the rest of the app from running until named
+
+# --- 4. GAME LOGIC ---
 def generate_algebra_spell():
-    # Creating an equation: ax + b = c
-    x_target = random.randint(1, 12) # This is the answer the user needs to find
+    x_target = random.randint(1, 12)
     a = random.randint(2, 10)
     b = random.randint(1, 20)
     c = (a * x_target) + b
-    
-    question = f"{a}x + {b} = {c}"
-    return question, x_target
-
-if 'score' not in st.session_state:
-    st.session_state.score = 0
+    return f"{a}x + {b} = {c}", x_target
 
 if 'current_q' not in st.session_state:
     st.session_state.current_q, st.session_state.target_x = generate_algebra_spell()
 
-# --- 4. THE INTERFACE ---
-st.markdown("### 🔮 The Forbidden Algebra")
-st.markdown(f'<div class="math-text">Solve for x: <br> {st.session_state.current_q}</div>', unsafe_allow_html=True)
+# --- 5. THE INTERFACE ---
+st.image("Sorcery Sums.png", use_container_width=True)
+st.markdown(f"### 🔮 Spell for {st.session_state.player_name}")
+st.markdown(f'<div style="font-size:24px; color:#7b7dbd;">Solve: {st.session_state.current_q}</div>', unsafe_allow_html=True)
 
-user_answer = st.number_input("What is the value of x?", step=1, value=0)
+user_answer = st.number_input("Value of x:", step=1)
 
-if st.button("🪄 Cast Algebra Spell!"):
+if st.button("🪄 Cast Spell!"):
     if user_answer == st.session_state.target_x:
         st.balloons()
-        st.success(f"Brilliant! x was indeed {st.session_state.target_x}. +20 Points")
-        st.session_state.score += 20
-        # Generate new question
+        
+        # SAVE TO GOOGLE SHEETS
+        # Fetch current scores
+        existing_data = conn.read(worksheet="Sheet1")
+        new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 20}])
+        updated_df = pd.concat([existing_data, new_row], ignore_index=True)
+        
+        # Update the cloud
+        conn.update(worksheet="Sheet1", data=updated_df)
+        
+        st.success("Score Recorded in the Clouds!")
         st.session_state.current_q, st.session_state.target_x = generate_algebra_spell()
         st.rerun()
-    else:
-        st.error("The equation remains sealed. Try again, Sorcerer!")
 
-st.sidebar.markdown(f"## 🏆 Sorcerer Score: {st.session_state.score}")
+# --- 6. LEADERBOARD ---
+st.sidebar.title("🏆 Hall of Wizards")
+try:
+    scores_df = conn.read(worksheet="Sheet1")
+    # Group by name and show top sorcerers
+    leaderboard = scores_df.groupby("Name")["Score"].sum().sort_values(ascending=False)
+    st.sidebar.table(leaderboard)
+except:
+    st.sidebar.write("Leaderboard is empty... for now.")
