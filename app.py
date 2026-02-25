@@ -2,12 +2,13 @@ import streamlit as st
 import random
 import pandas as pd
 import math
+import time
 from streamlit_gsheets import GSheetsConnection
 
 # --- 1. SETTINGS & THEMING ---
 st.set_page_config(page_title="Sorcery Sums", page_icon="🪄")
 
-# Safety check for autorefresh
+# Autorefresh safety
 try:
     from streamlit_autorefresh import st_autorefresh
     st_autorefresh(interval=30000, key="datarefresh")
@@ -25,7 +26,6 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 # --- 2. DATABASE CONNECTION ---
-# We use ttl=0 to force the app to get the NEWEST data every time
 conn = st.connection("gsheets", type=GSheetsConnection)
 
 # --- 3. LOGIN SCREEN ---
@@ -33,8 +33,8 @@ if "player_name" not in st.session_state:
     try:
         st.image("Sorcerer Login.png", width="stretch")
     except:
-        st.write("✨ **The Portal is Opening...** ✨")
-    name = st.text_input("Enter your name to join the duel:")
+        st.write("✨ **Portal Opening...** ✨")
+    name = st.text_input("Enter your name:")
     if st.button("Enter Realm"):
         if name:
             st.session_state.player_name = name
@@ -66,7 +66,6 @@ try:
 except:
     st.title("Sorcery Sums")
 
-st.markdown(f"## Welcome, Archmage {st.session_state.player_name}")
 st.markdown(f'<div style="background-color: white; padding: 30px; border-radius: 20px; border: 4px solid #c6c7ff; text-align: center; margin-bottom: 20px;"><h1>{st.session_state.current_q}</h1></div>', unsafe_allow_html=True)
 
 user_answer = st.number_input("Your Answer:", step=0.1)
@@ -75,16 +74,22 @@ if st.button("🪄 Cast Spell!"):
     if math.isclose(user_answer, st.session_state.target_ans, rel_tol=0.1):
         st.balloons()
         try:
-            # READ current data
-            df = conn.read(ttl=0) 
-            # ADD new row
+            # FORCE READ (ttl=0)
+            df = conn.read(ttl=0)
+            
+            # ADD DATA
             new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50}])
             updated_df = pd.concat([df, new_row], ignore_index=True)
-            # WRITE back to sheet
+            
+            # SAVE DATA
             conn.update(data=updated_df)
-            st.success("Score written to the scroll!")
+            st.success("✨ Score recorded! ✨")
+            time.sleep(1) # Give it a second to show success
+            
         except Exception as e:
-            st.error(f"Magic failed to save: {e}")
+            st.error(f"⚠️ DATABASE ERROR: {e}")
+            st.info("Check if your Google Sheet is set to 'Anyone with the link can EDIT'")
+            time.sleep(10) # PAUSE SO YOU CAN READ THE ERROR
         
         st.session_state.current_q, st.session_state.target_ans = generate_advanced_spell()
         st.rerun()
@@ -94,12 +99,12 @@ if st.button("🪄 Cast Spell!"):
 # --- 6. LEADERBOARD ---
 st.sidebar.markdown("# 🏆 Hall of Wizards")
 try:
-    # ttl=0 ensures the sidebar updates immediately after a win
     scores_df = conn.read(ttl=0)
     if not scores_df.empty:
+        # We group by name so one person can have multiple entries that add up
         leaderboard = scores_df.groupby("Name")["Score"].sum().sort_values(ascending=False).head(10)
         st.sidebar.table(leaderboard)
     else:
         st.sidebar.write("The scrolls are empty.")
-except Exception as e:
-    st.sidebar.error(f"Leaderboard Error: {e}")
+except:
+    st.sidebar.write("Can't reach the scrolls.")
