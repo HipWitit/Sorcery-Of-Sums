@@ -3,13 +3,16 @@ import random
 import pandas as pd
 import math
 from streamlit_gsheets import GSheetsConnection
-from streamlit_autorefresh import st_autorefresh
 
 # --- 1. SETTINGS & THEMING ---
 st.set_page_config(page_title="Sorcery Sums", page_icon="🪄")
 
-# Auto-refresh every 30 seconds for the leaderboard
-st_autorefresh(interval=30000, key="datarefresh")
+# Safety check for the autorefresh library
+try:
+    from streamlit_autorefresh import st_autorefresh
+    st_autorefresh(interval=30000, key="datarefresh")
+except ImportError:
+    pass
 
 st.markdown(f"""
     <style>
@@ -36,21 +39,27 @@ st.markdown(f"""
         font-weight: bold;
         width: 100%;
     }}
+    /* Removes the padding at the top of the page for a cleaner look */
+    .block-container {{
+        padding-top: 2rem;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
 # --- 2. DATABASE CONNECTION ---
-conn = st.connection("gsheets", type=GSheetsConnection)
+try:
+    conn = st.connection("gsheets", type=GSheetsConnection)
+except:
+    pass
 
 # --- 3. LOGIN SCREEN ---
 if "player_name" not in st.session_state:
-    # UPDATED FILENAME HERE WITH SAFETY SHIELD
     try:
+        # This replaces the text/emoji header
         st.image("Sorcerer Login.png", width="stretch")
     except:
-        st.write("✨ **The Sorcery Portal is Opening...** ✨")
+        st.write("✨ **The Portal is Opening...** ✨")
         
-    st.title("🧙‍♂️ Sorcerer Login")
     name = st.text_input("Enter your name to join the duel:")
     if st.button("Enter Realm"):
         if name:
@@ -81,7 +90,7 @@ if 'current_q' not in st.session_state:
 try:
     st.image("Sorcery Sums.png", width="stretch")
 except:
-    st.title("🪄 Sorcery Sums")
+    st.title("Sorcery Sums")
 
 st.markdown(f"## Welcome, Archmage {st.session_state.player_name}")
 
@@ -92,7 +101,6 @@ user_answer = st.number_input("Your Answer:", step=0.1)
 if st.button("🪄 Cast Spell!"):
     if math.isclose(user_answer, st.session_state.target_ans, rel_tol=0.1):
         st.balloons()
-        # Update Leaderboard Logic...
         try:
             df = conn.read(worksheet="Sheet1")
             new_data = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50}])
