@@ -23,7 +23,7 @@ st.markdown(f"""
     
     /* Sidebar Background */
     [data-testid="stSidebar"] {{
-        background-color: #ffffe3 !important;
+        background-color: #ddfffc !important;
         border-right: 2px solid #c6c7ff;
     }}
 
