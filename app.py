@@ -34,7 +34,7 @@ st.markdown(f"""
     [data-testid="stSidebar"] .stTabs button,
     [data-testid="stSidebar"] [data-testid="stTable"] td,
     [data-testid="stSidebar"] [data-testid="stTable"] th {{
-        color: #ffdef2 !important;
+        color: #eecbff !important;
     }}
     
     /* Keeping main interface text purple for readability */
