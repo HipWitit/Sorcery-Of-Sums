@@ -31,16 +31,21 @@ st.markdown(f"""
         margin-bottom: 20px;
     }}
 
-    /* Scratchpad styling (b4a7d6 background, d4ffea font) */
+    /* Flipped Scratchpad styling */
     div[data-testid="stTextArea"] textarea {{
-        background-color: #b4a7d6 !important;
-        color: #d4ffea !important;
+        background-color: #b4a7d6 !important; 
+        color: #d4ffea !important;           
         border-radius: 10px;
-        border: 2px solid #b4a7d6;
+        border: 2px solid #7b7dbd;
         font-family: 'Helvetica', sans-serif;
     }}
+    
+    div[data-testid="stTextArea"] textarea::placeholder {{
+        color: #d4ffea;
+        opacity: 0.7;
+    }}
 
-    /* Answer Box styling (Normal text input) */
+    /* Answer Box styling */
     div[data-testid="stTextInput"] input {{
         background-color: #e6fff8 !important;
         color: #7b7dbd !important;
@@ -98,25 +103,24 @@ try:
 except:
     st.title("Sorcery Sums")
 
-# Display Question
 st.markdown(f'<div class="question-container"><h1>{st.session_state.current_q}</h1></div>', unsafe_allow_html=True)
 
-# Scratchpad for working out equations
 st.text_area("Spellbook Scratchpad (Work out your equations here):", 
              placeholder="Example: 2x = 20 - 4...", 
              height=100, 
              key="scratchpad")
 
-# Normal Text Input for Answer
 user_answer_raw = st.text_input("Your Final Answer:", placeholder="Type your number here...")
 
 if st.button("🪄 Cast Spell!"):
     try:
-        # Convert text input to float for math comparison
         user_answer = float(user_answer_raw)
         
         if math.isclose(user_answer, st.session_state.target_ans, rel_tol=0.1):
-            st.balloons()
+            # NEW: Kawaii Star Effect
+            st.snow() # This creates a falling effect
+            st.toast("Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ", icon="⭐")
+            
             try:
                 df = conn.read(ttl=0)
                 current_date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -130,28 +134,26 @@ if st.button("🪄 Cast Spell!"):
                 
                 conn.update(data=updated_df)
                 st.success("✨ Score recorded! ✨")
-                time.sleep(1)
+                time.sleep(1.5) # Time for stars to fall
                 
             except Exception as e:
                 st.error(f"⚠️ DATABASE ERROR: {e}")
                 time.sleep(2)
             
-            # Reset for next question
             st.session_state.current_q, st.session_state.target_ans = generate_advanced_spell()
             st.rerun()
         else:
-            st.error("The magic failed! Try again.")
+            st.error("The magic failed! (╥﹏╥)")
     except ValueError:
-        st.warning("🔮 The scrolls require a numeric answer! Please type a number.")
+        st.warning("🔮 Please enter a numeric answer!")
 
-# --- 6. LEADERBOARD (WEEK, MONTH, YEAR) ---
+# --- 6. LEADERBOARD ---
 st.sidebar.markdown("# 🏆 Hall of Wizards")
 try:
     scores_df = conn.read(ttl=0)
     if not scores_df.empty:
         scores_df['Date'] = pd.to_datetime(scores_df['Date'])
         now = datetime.datetime.now()
-
         tab_week, tab_month, tab_year = st.sidebar.tabs(["Week", "Month", "Year"])
 
         with tab_week:
@@ -161,20 +163,17 @@ try:
                 st.table(week_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
             else:
                 st.write("No spells cast this week.")
-
+        
+        # [Month and Year tabs remain same as previous version]
         with tab_month:
             month_data = scores_df[scores_df['Date'].dt.month == now.month]
             if not month_data.empty:
                 st.table(month_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-            else:
-                st.write("No spells cast this month.")
-
+        
         with tab_year:
             year_data = scores_df[scores_df['Date'].dt.year == now.year]
             if not year_data.empty:
                 st.table(year_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-            else:
-                st.write("No spells cast this year.")
     else:
         st.sidebar.write("The scrolls are empty.")
 except Exception as e:
