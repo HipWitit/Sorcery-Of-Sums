@@ -31,10 +31,10 @@ st.markdown(f"""
         margin-bottom: 20px;
     }}
 
-    /* Scratchpad styling (d4ffea background, b4a7d6 font) */
+    /* Scratchpad styling (b4a7d6 background, d4ffea font) */
     div[data-testid="stTextArea"] textarea {{
-        background-color: #d4ffea !important;
-        color: #b4a7d6 !important;
+        background-color: #b4a7d6 !important;
+        color: #d4ffea !important;
         border-radius: 10px;
         border: 2px solid #b4a7d6;
         font-family: 'Helvetica', sans-serif;
