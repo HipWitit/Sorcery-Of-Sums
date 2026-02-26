@@ -18,7 +18,16 @@ except:
 
 st.markdown(f"""
     <style>
+    /* Main Background */
     .stApp {{ background-color: #fde4f2; }}
+    
+    /* SIDEBAR COLOR CHANGE TO ffffe3 */
+    [data-testid="stSidebar"] {{
+        background-color: #ffffe3 !important;
+        border-right: 2px solid #c6c7ff;
+    }}
+
+    /* Global Text Colors */
     h1, h2, h3, p, span, label {{ color: #7b7dbd !important; font-family: 'Helvetica', sans-serif; }}
     
     .question-container {{
