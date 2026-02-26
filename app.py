@@ -144,11 +144,17 @@ if st.button("🪄 Cast Spell!"):
     try:
         user_answer = float(user_answer_raw)
         if math.isclose(user_answer, st.session_state.target_ans, rel_tol=0.1):
-            # 1. TRIGGER STARS FIRST
+            # 1. TRIGGER THE STAR EFFECT
             pastel_star_effect()
-            st.toast("Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ", icon="✨")
             
-            # 2. WAIT A TINY BIT (This lets the JS run)
+            # 2. CUSTOM SUCCESS BOX (Color: ffffe3)
+            st.markdown(f"""
+                <div style="background-color: #ffffe3; border: 3px solid #b4a7d6; border-radius: 20px; padding: 20px; text-align: center; margin-top: 15px; margin-bottom: 15px; box-shadow: 0px 4px 10px rgba(0,0,0,0.05);">
+                    <h2 style="color: #7b7dbd !important; margin: 0; font-size: 24px;">Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Tiny pause to ensure the browser registers the animation
             time.sleep(0.5) 
             
             try:
@@ -157,19 +163,21 @@ if st.button("🪄 Cast Spell!"):
                 new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": current_date}])
                 updated_df = pd.concat([df, new_row], ignore_index=True)
                 conn.update(data=updated_df)
-                st.success("✨ Score recorded! ✨")
                 
-                # 3. LONGER SLEEP TO SEE THE STARS FLOAT
-                time.sleep(2.0) 
+                st.success("✨ Your magic has been recorded in the scrolls! ✨")
+                
+                # Wait longer so you can actually see the stars float up
+                time.sleep(2.5) 
             except Exception as e:
                 st.error(f"⚠️ DATABASE ERROR: {e}")
             
+            # Reset for the next challenge
             st.session_state.current_q, st.session_state.target_ans = generate_advanced_spell()
             st.rerun()
         else:
-            st.error("The magic failed! (╥﹏╥)")
+            st.error("The magic failed! (╥﹏╥) Double check your math!")
     except ValueError:
-        st.warning("🔮 Please enter a numeric answer!")
+        st.warning("🔮 A wizard must use numbers! Please enter a valid numeric answer.")
 
 # --- 6. LEADERBOARD ---
 st.sidebar.markdown("# 🏆 Hall of Wizards")
