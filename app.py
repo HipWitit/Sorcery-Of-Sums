@@ -27,17 +27,27 @@ st.markdown(f"""
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* 3. PINK BACKGROUND FOR SUBJECT & GRADE SELECTION */
-    div[data-testid="stSelectbox"], 
-    div[data-testid="stVerticalBlock"] > div[style*="flex-direction: column"] > div[data-testid="stMarkdownContainer"] + div {{
+    /* 3. REINFORCED PINK PODS (Targeting Container Borders) */
+    [data-testid="stSidebar"] [data-testid="stVerticalBlockBorderWrapper"] {{
         background-color: #ffdef2 !important;
-        padding: 15px;
-        border-radius: 15px;
+        padding: 10px;
+        border-radius: 20px;
         border: 2px solid #eecbff;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }}
 
-    /* 4. RADIO BUTTONS: PERIWINKLE WHEN SELECTED */
+    /* 4. PERIWINKLE CRYSTAL BALL FONT */
+    /* This targets the text inside the expander and the header */
+    .stExpander {{
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 15px;
+    }}
+    .stExpander p, .stExpander span, .stExpander label, .stExpander div {{
+        color: #7b7dbd !important;
+        font-weight: bold;
+    }}
+
+    /* 5. RADIO BUTTONS & GLOBAL TEXT */
     div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
         border-color: #7b7dbd !important;
     }}
@@ -45,20 +55,14 @@ st.markdown(f"""
         background-color: #c6c7ff !important;
     }}
 
-    /* 5. Hall of Wizards Font Color */
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
     [data-testid="stSidebar"] .stTabs button,
     [data-testid="stSidebar"] [data-testid="stTable"] td,
     [data-testid="stSidebar"] [data-testid="stTable"] th {{
-        color: #eecbff !important;
+        color: #7b7dbd !important;
     }}
     
-    .question-container h1, .question-container h3, label p {{ 
-        color: #7b7dbd !important; 
-        font-family: 'Helvetica', sans-serif;
-    }}
-
     .question-container {{
         background-color: white; 
         padding: 30px; 
@@ -68,17 +72,19 @@ st.markdown(f"""
         margin-bottom: 20px;
     }}
 
+    .question-container h1, .question-container h3 {{
+        color: #7b7dbd !important;
+    }}
+
     div[data-testid="stTextArea"] textarea {{
         background-color: #b4a7d6 !important; 
         color: #d4ffea !important;           
         border-radius: 10px;
-        border: 2px solid #7b7dbd;
     }}
     
     div[data-testid="stTextInput"] input {{
         background-color: #e6fff8 !important;
         color: #7b7dbd !important;
-        border-radius: 10px;
     }}
 
     .stButton>button {{ 
@@ -144,7 +150,7 @@ def generate_spell(unit, level):
         b = random.randint(1, 10 * prog)
         x = random.randint(1, 12)
         c = (a * x) + b
-        image_tag = ""
+        image_tag = "Imagine a balance scale. On one side, you have " + str(a) + " mystery boxes (x) and " + str(b) + " gems. On the other side, there are " + str(c) + " gems."
         return f"Solve for x: {a}x + {b} = {c}", x, image_tag
 
     elif "Quadratics" in unit:
@@ -152,7 +158,7 @@ def generate_spell(unit, level):
         x2 = random.randint(1, 3)
         b_val = x2 - x1
         c_val = -(x1 * x2)
-        image_tag = ""
+        image_tag = "A magic portal forms a curve (parabola). It touches the ground at x = " + str(x1) + " and another secret point."
         return f"Find the positive root: x² + ({b_val})x + ({c_val}) = 0", x1, image_tag
 
     elif "Functions" in unit:
@@ -163,26 +169,31 @@ def generate_spell(unit, level):
         else:
             func = f"f(x) = {prog}x + {val}"
             ans = (prog * val) + val
-        image_tag = "[attachment_0](attachment)"
+        image_tag = "A spell machine takes the number " + str(val) + " and transforms it using the rule " + func + "."
         return f"Given {func}, find f({val})", ans, image_tag
 
     elif "Geometry" in unit:
         side = random.randint(3, 7 * prog)
         if level == "12":
             ans = side**3
-            image_tag = ""
+            image_tag = "A 3D magic cube has a length, width, and height of " + str(side) + ". Calculate the space inside."
             return f"The side of a cube is {side}. What is its Volume?", ans, image_tag
         else:
             ans = side * 4
-            image_tag = ""
+            image_tag = "A square tile for a wizard's floor has a side of " + str(side) + ". How long is the border?"
             return f"A square has a side of {side}. What is its Perimeter?", ans, image_tag
     
     return "Scroll not found", 0, ""
 
 # --- 6. SIDEBAR: LESSON SELECTION & LEADERBOARD ---
 st.sidebar.title("📜 Choose Your Scroll")
-unit_choice = st.sidebar.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
-level_choice = st.sidebar.radio("Select Grade Level", ["10", "11", "12"])
+
+# Use border=True containers to ensure the CSS pink pods wrap the widgets
+with st.sidebar.container(border=True):
+    unit_choice = st.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
+
+with st.sidebar.container(border=True):
+    level_choice = st.radio("Select Grade Level", ["10", "11", "12"])
 
 # Reset question if unit/level changes
 if ("last_unit" not in st.session_state or 
@@ -231,7 +242,6 @@ st.markdown(f"""
 
 # Visual Aid Expanders
 with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
-    st.write("Visualizing the spell requirements:")
     st.write(st.session_state.get('current_image', 'No visual found in the stars.'))
 
 st.text_area("Spellbook Scratchpad:", placeholder="Work out your equations here...", height=100, key="scratchpad")
@@ -258,7 +268,6 @@ if st.button("🪄 Cast Spell!"):
             except:
                 st.error("⚠️ Database Error")
             
-            # Generate new question
             q, ans, img = generate_spell(unit_choice, level_choice)
             st.session_state.current_q = q
             st.session_state.target_ans = ans
