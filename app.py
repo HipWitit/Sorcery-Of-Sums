@@ -294,4 +294,3 @@ if st.button("🪄 Cast Spell!"):
             st.rerun()
         else: st.error("The magic failed!")
     except: st.warning("Enter a number!")
-
