@@ -43,7 +43,7 @@ st.markdown(f"""
     div[data-testid="stChart"] {{
         background-color: white !important;
         padding: 10px;
-        border-radius: 15px;
+        border-radius: 10px;
         border: 2px solid #7b7dbd;
     }}
 
