@@ -27,17 +27,17 @@ st.markdown(f"""
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* 3. FORCING PINK PODS (Subject & Grade) */
-    /* This targets the specific widget containers in the sidebar to ensure they are boxed in pink */
-    [data-testid="stSidebar"] [data-testid="stVerticalBlockBorderWrapper"] > div > div > div[data-testid="stVerticalBlock"] > div > div[data-testid="stVerticalBlock"] > div {{
+    /* 3. THE PINK MAGIC PODS */
+    /* This targets our custom 'pink-pod' class */
+    div.pink-pod {{
         background-color: #ffdef2 !important;
-        padding: 18px;
+        padding: 20px;
         border-radius: 20px;
         border: 2px solid #eecbff;
         margin-bottom: 15px;
     }}
 
-    /* 4. PERIWINKLE RADIO BUTTONS (The aggressive fix) */
+    /* 4. PERIWINKLE RADIO BUTTONS */
     /* Target the unselected circle */
     div[data-testid="stRadioButton"] div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
         border-color: #7b7dbd !important;
@@ -50,15 +50,18 @@ st.markdown(f"""
         border-color: #7b7dbd !important;
     }}
 
-    /* 5. Sidebar Text & Hall of Wizards (#eecbff) */
+    /* 5. Sidebar Text Colors */
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
-    [data-testid="stSidebar"] .stTabs button,
-    [data-testid="stSidebar"] [data-testid="stTable"] td,
-    [data-testid="stSidebar"] [data-testid="stTable"] th,
-    [data-testid="stSidebar"] label p {{
-        color: #eecbff !important;
+    [data-testid="stSidebar"] label p,
+    [data-testid="stSidebar"] .stTabs button {{
+        color: #7b7dbd !important;
         font-weight: bold;
+    }}
+
+    [data-testid="stSidebar"] [data-testid="stTable"] td,
+    [data-testid="stSidebar"] [data-testid="stTable"] th {{
+        color: #eecbff !important;
     }}
     
     /* Main Question Container */
@@ -80,7 +83,6 @@ st.markdown(f"""
         background-color: #b4a7d6 !important; 
         color: #d4ffea !important;           
         border-radius: 15px;
-        border: 2px solid #7b7dbd;
     }}
     
     div[data-testid="stTextInput"] input {{
@@ -95,12 +97,6 @@ st.markdown(f"""
         border-radius: 50px; 
         width: 100%;
         font-weight: bold;
-        transition: 0.3s;
-    }}
-    
-    .stButton>button:hover {{
-        background-color: #b4a7d6;
-        border: 2px solid white;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -158,7 +154,6 @@ def generate_spell(unit, level):
         b = random.randint(1, 20)
         c = (a * x) + b
         return f"Solve for x: {a}x + {b} = {c}", x
-
     elif "Quadratics" in unit:
         x = random.randint(1, 10)
         if level == "10":
@@ -168,14 +163,12 @@ def generate_spell(unit, level):
             b_val = -(x + x2)
             c_val = x * x2
             return f"Find one positive root: x² + ({b_val})x + {c_val} = 0", x
-
     elif "Functions" in unit:
         x = random.randint(2, 6)
         if level == "10":
             return f"f(x) = 3x + 5. Find f({x})", (3*x + 5)
         else:
             return f"f(x) = x² + 2. Find f({x})", (x**2 + 2)
-
     elif "Geometry" in unit:
         r = random.randint(2, 10)
         if level == "10":
@@ -183,13 +176,21 @@ def generate_spell(unit, level):
         else:
             area = round(math.pi * (r**2), 2)
             return f"Circle Area = {area}. What is the radius r?", r
-    
     return "Scroll not found", 0
 
 # --- 6. SIDEBAR: LESSON SELECTION & LEADERBOARD ---
 st.sidebar.title("📜 Choose Your Scroll")
-unit_choice = st.sidebar.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
-level_choice = st.sidebar.radio("Select Grade Level", ["10", "11", "12"])
+
+# MAGIC FIX: We wrap the widgets in a 'container' so we can force the pink background
+with st.sidebar.container():
+    st.markdown('<div class="pink-pod">', unsafe_allow_html=True)
+    unit_choice = st.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with st.sidebar.container():
+    st.markdown('<div class="pink-pod">', unsafe_allow_html=True)
+    level_choice = st.sidebar.radio("Select Grade Level", ["10", "11", "12"])
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # Reset question if unit/level changes
 if ("last_unit" not in st.session_state or 
