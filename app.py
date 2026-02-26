@@ -27,42 +27,41 @@ st.markdown(f"""
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* 3. PINK BACKGROUND FOR SUBJECT & GRADE SELECTION */
-    /* Targets the dropdown and radio button containers in the sidebar */
-    div[data-testid="stSelectbox"], 
-    div[data-testid="stVerticalBlock"] > div[style*="flex-direction: column"] > div[data-testid="stMarkdownContainer"] + div {{
+    /* 3. FORCING PINK PODS (Subject & Grade) */
+    /* This targets the specific widget containers in the sidebar to ensure they are boxed in pink */
+    [data-testid="stSidebar"] [data-testid="stVerticalBlockBorderWrapper"] > div > div > div[data-testid="stVerticalBlock"] > div > div[data-testid="stVerticalBlock"] > div {{
         background-color: #ffdef2 !important;
-        padding: 15px;
-        border-radius: 15px;
+        padding: 18px;
+        border-radius: 20px;
         border: 2px solid #eecbff;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }}
 
-    /* 4. RADIO BUTTONS: PERIWINKLE WHEN SELECTED */
-    /* Outer circle */
-    div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
+    /* 4. PERIWINKLE RADIO BUTTONS (The aggressive fix) */
+    /* Target the unselected circle */
+    div[data-testid="stRadioButton"] div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
+        border-color: #7b7dbd !important;
+        background-color: white !important;
+    }}
+    
+    /* Target the selected circle and inner dot (#c6c7ff) */
+    div[data-testid="stRadioButton"] div[role="radiogroup"] div[data-selection="true"] div {{
+        background-color: #c6c7ff !important;
         border-color: #7b7dbd !important;
     }}
-    /* The selected dot (Periwinkle #c6c7ff) */
-    div[role="radiogroup"] div[data-selection="true"] div {{
-        background-color: #c6c7ff !important;
-    }}
 
-    /* 5. Hall of Wizards Font Color (#eecbff) */
+    /* 5. Sidebar Text & Hall of Wizards (#eecbff) */
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
     [data-testid="stSidebar"] .stTabs button,
     [data-testid="stSidebar"] [data-testid="stTable"] td,
-    [data-testid="stSidebar"] [data-testid="stTable"] th {{
+    [data-testid="stSidebar"] [data-testid="stTable"] th,
+    [data-testid="stSidebar"] label p {{
         color: #eecbff !important;
+        font-weight: bold;
     }}
     
-    /* Global Text & Question Container */
-    .question-container h1, .question-container h3, label p {{ 
-        color: #7b7dbd !important; 
-        font-family: 'Helvetica', sans-serif;
-    }}
-
+    /* Main Question Container */
     .question-container {{
         background-color: white; 
         padding: 30px; 
@@ -72,26 +71,36 @@ st.markdown(f"""
         margin-bottom: 20px;
     }}
 
-    /* Input Fields */
+    .question-container h1, .question-container h3 {{
+        color: #7b7dbd !important;
+    }}
+
+    /* Input Styling */
     div[data-testid="stTextArea"] textarea {{
         background-color: #b4a7d6 !important; 
         color: #d4ffea !important;           
-        border-radius: 10px;
+        border-radius: 15px;
         border: 2px solid #7b7dbd;
     }}
     
     div[data-testid="stTextInput"] input {{
         background-color: #e6fff8 !important;
         color: #7b7dbd !important;
-        border-radius: 10px;
+        border-radius: 15px;
     }}
 
     .stButton>button {{ 
         background-color: #c6c7ff; 
         color: white; 
         border-radius: 50px; 
-        width: 100%; 
+        width: 100%;
         font-weight: bold;
+        transition: 0.3s;
+    }}
+    
+    .stButton>button:hover {{
+        background-color: #b4a7d6;
+        border: 2px solid white;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -197,7 +206,7 @@ try:
     scores_df = conn.read(ttl=0)
     if not scores_df.empty:
         scores_df['Date'] = pd.to_datetime(scores_df['Date'])
-        now = datetime.now()
+        now = datetime.datetime.now()
         tab_w, tab_m, tab_y = st.sidebar.tabs(["Week", "Month", "Year"])
         with tab_w:
             w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
@@ -241,7 +250,7 @@ if st.button("🪄 Cast Spell!"):
             time.sleep(0.5)
             try:
                 df = conn.read(ttl=0)
-                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.now().strftime("%Y-%m-%d")}])
+                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
                 conn.update(data=pd.concat([df, new_row], ignore_index=True))
                 st.success("✨ Score recorded! ✨")
                 time.sleep(2.0)
