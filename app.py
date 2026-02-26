@@ -5,6 +5,7 @@ import math
 import time
 import datetime
 import numpy as np
+import matplotlib.pyplot as plt
 from streamlit_gsheets import GSheetsConnection
 
 # --- 1. SETTINGS & THEMING ---
@@ -39,7 +40,6 @@ st.markdown(f"""
     }}
 
     /* 4. WHITE GRAPH BACKGROUND FIX */
-    /* This forces the container holding the chart to stay white */
     div[data-testid="stChart"] {{
         background-color: white !important;
         padding: 10px;
@@ -163,10 +163,10 @@ if "player_name" not in st.session_state:
             st.rerun()
     st.stop()
 
-# --- 5. MATH LOGIC WITH WHITE/BLACK GRAPHS ---
+# --- 5. MATH LOGIC WITH MATPLOTLIB GRAPHS ---
 def generate_spell(unit, level):
     prog = int(level) - 9 
-    plot_data = None
+    fig = None
     
     if "Algebra" in unit:
         a = random.randint(2, 5 * prog)
@@ -179,20 +179,36 @@ def generate_spell(unit, level):
     elif "Quadratics" in unit:
         h = random.randint(-3, 3) 
         k = random.randint(1, 5)  
-        x_vals = np.linspace(h-5, h+5, 40)
+        x_vals = np.linspace(h-5, h+5, 100)
         y_vals = (x_vals - h)**2 + k
-        plot_data = pd.DataFrame({'x': x_vals, 'Path': y_vals}).set_index('x')
+        
+        fig, ax = plt.subplots(figsize=(5, 4))
+        ax.plot(x_vals, y_vals, color='black', linewidth=2)
+        ax.set_facecolor('white')
+        ax.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray')
+        ax.axhline(y=0, color='black', linewidth=1.5)
+        ax.axvline(x=0, color='black', linewidth=1.5)
+        
         image_tag = "A magic portal forms a curve. Scry the crystal ball for the lowest point (the vertex)."
-        return f"What is the y-coordinate of the vertex in the graph?", k, image_tag, plot_data
+        return f"What is the y-coordinate of the vertex in the graph?", k, image_tag, fig
 
     elif "Functions" in unit:
         m = random.randint(1, 3); b_val = random.randint(-2, 2)
         target_x = random.randint(-2, 2); ans = m * target_x + b_val
-        x_vals = np.linspace(-5, 5, 11)
+        x_vals = np.linspace(-10, 10, 100)
         y_vals = m * x_vals + b_val
-        plot_data = pd.DataFrame({'x': x_vals, 'Path': y_vals}).set_index('x')
+        
+        fig, ax = plt.subplots(figsize=(5, 4))
+        ax.plot(x_vals, y_vals, color='black', linewidth=2)
+        ax.set_facecolor('white')
+        ax.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray')
+        ax.axhline(y=0, color='black', linewidth=1.5)
+        ax.axvline(x=0, color='black', linewidth=1.5)
+        ax.set_xlim([-10, 10])
+        ax.set_ylim([-10, 10])
+
         image_tag = f"The spell line follows a constant path. Locate where x = {target_x}."
-        return f"Using the graph aid, find f({target_x})", ans, image_tag, plot_data
+        return f"Using the graph aid, find f({target_x})", ans, image_tag, fig
 
     elif "Geometry" in unit:
         side = random.randint(3, 7 * prog)
@@ -249,8 +265,8 @@ st.markdown(f"""
 with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
     st.write(st.session_state.get('current_image', 'No visual found.'))
     if st.session_state.get('current_plot') is not None:
-        # WHITE BACKGROUND, BLACK LINE CONFIGURATION
-        st.line_chart(st.session_state.current_plot, color="#000000")
+        # RENDERING THE MATPLOTLIB FIGURE
+        st.pyplot(st.session_state.current_plot)
 
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
 user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...")
