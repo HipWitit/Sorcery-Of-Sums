@@ -27,38 +27,42 @@ st.markdown(f"""
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* 3. THE MAGIC POD FIX */
-    /* We target the vertical blocks inside the sidebar specifically */
-    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlockBorderWrapper"] > div > div {{
+    /* 3. PINK BACKGROUND FOR SUBJECT & GRADE SELECTION */
+    /* Targets the dropdown and radio button containers in the sidebar */
+    div[data-testid="stSelectbox"], 
+    div[data-testid="stVerticalBlock"] > div[style*="flex-direction: column"] > div[data-testid="stMarkdownContainer"] + div {{
         background-color: #ffdef2 !important;
-        padding: 20px;
-        border-radius: 20px;
+        padding: 15px;
+        border-radius: 15px;
         border: 2px solid #eecbff;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }}
 
-    /* 4. PERIWINKLE RADIO BUTTONS (Selected Color) */
-    /* This forces the red dots in your screenshot to become periwinkle */
-    div[data-testid="stRadioButton"] div[role="radiogroup"] div[data-selection="true"] div {{
+    /* 4. RADIO BUTTONS: PERIWINKLE WHEN SELECTED */
+    /* Outer circle */
+    div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
+        border-color: #7b7dbd !important;
+    }}
+    /* The selected dot (Periwinkle #c6c7ff) */
+    div[role="radiogroup"] div[data-selection="true"] div {{
         background-color: #c6c7ff !important;
-        border-color: #7b7dbd !important;
-    }}
-    
-    /* The circle border for all buttons */
-    div[data-testid="stRadioButton"] div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
-        border-color: #7b7dbd !important;
     }}
 
-    /* 5. Sidebar Text Colors */
+    /* 5. Hall of Wizards Font Color (#eecbff) */
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
-    [data-testid="stSidebar"] label p,
-    [data-testid="stSidebar"] .stTabs button {{
-        color: #7b7dbd !important;
-        font-weight: bold;
+    [data-testid="stSidebar"] .stTabs button,
+    [data-testid="stSidebar"] [data-testid="stTable"] td,
+    [data-testid="stSidebar"] [data-testid="stTable"] th {{
+        color: #eecbff !important;
     }}
     
-    /* Main Question Container */
+    /* Global Text & Question Container */
+    .question-container h1, .question-container h3, label p {{ 
+        color: #7b7dbd !important; 
+        font-family: 'Helvetica', sans-serif;
+    }}
+
     .question-container {{
         background-color: white; 
         padding: 30px; 
@@ -68,28 +72,25 @@ st.markdown(f"""
         margin-bottom: 20px;
     }}
 
-    .question-container h1, .question-container h3 {{
-        color: #7b7dbd !important;
-    }}
-
-    /* Input Styling */
+    /* Input Fields */
     div[data-testid="stTextArea"] textarea {{
         background-color: #b4a7d6 !important; 
         color: #d4ffea !important;           
-        border-radius: 15px;
+        border-radius: 10px;
+        border: 2px solid #7b7dbd;
     }}
     
     div[data-testid="stTextInput"] input {{
         background-color: #e6fff8 !important;
         color: #7b7dbd !important;
-        border-radius: 15px;
+        border-radius: 10px;
     }}
 
     .stButton>button {{ 
         background-color: #c6c7ff; 
         color: white; 
         border-radius: 50px; 
-        width: 100%;
+        width: 100%; 
         font-weight: bold;
     }}
     </style>
@@ -148,6 +149,7 @@ def generate_spell(unit, level):
         b = random.randint(1, 20)
         c = (a * x) + b
         return f"Solve for x: {a}x + {b} = {c}", x
+
     elif "Quadratics" in unit:
         x = random.randint(1, 10)
         if level == "10":
@@ -157,12 +159,14 @@ def generate_spell(unit, level):
             b_val = -(x + x2)
             c_val = x * x2
             return f"Find one positive root: x² + ({b_val})x + {c_val} = 0", x
+
     elif "Functions" in unit:
         x = random.randint(2, 6)
         if level == "10":
             return f"f(x) = 3x + 5. Find f({x})", (3*x + 5)
         else:
             return f"f(x) = x² + 2. Find f({x})", (x**2 + 2)
+
     elif "Geometry" in unit:
         r = random.randint(2, 10)
         if level == "10":
@@ -170,18 +174,13 @@ def generate_spell(unit, level):
         else:
             area = round(math.pi * (r**2), 2)
             return f"Circle Area = {area}. What is the radius r?", r
+    
     return "Scroll not found", 0
 
 # --- 6. SIDEBAR: LESSON SELECTION & LEADERBOARD ---
 st.sidebar.title("📜 Choose Your Scroll")
-
-# By wrapping these in st.sidebar.container(border=True), 
-# our new CSS will find them and turn the box pink automatically!
-with st.sidebar.container(border=True):
-    unit_choice = st.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
-
-with st.sidebar.container(border=True):
-    level_choice = st.radio("Select Grade Level", ["10", "11", "12"])
+unit_choice = st.sidebar.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
+level_choice = st.sidebar.radio("Select Grade Level", ["10", "11", "12"])
 
 # Reset question if unit/level changes
 if ("last_unit" not in st.session_state or 
@@ -198,7 +197,7 @@ try:
     scores_df = conn.read(ttl=0)
     if not scores_df.empty:
         scores_df['Date'] = pd.to_datetime(scores_df['Date'])
-        now = datetime.datetime.now()
+        now = datetime.now()
         tab_w, tab_m, tab_y = st.sidebar.tabs(["Week", "Month", "Year"])
         with tab_w:
             w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
@@ -242,7 +241,7 @@ if st.button("🪄 Cast Spell!"):
             time.sleep(0.5)
             try:
                 df = conn.read(ttl=0)
-                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.now().strftime("%Y-%m-%d")}])
                 conn.update(data=pd.concat([df, new_row], ignore_index=True))
                 st.success("✨ Score recorded! ✨")
                 time.sleep(2.0)
