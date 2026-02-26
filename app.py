@@ -278,7 +278,7 @@ if st.button("🪄 Cast Spell!"):
             st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
             
             # Short pause so the script can finish injecting stars before the page clears
-            time.sleep(1.2) 
+            time.sleep(.2) 
             
             try:
                 df = conn.read(ttl=0)
