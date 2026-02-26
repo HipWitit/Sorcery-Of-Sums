@@ -139,13 +139,17 @@ st.text_area("Spellbook Scratchpad:", placeholder="Work out your equations...", 
 
 user_answer_raw = st.text_input("Your Final Answer:", placeholder="Type number here...")
 
+# --- UPDATED BUTTON LOGIC ---
 if st.button("🪄 Cast Spell!"):
     try:
         user_answer = float(user_answer_raw)
         if math.isclose(user_answer, st.session_state.target_ans, rel_tol=0.1):
-            # TRIGGER YOUR CUSTOM EFFECT
+            # 1. TRIGGER STARS FIRST
             pastel_star_effect()
             st.toast("Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ", icon="✨")
+            
+            # 2. WAIT A TINY BIT (This lets the JS run)
+            time.sleep(0.5) 
             
             try:
                 df = conn.read(ttl=0)
@@ -154,7 +158,9 @@ if st.button("🪄 Cast Spell!"):
                 updated_df = pd.concat([df, new_row], ignore_index=True)
                 conn.update(data=updated_df)
                 st.success("✨ Score recorded! ✨")
-                time.sleep(1.5) 
+                
+                # 3. LONGER SLEEP TO SEE THE STARS FLOAT
+                time.sleep(2.0) 
             except Exception as e:
                 st.error(f"⚠️ DATABASE ERROR: {e}")
             
@@ -178,6 +184,15 @@ try:
             week_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
             if not week_data.empty:
                 st.table(week_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-        # [Remaining sidebar tabs unchanged]
+        
+        with tab_month:
+            month_data = scores_df[scores_df['Date'].dt.month == now.month]
+            if not month_data.empty:
+                st.table(month_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+
+        with tab_year:
+            year_data = scores_df[scores_df['Date'].dt.year == now.year]
+            if not year_data.empty:
+                st.table(year_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
 except:
     st.sidebar.write("The scrolls are sleeping.")
