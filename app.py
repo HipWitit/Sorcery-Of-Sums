@@ -154,7 +154,7 @@ if "player_name" not in st.session_state:
             st.rerun()
     st.stop()
 
-# --- 5. MATH LOGIC WITH GRAPHS ---
+# --- 5. MATH LOGIC WITH WHITE/BLACK GRAPHS ---
 def generate_spell(unit, level):
     prog = int(level) - 9 
     plot_data = None
@@ -168,11 +168,11 @@ def generate_spell(unit, level):
         return f"Solve for x: {a}x + {b} = {c}", x, image_tag, None
 
     elif "Quadratics" in unit:
-        h = random.randint(-2, 2) # x-coord of vertex
-        k = random.randint(1, 5)  # y-coord of vertex
+        h = random.randint(-3, 3) 
+        k = random.randint(1, 5)  
         x_vals = np.linspace(h-5, h+5, 40)
         y_vals = (x_vals - h)**2 + k
-        plot_data = pd.DataFrame({'x': x_vals, 'Energy (y)': y_vals}).set_index('x')
+        plot_data = pd.DataFrame({'x': x_vals, 'Path': y_vals}).set_index('x')
         image_tag = "A magic portal forms a curve. Scry the crystal ball for the lowest point (the vertex)."
         return f"What is the y-coordinate of the vertex in the graph?", k, image_tag, plot_data
 
@@ -181,7 +181,7 @@ def generate_spell(unit, level):
         target_x = random.randint(-2, 2); ans = m * target_x + b_val
         x_vals = np.linspace(-5, 5, 11)
         y_vals = m * x_vals + b_val
-        plot_data = pd.DataFrame({'x': x_vals, 'Path (y)': y_vals}).set_index('x')
+        plot_data = pd.DataFrame({'x': x_vals, 'Path': y_vals}).set_index('x')
         image_tag = f"The spell line follows a constant path. Locate where x = {target_x}."
         return f"Using the graph aid, find f({target_x})", ans, image_tag, plot_data
 
@@ -240,7 +240,8 @@ st.markdown(f"""
 with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
     st.write(st.session_state.get('current_image', 'No visual found.'))
     if st.session_state.get('current_plot') is not None:
-        st.line_chart(st.session_state.current_plot)
+        # WHITE BACKGROUND, BLACK LINE CONFIGURATION
+        st.line_chart(st.session_state.current_plot, color="#000000")
 
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
 user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...")
