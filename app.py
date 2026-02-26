@@ -38,7 +38,16 @@ st.markdown(f"""
         margin-bottom: 15px;
     }}
 
-    /* 4. PERIWINKLE CRYSTAL BALL FONT */
+    /* 4. WHITE GRAPH BACKGROUND FIX */
+    /* This forces the container holding the chart to stay white */
+    div[data-testid="stChart"] {{
+        background-color: white !important;
+        padding: 10px;
+        border-radius: 15px;
+        border: 2px solid #7b7dbd;
+    }}
+
+    /* 5. PERIWINKLE CRYSTAL BALL FONT */
     .stExpander {{
         background-color: rgba(255, 255, 255, 0.5);
         border-radius: 15px;
@@ -48,7 +57,7 @@ st.markdown(f"""
         font-weight: bold;
     }}
 
-    /* 5. YELLOW SUCCESS BOX FONT FIX */
+    /* 6. YELLOW SUCCESS BOX FONT FIX */
     .success-box {{
         background-color: #ffffe3; 
         border: 3px solid #b4a7d6; 
@@ -65,7 +74,7 @@ st.markdown(f"""
         font-size: 24px;
     }}
 
-    /* 6. GLOBAL SIDEBAR TEXT & RADIOS */
+    /* 7. GLOBAL SIDEBAR TEXT & RADIOS */
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
     [data-testid="stSidebar"] label p {{
