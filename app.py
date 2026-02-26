@@ -4,6 +4,7 @@ import pandas as pd
 import math
 import time
 import datetime
+import numpy as np
 from streamlit_gsheets import GSheetsConnection
 
 # --- 1. SETTINGS & THEMING ---
@@ -158,6 +159,7 @@ if "player_name" not in st.session_state:
 # --- 5. MATH LOGIC WITH PROGRESSION & VISUALS ---
 def generate_spell(unit, level):
     prog = int(level) - 9 
+    plot_data = None
     
     if "Algebra" in unit:
         a = random.randint(2, 5 * prog)
@@ -165,44 +167,44 @@ def generate_spell(unit, level):
         x = random.randint(1, 12)
         c = (a * x) + b
         image_tag = f"Imagine a balance scale. On one side, you have {a} mystery boxes (x) and {b} gems. On the other side, there are {c} gems."
-        return f"Solve for x: {a}x + {b} = {c}", x, image_tag
+        return f"Solve for x: {a}x + {b} = {c}", x, image_tag, None
 
     elif "Quadratics" in unit:
-        x1 = random.randint(1, 5 * prog)
-        x2 = random.randint(1, 3)
-        b_val = x2 - x1
-        c_val = -(x1 * x2)
-        image_tag = f"A magic portal forms a curve. It touches the ground at x = {x1} and another secret point."
-        return f"Find the positive root: x² + ({b_val})x + ({c_val}) = 0", x1, image_tag
+        h = random.randint(-2, 2)
+        k = random.randint(1, 5)
+        x_vals = np.linspace(h-5, h+5, 50)
+        y_vals = (x_vals - h)**2 + k
+        plot_data = pd.DataFrame({'x': x_vals, 'Energy (y)': y_vals}).set_index('x')
+        image_tag = "A magic portal forms a curve. Scry the crystal ball to find the y-value of the vertex (the lowest point)."
+        return f"Based on the graph, what is the y-coordinate of the vertex?", k, image_tag, plot_data
 
     elif "Functions" in unit:
-        val = random.randint(2, 5)
-        if level == "12":
-            func = f"f(x) = 2x² - {val}"
-            ans = 2*(val**2) - val
-        else:
-            func = f"f(x) = {prog}x + {val}"
-            ans = (prog * val) + val
-        image_tag = f"A spell machine takes the number {val} and transforms it using the rule {func}."
-        return f"Given {func}, find f({val})", ans, image_tag
+        m = random.randint(1, 3)
+        b = random.randint(-2, 2)
+        target_x = random.randint(-2, 2)
+        ans = m * target_x + b
+        x_vals = np.linspace(-5, 5, 11)
+        y_vals = m * x_vals + b
+        plot_data = pd.DataFrame({'x': x_vals, 'Spell Power (y)': y_vals}).set_index('x')
+        image_tag = f"A spell machine follows a linear path. Locate the point where x = {target_x}."
+        return f"Using the graph, find the value of f({target_x})", ans, image_tag, plot_data
 
     elif "Geometry" in unit:
         side = random.randint(3, 7 * prog)
         if level == "12":
             ans = side**3
             image_tag = f"A 3D magic cube has sides of {side}. Calculate the total volume inside."
-            return f"The side of a cube is {side}. What is its Volume?", ans, image_tag
+            return f"The side of a cube is {side}. What is its Volume?", ans, image_tag, None
         else:
             ans = side * 4
             image_tag = f"A square tile has a side of {side}. How long is the magic border around it?"
-            return f"A square has a side of {side}. What is its Perimeter?", ans, image_tag
+            return f"A square has a side of {side}. What is its Perimeter?", ans, image_tag, None
     
-    return "Scroll not found", 0, ""
+    return "Scroll not found", 0, "", None
 
 # --- 6. SIDEBAR: LESSON SELECTION & LEADERBOARD ---
 st.sidebar.title("📜 Choose Your Scroll")
 
-# These will now automatically get the pink pod backgrounds via CSS
 unit_choice = st.sidebar.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
 level_choice = st.sidebar.radio("Select Grade Level", ["10", "11", "12"])
 
@@ -211,10 +213,11 @@ if ("last_unit" not in st.session_state or
     st.session_state.last_level != level_choice):
     st.session_state.last_unit = unit_choice
     st.session_state.last_level = level_choice
-    q, ans, img = generate_spell(unit_choice, level_choice)
+    q, ans, img, pdf = generate_spell(unit_choice, level_choice)
     st.session_state.current_q = q
     st.session_state.target_ans = ans
     st.session_state.current_image = img
+    st.session_state.current_plot = pdf
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("# 🏆 Hall of Wizards")
@@ -223,59 +226,4 @@ try:
     if not scores_df.empty:
         scores_df['Date'] = pd.to_datetime(scores_df['Date'])
         now = datetime.datetime.now()
-        tab_w, tab_m, tab_y = st.sidebar.tabs(["Week", "Month", "Year"])
-        with tab_w:
-            w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
-            if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-except:
-    st.sidebar.write("The scrolls are sleeping.")
-
-# --- 7. MAIN INTERFACE ---
-try:
-    st.image("Sorcery Sums.png")
-except:
-    st.title("Sorcery Sums")
-
-st.markdown(f"""
-    <div class="question-container">
-        <h3>Grade {level_choice} {unit_choice}</h3>
-        <h1>{st.session_state.current_q}</h1>
-    </div>
-""", unsafe_allow_html=True)
-
-with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
-    st.write(st.session_state.get('current_image', 'No visual found in the stars.'))
-
-st.text_area("Spellbook Scratchpad:", placeholder="Work out your equations here...", height=100, key="scratchpad")
-user_answer_raw = st.text_input("Your Final Answer:", placeholder="Type number here...")
-
-if st.button("🪄 Cast Spell!"):
-    try:
-        user_answer = float(user_answer_raw)
-        if math.isclose(user_answer, st.session_state.target_ans, rel_tol=0.1):
-            pastel_star_effect()
-            # SUCCESS BOX WITH THE NEW FONT COLOR
-            st.markdown(f"""
-                <div class="success-box">
-                    <h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2>
-                </div>
-            """, unsafe_allow_html=True)
-            
-            time.sleep(1.0)
-            try:
-                df = conn.read(ttl=0)
-                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
-                conn.update(data=pd.concat([df, new_row], ignore_index=True))
-                st.success("✨ Score recorded! ✨")
-            except:
-                st.error("⚠️ Database Error")
-            
-            q, ans, img = generate_spell(unit_choice, level_choice)
-            st.session_state.current_q = q
-            st.session_state.target_ans = ans
-            st.session_state.current_image = img
-            st.rerun()
-        else:
-            st.error("The magic failed! (╥﹏╥)")
-    except ValueError:
-        st.warning("🔮 Please enter a numeric answer!")
+        tab_w, tab_
