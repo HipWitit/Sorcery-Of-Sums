@@ -9,7 +9,7 @@ from streamlit_gsheets import GSheetsConnection
 # --- 1. SETTINGS & THEMING ---
 st.set_page_config(page_title="Sorcery Sums", page_icon="🪄")
 
-# Autorefresh safety
+# Autorefresh for Leaderboard
 try:
     from streamlit_autorefresh import st_autorefresh
     st_autorefresh(interval=30000, key="datarefresh")
@@ -35,7 +35,6 @@ st.markdown(f"""
         color: #d4ffea !important;           
         border-radius: 10px;
         border: 2px solid #7b7dbd;
-        font-family: 'Helvetica', sans-serif;
     }}
     
     div[data-testid="stTextInput"] input {{
@@ -59,26 +58,15 @@ def pastel_star_effect():
     st.markdown("""
     <style>
     .star {
-        position: fixed;
-        width: 25px;
-        height: 25px;
-        clip-path: polygon(
-            50% 0%, 61% 35%, 98% 35%,
-            68% 57%, 79% 91%,
-            50% 70%, 21% 91%,
-            32% 57%, 2% 35%,
-            39% 35%
-        );
-        animation: floatUp 2.5s ease-out forwards;
-        z-index: 9999;
+        position: fixed; width: 25px; height: 25px;
+        clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        animation: floatUp 2.5s ease-out forwards; z-index: 9999;
     }
-
     @keyframes floatUp {
         0% { transform: translateY(0) rotate(0deg); opacity: 1; }
         100% { transform: translateY(-500px) rotate(360deg); opacity: 0; }
     }
     </style>
-
     <script>
     const colors = ["#ffd6ff","#caffbf","#fdffb6","#bdb2ff","#a0c4ff"];
     for (let i = 0; i < 30; i++) {
@@ -93,114 +81,133 @@ def pastel_star_effect():
     </script>
     """, unsafe_allow_html=True)
 
-# --- 3. DATABASE & LOGIN ---
+# --- 3. DATABASE CONNECTION ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 
+# --- 4. LOGIN SCREEN ---
 if "player_name" not in st.session_state:
     try:
         st.image("Sorcerer Login.png")
     except:
         st.write("✨ **Portal Opening...** ✨")
-    name = st.text_input("Enter your name:")
+    name = st.text_input("Enter your name to begin your journey:")
     if st.button("Enter Realm"):
         if name:
             st.session_state.player_name = name
             st.rerun()
     st.stop()
 
-# --- 4. MATH LOGIC ---
-def generate_advanced_spell():
-    spell_type = random.choice(["Algebra", "Quadratic", "Geometry"])
-    if spell_type == "Algebra":
-        x = random.randint(2, 12)
-        a, b = random.randint(2, 10), random.randint(1, 20)
+# --- 5. MATH LOGIC BY UNIT & LEVEL ---
+def generate_spell(unit, level):
+    if "Algebra" in unit:
+        difficulty = int(level) - 9
+        x = random.randint(2, 10 * difficulty)
+        a = random.randint(2, 5 * difficulty)
+        b = random.randint(1, 20)
         c = (a * x) + b
         return f"Solve for x: {a}x + {b} = {c}", x
-    elif spell_type == "Quadratic":
-        x = random.randint(2, 12)
-        return f"Solve for x: x² = {x**2}", x
-    elif spell_type == "Geometry":
-        r = random.randint(2, 10)
-        area = round(math.pi * (r**2), 2)
-        return f"Circle Area = {area}. What is r?", r
 
-if 'current_q' not in st.session_state:
-    st.session_state.current_q, st.session_state.target_ans = generate_advanced_spell()
-
-# --- 5. MAIN INTERFACE ---
-try:
-    st.image("Sorcery Sums.png")
-except:
-    st.title("Sorcery Sums")
-
-st.markdown(f'<div class="question-container"><h1>{st.session_state.current_q}</h1></div>', unsafe_allow_html=True)
-
-st.text_area("Spellbook Scratchpad:", placeholder="Work out your equations...", height=100, key="scratchpad")
-
-user_answer_raw = st.text_input("Your Final Answer:", placeholder="Type number here...")
-
-# --- UPDATED BUTTON LOGIC ---
-if st.button("🪄 Cast Spell!"):
-    try:
-        user_answer = float(user_answer_raw)
-        if math.isclose(user_answer, st.session_state.target_ans, rel_tol=0.1):
-            # 1. TRIGGER THE STAR EFFECT
-            pastel_star_effect()
-            
-            # 2. CUSTOM SUCCESS BOX (Color: ffffe3)
-            st.markdown(f"""
-                <div style="background-color: #ffffe3; border: 3px solid #b4a7d6; border-radius: 20px; padding: 20px; text-align: center; margin-top: 15px; margin-bottom: 15px; box-shadow: 0px 4px 10px rgba(0,0,0,0.05);">
-                    <h2 style="color: #7b7dbd !important; margin: 0; font-size: 24px;">Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2>
-                </div>
-            """, unsafe_allow_html=True)
-            
-            # Tiny pause to ensure the browser registers the animation
-            time.sleep(0.5) 
-            
-            try:
-                df = conn.read(ttl=0)
-                current_date = datetime.datetime.now().strftime("%Y-%m-%d")
-                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": current_date}])
-                updated_df = pd.concat([df, new_row], ignore_index=True)
-                conn.update(data=updated_df)
-                
-                st.success("✨ Your magic has been recorded in the scrolls! ✨")
-                
-                # Wait longer so you can actually see the stars float up
-                time.sleep(2.5) 
-            except Exception as e:
-                st.error(f"⚠️ DATABASE ERROR: {e}")
-            
-            # Reset for the next challenge
-            st.session_state.current_q, st.session_state.target_ans = generate_advanced_spell()
-            st.rerun()
+    elif "Quadratics" in unit:
+        x = random.randint(1, 10)
+        if level == "10":
+            return f"Solve for x: x² = {x**2}", x
         else:
-            st.error("The magic failed! (╥﹏╥) Double check your math!")
-    except ValueError:
-        st.warning("🔮 A wizard must use numbers! Please enter a valid numeric answer.")
+            x2 = random.randint(1, 5)
+            b_val = -(x + x2)
+            c_val = x * x2
+            return f"Find one positive root: x² + ({b_val})x + {c_val} = 0", x
 
-# --- 6. LEADERBOARD ---
+    elif "Functions" in unit:
+        x = random.randint(2, 6)
+        if level == "10":
+            return f"f(x) = 3x + 5. Find f({x})", (3*x + 5)
+        else:
+            return f"f(x) = x² + 2. Find f({x})", (x**2 + 2)
+
+    elif "Geometry" in unit:
+        r = random.randint(2, 10)
+        if level == "10":
+            return f"Circle Radius = {r}. What is the Area? (Use 3.14)", round(3.14 * (r**2), 2)
+        else:
+            area = round(math.pi * (r**2), 2)
+            return f"Circle Area = {area}. What is the radius r?", r
+    
+    return "Scroll not found", 0
+
+# --- 6. SIDEBAR: LESSON SELECTION & LEADERBOARD ---
+st.sidebar.title("📜 Choose Your Scroll")
+unit_choice = st.sidebar.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
+level_choice = st.sidebar.radio("Select Grade Level", ["10", "11", "12"])
+
+# Reset question if unit/level changes
+if ("last_unit" not in st.session_state or 
+    st.session_state.last_unit != unit_choice or 
+    st.session_state.last_level != level_choice):
+    st.session_state.last_unit = unit_choice
+    st.session_state.last_level = level_choice
+    st.session_state.current_q, st.session_state.target_ans = generate_spell(unit_choice, level_choice)
+
+# Hall of Wizards
+st.sidebar.markdown("---")
 st.sidebar.markdown("# 🏆 Hall of Wizards")
 try:
     scores_df = conn.read(ttl=0)
     if not scores_df.empty:
         scores_df['Date'] = pd.to_datetime(scores_df['Date'])
         now = datetime.datetime.now()
-        tab_week, tab_month, tab_year = st.sidebar.tabs(["Week", "Month", "Year"])
-        
-        with tab_week:
-            week_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
-            if not week_data.empty:
-                st.table(week_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-        
-        with tab_month:
-            month_data = scores_df[scores_df['Date'].dt.month == now.month]
-            if not month_data.empty:
-                st.table(month_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-
-        with tab_year:
-            year_data = scores_df[scores_df['Date'].dt.year == now.year]
-            if not year_data.empty:
-                st.table(year_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+        tab_w, tab_m, tab_y = st.sidebar.tabs(["Week", "Month", "Year"])
+        with tab_w:
+            w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
+            if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+        with tab_m:
+            m_data = scores_df[scores_df['Date'].dt.month == now.month]
+            if not m_data.empty: st.table(m_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+        with tab_y:
+            y_data = scores_df[scores_df['Date'].dt.year == now.year]
+            if not y_data.empty: st.table(y_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
 except:
     st.sidebar.write("The scrolls are sleeping.")
+
+# --- 7. MAIN INTERFACE ---
+try:
+    st.image("Sorcery Sums.png")
+except:
+    st.title("Sorcery Sums")
+
+st.markdown(f"""
+    <div class="question-container">
+        <h3>Grade {level_choice} {unit_choice}</h3>
+        <h1>{st.session_state.current_q}</h1>
+    </div>
+""", unsafe_allow_html=True)
+
+st.text_area("Spellbook Scratchpad:", placeholder="Work out your equations here...", height=100, key="scratchpad")
+user_answer_raw = st.text_input("Your Final Answer:", placeholder="Type number here...")
+
+if st.button("🪄 Cast Spell!"):
+    try:
+        user_answer = float(user_answer_raw)
+        if math.isclose(user_answer, st.session_state.target_ans, rel_tol=0.1):
+            pastel_star_effect()
+            st.markdown(f"""
+                <div style="background-color: #ffffe3; border: 3px solid #b4a7d6; border-radius: 20px; padding: 20px; text-align: center; margin-top: 15px; margin-bottom: 15px; box-shadow: 0px 4px 10px rgba(0,0,0,0.05);">
+                    <h2 style="color: #7b7dbd !important; margin: 0; font-size: 24px;">Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            time.sleep(0.5)
+            try:
+                df = conn.read(ttl=0)
+                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                conn.update(data=pd.concat([df, new_row], ignore_index=True))
+                st.success("✨ Score recorded! ✨")
+                time.sleep(2.0)
+            except:
+                st.error("⚠️ Database Error")
+            
+            st.session_state.current_q, st.session_state.target_ans = generate_spell(unit_choice, level_choice)
+            st.rerun()
+        else:
+            st.error("The magic failed! (╥﹏╥)")
+    except ValueError:
+        st.warning("🔮 Please enter a numeric answer!")
