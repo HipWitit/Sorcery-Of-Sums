@@ -27,42 +27,58 @@ st.markdown(f"""
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* 3. PINK BACKGROUND FOR SUBJECT & GRADE SELECTION */
-    /* Targets the dropdown and radio button containers in the sidebar */
+    /* 3. PINK PODS FOR SELECTION (From the version you liked) */
     div[data-testid="stSelectbox"], 
-    div[data-testid="stVerticalBlock"] > div[style*="flex-direction: column"] > div[data-testid="stMarkdownContainer"] + div {{
+    div[role="radiogroup"] {{
         background-color: #ffdef2 !important;
         padding: 15px;
         border-radius: 15px;
         border: 2px solid #eecbff;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }}
 
-    /* 4. RADIO BUTTONS: PERIWINKLE WHEN SELECTED */
-    /* Outer circle */
+    /* 4. PERIWINKLE CRYSTAL BALL FONT */
+    .stExpander {{
+        background-color: rgba(255, 255, 255, 0.5);
+        border-radius: 15px;
+    }}
+    /* Forces the text inside the expander to be visible periwinkle */
+    .stExpander p, .stExpander span, .stExpander label {{
+        color: #7b7dbd !important;
+        font-weight: bold;
+    }}
+
+    /* 5. YELLOW SUCCESS BOX FONT FIX (#f2e2ff) */
+    .success-box {{
+        background-color: #ffffe3; 
+        border: 3px solid #b4a7d6; 
+        border-radius: 20px; 
+        padding: 20px; 
+        text-align: center; 
+        margin-top: 15px; 
+        margin-bottom: 15px;
+    }}
+    .success-box h2 {{
+        color: #f2e2ff !important;
+        text-shadow: 1px 1px 2px #7b7dbd;
+        margin: 0; 
+        font-size: 24px;
+    }}
+
+    /* 6. GLOBAL SIDEBAR TEXT & RADIOS */
+    [data-testid="stSidebar"] h1, 
+    [data-testid="stSidebar"] h2, 
+    [data-testid="stSidebar"] label p {{
+        color: #7b7dbd !important;
+    }}
+    
     div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
         border-color: #7b7dbd !important;
     }}
-    /* The selected dot (Periwinkle #c6c7ff) */
     div[role="radiogroup"] div[data-selection="true"] div {{
         background-color: #c6c7ff !important;
     }}
-
-    /* 5. Hall of Wizards Font Color (#eecbff) */
-    [data-testid="stSidebar"] h1, 
-    [data-testid="stSidebar"] h2, 
-    [data-testid="stSidebar"] .stTabs button,
-    [data-testid="stSidebar"] [data-testid="stTable"] td,
-    [data-testid="stSidebar"] [data-testid="stTable"] th {{
-        color: #eecbff !important;
-    }}
     
-    /* Global Text & Question Container */
-    .question-container h1, .question-container h3, label p {{ 
-        color: #7b7dbd !important; 
-        font-family: 'Helvetica', sans-serif;
-    }}
-
     .question-container {{
         background-color: white; 
         padding: 30px; 
@@ -71,21 +87,20 @@ st.markdown(f"""
         text-align: center; 
         margin-bottom: 20px;
     }}
+    .question-container h1, .question-container h3 {{
+        color: #7b7dbd !important;
+    }}
 
-    /* Input Fields */
+    /* Input Field Styling */
     div[data-testid="stTextArea"] textarea {{
         background-color: #b4a7d6 !important; 
         color: #d4ffea !important;           
         border-radius: 10px;
-        border: 2px solid #7b7dbd;
     }}
-    
     div[data-testid="stTextInput"] input {{
         background-color: #e6fff8 !important;
         color: #7b7dbd !important;
-        border-radius: 10px;
     }}
-
     .stButton>button {{ 
         background-color: #c6c7ff; 
         color: white; 
@@ -140,74 +155,78 @@ if "player_name" not in st.session_state:
             st.rerun()
     st.stop()
 
-# --- 5. MATH LOGIC BY UNIT & LEVEL ---
+# --- 5. MATH LOGIC WITH PROGRESSION & VISUALS ---
 def generate_spell(unit, level):
+    prog = int(level) - 9 
+    
     if "Algebra" in unit:
-        difficulty = int(level) - 9
-        x = random.randint(2, 10 * difficulty)
-        a = random.randint(2, 5 * difficulty)
-        b = random.randint(1, 20)
+        a = random.randint(2, 5 * prog)
+        b = random.randint(1, 10 * prog)
+        x = random.randint(1, 12)
         c = (a * x) + b
-        return f"Solve for x: {a}x + {b} = {c}", x
+        image_tag = f"Imagine a balance scale. On one side, you have {a} mystery boxes (x) and {b} gems. On the other side, there are {c} gems."
+        return f"Solve for x: {a}x + {b} = {c}", x, image_tag
 
     elif "Quadratics" in unit:
-        x = random.randint(1, 10)
-        if level == "10":
-            return f"Solve for x: x² = {x**2}", x
-        else:
-            x2 = random.randint(1, 5)
-            b_val = -(x + x2)
-            c_val = x * x2
-            return f"Find one positive root: x² + ({b_val})x + {c_val} = 0", x
+        x1 = random.randint(1, 5 * prog)
+        x2 = random.randint(1, 3)
+        b_val = x2 - x1
+        c_val = -(x1 * x2)
+        image_tag = f"A magic portal forms a curve. It touches the ground at x = {x1} and another secret point."
+        return f"Find the positive root: x² + ({b_val})x + ({c_val}) = 0", x1, image_tag
 
     elif "Functions" in unit:
-        x = random.randint(2, 6)
-        if level == "10":
-            return f"f(x) = 3x + 5. Find f({x})", (3*x + 5)
+        val = random.randint(2, 5)
+        if level == "12":
+            func = f"f(x) = 2x² - {val}"
+            ans = 2*(val**2) - val
         else:
-            return f"f(x) = x² + 2. Find f({x})", (x**2 + 2)
+            func = f"f(x) = {prog}x + {val}"
+            ans = (prog * val) + val
+        image_tag = f"A spell machine takes the number {val} and transforms it using the rule {func}."
+        return f"Given {func}, find f({val})", ans, image_tag
 
     elif "Geometry" in unit:
-        r = random.randint(2, 10)
-        if level == "10":
-            return f"Circle Radius = {r}. What is the Area? (Use 3.14)", round(3.14 * (r**2), 2)
+        side = random.randint(3, 7 * prog)
+        if level == "12":
+            ans = side**3
+            image_tag = f"A 3D magic cube has sides of {side}. Calculate the total volume inside."
+            return f"The side of a cube is {side}. What is its Volume?", ans, image_tag
         else:
-            area = round(math.pi * (r**2), 2)
-            return f"Circle Area = {area}. What is the radius r?", r
+            ans = side * 4
+            image_tag = f"A square tile has a side of {side}. How long is the magic border around it?"
+            return f"A square has a side of {side}. What is its Perimeter?", ans, image_tag
     
-    return "Scroll not found", 0
+    return "Scroll not found", 0, ""
 
 # --- 6. SIDEBAR: LESSON SELECTION & LEADERBOARD ---
 st.sidebar.title("📜 Choose Your Scroll")
+
+# These will now automatically get the pink pod backgrounds via CSS
 unit_choice = st.sidebar.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
 level_choice = st.sidebar.radio("Select Grade Level", ["10", "11", "12"])
 
-# Reset question if unit/level changes
 if ("last_unit" not in st.session_state or 
     st.session_state.last_unit != unit_choice or 
     st.session_state.last_level != level_choice):
     st.session_state.last_unit = unit_choice
     st.session_state.last_level = level_choice
-    st.session_state.current_q, st.session_state.target_ans = generate_spell(unit_choice, level_choice)
+    q, ans, img = generate_spell(unit_choice, level_choice)
+    st.session_state.current_q = q
+    st.session_state.target_ans = ans
+    st.session_state.current_image = img
 
-# Hall of Wizards
 st.sidebar.markdown("---")
 st.sidebar.markdown("# 🏆 Hall of Wizards")
 try:
     scores_df = conn.read(ttl=0)
     if not scores_df.empty:
         scores_df['Date'] = pd.to_datetime(scores_df['Date'])
-        now = datetime.now()
+        now = datetime.datetime.now()
         tab_w, tab_m, tab_y = st.sidebar.tabs(["Week", "Month", "Year"])
         with tab_w:
             w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
             if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-        with tab_m:
-            m_data = scores_df[scores_df['Date'].dt.month == now.month]
-            if not m_data.empty: st.table(m_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-        with tab_y:
-            y_data = scores_df[scores_df['Date'].dt.year == now.year]
-            if not y_data.empty: st.table(y_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
 except:
     st.sidebar.write("The scrolls are sleeping.")
 
@@ -224,6 +243,9 @@ st.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
+with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
+    st.write(st.session_state.get('current_image', 'No visual found in the stars.'))
+
 st.text_area("Spellbook Scratchpad:", placeholder="Work out your equations here...", height=100, key="scratchpad")
 user_answer_raw = st.text_input("Your Final Answer:", placeholder="Type number here...")
 
@@ -232,23 +254,26 @@ if st.button("🪄 Cast Spell!"):
         user_answer = float(user_answer_raw)
         if math.isclose(user_answer, st.session_state.target_ans, rel_tol=0.1):
             pastel_star_effect()
+            # SUCCESS BOX WITH THE NEW FONT COLOR
             st.markdown(f"""
-                <div style="background-color: #ffffe3; border: 3px solid #b4a7d6; border-radius: 20px; padding: 20px; text-align: center; margin-top: 15px; margin-bottom: 15px; box-shadow: 0px 4px 10px rgba(0,0,0,0.05);">
-                    <h2 style="color: #7b7dbd !important; margin: 0; font-size: 24px;">Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2>
+                <div class="success-box">
+                    <h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2>
                 </div>
             """, unsafe_allow_html=True)
             
-            time.sleep(0.5)
+            time.sleep(1.0)
             try:
                 df = conn.read(ttl=0)
-                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.now().strftime("%Y-%m-%d")}])
+                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
                 conn.update(data=pd.concat([df, new_row], ignore_index=True))
                 st.success("✨ Score recorded! ✨")
-                time.sleep(2.0)
             except:
                 st.error("⚠️ Database Error")
             
-            st.session_state.current_q, st.session_state.target_ans = generate_spell(unit_choice, level_choice)
+            q, ans, img = generate_spell(unit_choice, level_choice)
+            st.session_state.current_q = q
+            st.session_state.target_ans = ans
+            st.session_state.current_image = img
             st.rerun()
         else:
             st.error("The magic failed! (╥﹏╥)")
