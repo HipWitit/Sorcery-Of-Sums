@@ -21,15 +21,28 @@ st.markdown(f"""
     /* Main Background */
     .stApp {{ background-color: #fde4f2; }}
     
-    /* SIDEBAR COLOR CHANGE TO ffffe3 */
+    /* Sidebar Background */
     [data-testid="stSidebar"] {{
         background-color: #ffffe3 !important;
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* Global Text Colors */
-    h1, h2, h3, p, span, label {{ color: #7b7dbd !important; font-family: 'Helvetica', sans-serif; }}
+    /* UPDATED: Hall of Wizards Font Color to #ffdef2 */
+    /* This targets the header, the tabs, and the table text in the sidebar */
+    [data-testid="stSidebar"] h1, 
+    [data-testid="stSidebar"] h2, 
+    [data-testid="stSidebar"] .stTabs button,
+    [data-testid="stSidebar"] [data-testid="stTable"] td,
+    [data-testid="stSidebar"] [data-testid="stTable"] th {{
+        color: #ffdef2 !important;
+    }}
     
+    /* Keeping main interface text purple for readability */
+    .question-container h1, .question-container h3, label p {{ 
+        color: #7b7dbd !important; 
+        font-family: 'Helvetica', sans-serif;
+    }}
+
     .question-container {{
         background-color: white; 
         padding: 30px; 
@@ -39,6 +52,7 @@ st.markdown(f"""
         margin-bottom: 20px;
     }}
 
+    /* Input Fields */
     div[data-testid="stTextArea"] textarea {{
         background-color: #b4a7d6 !important; 
         color: #d4ffea !important;           
