@@ -5,7 +5,7 @@ import math
 import time
 import datetime
 import numpy as np
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go  # The new magic engine
 from streamlit_gsheets import GSheetsConnection
 
 # --- 1. SETTINGS & THEMING ---
@@ -29,7 +29,7 @@ st.markdown(f"""
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* 3. PINK PODS FOR SELECTION (The Sacred Layout) */
+    /* 3. PINK PODS FOR SELECTION */
     div[data-testid="stSelectbox"], 
     div[role="radiogroup"] {{
         background-color: #ffdef2 !important;
@@ -163,11 +163,23 @@ if "player_name" not in st.session_state:
             st.rerun()
     st.stop()
 
-# --- 5. MATH LOGIC WITH MATPLOTLIB GRAPHS ---
+# --- 5. MATH LOGIC WITH PLOTLY INTERACTIVITY ---
 def generate_spell(unit, level):
     prog = int(level) - 9 
     fig = None
     
+    # Sacred Plotly Stylizer
+    def apply_sacred_style(fig):
+        fig.update_layout(
+            plot_bgcolor='white',
+            paper_bgcolor='white',
+            margin=dict(l=20, r=20, t=20, b=20),
+            xaxis=dict(showgrid=True, gridcolor='lightgray', zeroline=True, zerolinecolor='black'),
+            yaxis=dict(showgrid=True, gridcolor='lightgray', zeroline=True, zerolinecolor='black'),
+            height=400
+        )
+        return fig
+
     if "Algebra" in unit:
         a = random.randint(2, 5 * prog)
         b = random.randint(1, 10 * prog)
@@ -177,20 +189,16 @@ def generate_spell(unit, level):
         return f"Solve for x: {a}x + {b} = {c}", x, image_tag, None
 
     elif "Quadratics" in unit:
-        h = random.randint(-3, 3) 
-        k = random.randint(1, 5)  
+        h, k = random.randint(-3, 3), random.randint(1, 5)
         x_vals = np.linspace(h-5, h+5, 100)
         y_vals = (x_vals - h)**2 + k
         
-        fig, ax = plt.subplots(figsize=(5, 4))
-        ax.plot(x_vals, y_vals, color='black', linewidth=2)
-        ax.set_facecolor('white')
-        ax.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray')
-        ax.axhline(y=0, color='black', linewidth=1.5)
-        ax.axvline(x=0, color='black', linewidth=1.5)
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=x_vals, y=y_vals, mode='lines', line=dict(color='black', width=3), name="Spell Path"))
+        fig = apply_sacred_style(fig)
         
-        image_tag = "A magic portal forms a curve. Scry the crystal ball for the lowest point (the vertex)."
-        return f"What is the y-coordinate of the vertex in the graph?", k, image_tag, fig
+        image_tag = "Hover to scry the point! Locate the vertex (the lowest point of the curve)."
+        return f"Find the vertex y-coordinate:", k, image_tag, fig
 
     elif "Functions" in unit:
         m = random.randint(1, 3); b_val = random.randint(-2, 2)
@@ -198,17 +206,14 @@ def generate_spell(unit, level):
         x_vals = np.linspace(-10, 10, 100)
         y_vals = m * x_vals + b_val
         
-        fig, ax = plt.subplots(figsize=(5, 4))
-        ax.plot(x_vals, y_vals, color='black', linewidth=2)
-        ax.set_facecolor('white')
-        ax.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray')
-        ax.axhline(y=0, color='black', linewidth=1.5)
-        ax.axvline(x=0, color='black', linewidth=1.5)
-        ax.set_xlim([-10, 10])
-        ax.set_ylim([-10, 10])
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=x_vals, y=y_vals, mode='lines', line=dict(color='black', width=3), name="Function"))
+        fig = apply_sacred_style(fig)
+        fig.update_xaxes(range=[-10, 10])
+        fig.update_yaxes(range=[-10, 10])
 
-        image_tag = f"The spell line follows a constant path. Locate where x = {target_x}."
-        return f"Using the graph aid, find f({target_x})", ans, image_tag, fig
+        image_tag = f"Follow the line to x = {target_x} and scry the corresponding y value."
+        return f"Using the crystal aid, find f({target_x})", ans, image_tag, fig
 
     elif "Geometry" in unit:
         side = random.randint(3, 7 * prog)
@@ -264,9 +269,9 @@ st.markdown(f"""
 
 with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
     st.write(st.session_state.get('current_image', 'No visual found.'))
-    if st.session_state.get('current_plot') is not None:
-        # RENDERING THE MATPLOTLIB FIGURE
-        st.pyplot(st.session_state.current_plot)
+    if st.session_state.current_plot is not None:
+        # RENDERING THE PLOTLY MAGIC ENGINE
+        st.plotly_chart(st.session_state.current_plot, use_container_width=True, config={'displayModeBar': False})
 
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
 user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...")
@@ -289,3 +294,4 @@ if st.button("🪄 Cast Spell!"):
             st.rerun()
         else: st.error("The magic failed!")
     except: st.warning("Enter a number!")
+
