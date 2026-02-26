@@ -28,7 +28,7 @@ st.markdown(f"""
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* 3. PINK PODS FOR SELECTION (From the version you liked) */
+    /* 3. PINK PODS FOR SELECTION (The Sacred Layout) */
     div[data-testid="stSelectbox"], 
     div[role="radiogroup"] {{
         background-color: #ffdef2 !important;
@@ -43,13 +43,12 @@ st.markdown(f"""
         background-color: rgba(255, 255, 255, 0.5);
         border-radius: 15px;
     }}
-    /* Forces the text inside the expander to be visible periwinkle */
     .stExpander p, .stExpander span, .stExpander label {{
         color: #7b7dbd !important;
         font-weight: bold;
     }}
 
-    /* 5. YELLOW SUCCESS BOX FONT FIX (#f2e2ff) */
+    /* 5. YELLOW SUCCESS BOX FONT FIX */
     .success-box {{
         background-color: #ffffe3; 
         border: 3px solid #b4a7d6; 
@@ -92,7 +91,6 @@ st.markdown(f"""
         color: #7b7dbd !important;
     }}
 
-    /* Input Field Styling */
     div[data-testid="stTextArea"] textarea {{
         background-color: #b4a7d6 !important; 
         color: #d4ffea !important;           
@@ -156,7 +154,7 @@ if "player_name" not in st.session_state:
             st.rerun()
     st.stop()
 
-# --- 5. MATH LOGIC WITH PROGRESSION & VISUALS ---
+# --- 5. MATH LOGIC WITH GRAPHS ---
 def generate_spell(unit, level):
     prog = int(level) - 9 
     plot_data = None
@@ -166,43 +164,38 @@ def generate_spell(unit, level):
         b = random.randint(1, 10 * prog)
         x = random.randint(1, 12)
         c = (a * x) + b
-        image_tag = f"Imagine a balance scale. On one side, you have {a} mystery boxes (x) and {b} gems. On the other side, there are {c} gems."
+        image_tag = f"Imagine a balance scale. Side A: {a} mystery boxes (x) + {b} gems. Side B: {c} gems."
         return f"Solve for x: {a}x + {b} = {c}", x, image_tag, None
 
     elif "Quadratics" in unit:
-        h = random.randint(-2, 2)
-        k = random.randint(1, 5)
-        x_vals = np.linspace(h-5, h+5, 50)
+        h = random.randint(-2, 2) # x-coord of vertex
+        k = random.randint(1, 5)  # y-coord of vertex
+        x_vals = np.linspace(h-5, h+5, 40)
         y_vals = (x_vals - h)**2 + k
         plot_data = pd.DataFrame({'x': x_vals, 'Energy (y)': y_vals}).set_index('x')
-        image_tag = "A magic portal forms a curve. Scry the crystal ball to find the y-value of the vertex (the lowest point)."
-        return f"Based on the graph, what is the y-coordinate of the vertex?", k, image_tag, plot_data
+        image_tag = "A magic portal forms a curve. Scry the crystal ball for the lowest point (the vertex)."
+        return f"What is the y-coordinate of the vertex in the graph?", k, image_tag, plot_data
 
     elif "Functions" in unit:
-        m = random.randint(1, 3)
-        b = random.randint(-2, 2)
-        target_x = random.randint(-2, 2)
-        ans = m * target_x + b
+        m = random.randint(1, 3); b_val = random.randint(-2, 2)
+        target_x = random.randint(-2, 2); ans = m * target_x + b_val
         x_vals = np.linspace(-5, 5, 11)
-        y_vals = m * x_vals + b
-        plot_data = pd.DataFrame({'x': x_vals, 'Spell Power (y)': y_vals}).set_index('x')
-        image_tag = f"A spell machine follows a linear path. Locate the point where x = {target_x}."
-        return f"Using the graph, find the value of f({target_x})", ans, image_tag, plot_data
+        y_vals = m * x_vals + b_val
+        plot_data = pd.DataFrame({'x': x_vals, 'Path (y)': y_vals}).set_index('x')
+        image_tag = f"The spell line follows a constant path. Locate where x = {target_x}."
+        return f"Using the graph aid, find f({target_x})", ans, image_tag, plot_data
 
     elif "Geometry" in unit:
         side = random.randint(3, 7 * prog)
         if level == "12":
             ans = side**3
-            image_tag = f"A 3D magic cube has sides of {side}. Calculate the total volume inside."
-            return f"The side of a cube is {side}. What is its Volume?", ans, image_tag, None
-        else:
-            ans = side * 4
-            image_tag = f"A square tile has a side of {side}. How long is the magic border around it?"
-            return f"A square has a side of {side}. What is its Perimeter?", ans, image_tag, None
+            return f"The side of a cube is {side}. Find Volume.", ans, f"A 3D cube with side {side}.", None
+        ans = side * 4
+        return f"A square has a side of {side}. Find Perimeter.", ans, f"A square with side {side}.", None
     
     return "Scroll not found", 0, "", None
 
-# --- 6. SIDEBAR: LESSON SELECTION & LEADERBOARD ---
+# --- 6. SIDEBAR: SELECTION & LEADERBOARD ---
 st.sidebar.title("📜 Choose Your Scroll")
 
 unit_choice = st.sidebar.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
@@ -214,10 +207,8 @@ if ("last_unit" not in st.session_state or
     st.session_state.last_unit = unit_choice
     st.session_state.last_level = level_choice
     q, ans, img, pdf = generate_spell(unit_choice, level_choice)
-    st.session_state.current_q = q
-    st.session_state.target_ans = ans
-    st.session_state.current_image = img
-    st.session_state.current_plot = pdf
+    st.session_state.current_q, st.session_state.target_ans = q, ans
+    st.session_state.current_image, st.session_state.current_plot = img, pdf
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("# 🏆 Hall of Wizards")
@@ -226,4 +217,49 @@ try:
     if not scores_df.empty:
         scores_df['Date'] = pd.to_datetime(scores_df['Date'])
         now = datetime.datetime.now()
-        tab_w, tab_
+        t1, t2, t3 = st.sidebar.tabs(["Week", "Month", "Year"])
+        with t1:
+            w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
+            if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+except:
+    st.sidebar.write("The scrolls are sleeping.")
+
+# --- 7. MAIN INTERFACE ---
+try:
+    st.image("Sorcery Sums.png")
+except:
+    st.title("Sorcery Sums")
+
+st.markdown(f"""
+    <div class="question-container">
+        <h3>Grade {level_choice} {unit_choice}</h3>
+        <h1>{st.session_state.current_q}</h1>
+    </div>
+""", unsafe_allow_html=True)
+
+with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
+    st.write(st.session_state.get('current_image', 'No visual found.'))
+    if st.session_state.get('current_plot') is not None:
+        st.line_chart(st.session_state.current_plot)
+
+st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
+user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...")
+
+if st.button("🪄 Cast Spell!"):
+    try:
+        if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
+            pastel_star_effect()
+            st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
+            time.sleep(1.0)
+            try:
+                df = conn.read(ttl=0)
+                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                conn.update(data=pd.concat([df, new_row], ignore_index=True))
+            except: pass
+            
+            q, ans, img, pdf = generate_spell(unit_choice, level_choice)
+            st.session_state.current_q, st.session_state.target_ans = q, ans
+            st.session_state.current_image, st.session_state.current_plot = img, pdf
+            st.rerun()
+        else: st.error("The magic failed!")
+    except: st.warning("Enter a number!")
