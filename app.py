@@ -27,26 +27,25 @@ st.markdown(f"""
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* 3. THE PINK MAGIC PODS */
-    /* This targets our custom 'pink-pod' class */
-    div.pink-pod {{
+    /* 3. THE MAGIC POD FIX */
+    /* We target the vertical blocks inside the sidebar specifically */
+    [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > [data-testid="stVerticalBlockBorderWrapper"] > div > div {{
         background-color: #ffdef2 !important;
         padding: 20px;
         border-radius: 20px;
         border: 2px solid #eecbff;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }}
 
-    /* 4. PERIWINKLE RADIO BUTTONS */
-    /* Target the unselected circle */
-    div[data-testid="stRadioButton"] div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
-        border-color: #7b7dbd !important;
-        background-color: white !important;
-    }}
-    
-    /* Target the selected circle and inner dot (#c6c7ff) */
+    /* 4. PERIWINKLE RADIO BUTTONS (Selected Color) */
+    /* This forces the red dots in your screenshot to become periwinkle */
     div[data-testid="stRadioButton"] div[role="radiogroup"] div[data-selection="true"] div {{
         background-color: #c6c7ff !important;
+        border-color: #7b7dbd !important;
+    }}
+    
+    /* The circle border for all buttons */
+    div[data-testid="stRadioButton"] div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
         border-color: #7b7dbd !important;
     }}
 
@@ -57,11 +56,6 @@ st.markdown(f"""
     [data-testid="stSidebar"] .stTabs button {{
         color: #7b7dbd !important;
         font-weight: bold;
-    }}
-
-    [data-testid="stSidebar"] [data-testid="stTable"] td,
-    [data-testid="stSidebar"] [data-testid="stTable"] th {{
-        color: #eecbff !important;
     }}
     
     /* Main Question Container */
@@ -181,16 +175,13 @@ def generate_spell(unit, level):
 # --- 6. SIDEBAR: LESSON SELECTION & LEADERBOARD ---
 st.sidebar.title("📜 Choose Your Scroll")
 
-# MAGIC FIX: We wrap the widgets in a 'container' so we can force the pink background
-with st.sidebar.container():
-    st.markdown('<div class="pink-pod">', unsafe_allow_html=True)
+# By wrapping these in st.sidebar.container(border=True), 
+# our new CSS will find them and turn the box pink automatically!
+with st.sidebar.container(border=True):
     unit_choice = st.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
-    st.markdown('</div>', unsafe_allow_html=True)
 
-with st.sidebar.container():
-    st.markdown('<div class="pink-pod">', unsafe_allow_html=True)
-    level_choice = st.sidebar.radio("Select Grade Level", ["10", "11", "12"])
-    st.markdown('</div>', unsafe_allow_html=True)
+with st.sidebar.container(border=True):
+    level_choice = st.radio("Select Grade Level", ["10", "11", "12"])
 
 # Reset question if unit/level changes
 if ("last_unit" not in st.session_state or 
