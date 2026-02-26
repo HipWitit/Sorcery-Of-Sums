@@ -5,7 +5,8 @@ import math
 import time
 import datetime
 import numpy as np
-import plotly.graph_objects as go  # The new magic engine
+import plotly.graph_objects as go 
+import streamlit.components.v1 as components # Required for the new star engine
 from streamlit_gsheets import GSheetsConnection
 
 # --- 1. SETTINGS & THEMING ---
@@ -100,6 +101,12 @@ st.markdown(f"""
         color: #7b7dbd !important;
     }}
 
+    /* THE MAGIC KEYFRAMES */
+    @keyframes floatUp {{
+        0% {{ transform: translateY(0) rotate(0deg); opacity: 1; }}
+        100% {{ transform: translateY(-110vh) rotate(360deg); opacity: 0; }}
+    }}
+
     div[data-testid="stTextArea"] textarea {{
         background-color: #b4a7d6 !important; 
         color: #d4ffea !important;           
@@ -119,33 +126,30 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. THE SACRED STAR EFFECT ---
+# --- 2. THE SACRED STAR EFFECT (IFRAME PORTAL) ---
 def pastel_star_effect():
-    st.markdown("""
-    <style>
-    .star {
-        position: fixed; width: 25px; height: 25px;
-        clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-        animation: floatUp 2.5s ease-out forwards; z-index: 9999;
-    }
-    @keyframes floatUp {
-        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-        100% { transform: translateY(-500px) rotate(360deg); opacity: 0; }
-    }
-    </style>
+    # This reaches out of the iframe to the parent document
+    components.html(f"""
     <script>
     const colors = ["#ffd6ff","#caffbf","#fdffb6","#bdb2ff","#a0c4ff"];
-    for (let i = 0; i < 30; i++) {
-        let star = document.createElement("div");
-        star.className = "star";
-        star.style.left = Math.random() * window.innerWidth + "px";
-        star.style.top = window.innerHeight + "px";
+    for (let i = 0; i < 30; i++) {{
+        let star = window.parent.document.createElement("div");
+        star.style.position = "fixed";
+        star.style.width = "25px";
+        star.style.height = "25px";
+        star.style.clipPath = "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)";
+        star.style.left = Math.random() * 100 + "vw";
+        star.style.top = "100vh"; 
         star.style.background = colors[Math.floor(Math.random() * colors.length)];
-        document.body.appendChild(star);
+        star.style.zIndex = "10000";
+        star.style.pointerEvents = "none";
+        star.style.animation = "floatUp 2.5s ease-out forwards";
+        window.parent.document.body.appendChild(star);
+        
         setTimeout(() => star.remove(), 2500);
-    }
+    }}
     </script>
-    """, unsafe_allow_html=True)
+    """, height=0)
 
 # --- 3. DATABASE CONNECTION ---
 conn = st.connection("gsheets", type=GSheetsConnection)
@@ -168,7 +172,6 @@ def generate_spell(unit, level):
     prog = int(level) - 9 
     fig = None
     
-    # Sacred Plotly Stylizer
     def apply_sacred_style(fig):
         fig.update_layout(
             plot_bgcolor='white',
@@ -192,11 +195,9 @@ def generate_spell(unit, level):
         h, k = random.randint(-3, 3), random.randint(1, 5)
         x_vals = np.linspace(h-5, h+5, 100)
         y_vals = (x_vals - h)**2 + k
-        
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=x_vals, y=y_vals, mode='lines', line=dict(color='black', width=3), name="Spell Path"))
         fig = apply_sacred_style(fig)
-        
         image_tag = "Hover to scry the point! Locate the vertex (the lowest point of the curve)."
         return f"Find the vertex y-coordinate:", k, image_tag, fig
 
@@ -205,13 +206,9 @@ def generate_spell(unit, level):
         target_x = random.randint(-2, 2); ans = m * target_x + b_val
         x_vals = np.linspace(-10, 10, 100)
         y_vals = m * x_vals + b_val
-        
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=x_vals, y=y_vals, mode='lines', line=dict(color='black', width=3), name="Function"))
         fig = apply_sacred_style(fig)
-        fig.update_xaxes(range=[-10, 10])
-        fig.update_yaxes(range=[-10, 10])
-
         image_tag = f"Follow the line to x = {target_x} and scry the corresponding y value."
         return f"Using the crystal aid, find f({target_x})", ans, image_tag, fig
 
@@ -227,7 +224,6 @@ def generate_spell(unit, level):
 
 # --- 6. SIDEBAR: SELECTION & LEADERBOARD ---
 st.sidebar.title("📜 Choose Your Scroll")
-
 unit_choice = st.sidebar.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
 level_choice = st.sidebar.radio("Select Grade Level", ["10", "11", "12"])
 
@@ -270,7 +266,6 @@ st.markdown(f"""
 with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
     st.write(st.session_state.get('current_image', 'No visual found.'))
     if st.session_state.current_plot is not None:
-        # RENDERING THE PLOTLY MAGIC ENGINE
         st.plotly_chart(st.session_state.current_plot, use_container_width=True, config={'displayModeBar': False})
 
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
@@ -279,9 +274,12 @@ user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here
 if st.button("🪄 Cast Spell!"):
     try:
         if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
-            pastel_star_effect()
+            pastel_star_effect() # LAUNCH THE STARS
             st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
-            time.sleep(1.0)
+            
+            # Short pause so the script can finish injecting stars before the page clears
+            time.sleep(1.2) 
+            
             try:
                 df = conn.read(ttl=0)
                 new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
@@ -294,3 +292,4 @@ if st.button("🪄 Cast Spell!"):
             st.rerun()
         else: st.error("The magic failed!")
     except: st.warning("Enter a number!")
+
