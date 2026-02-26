@@ -18,17 +18,37 @@ except:
 
 st.markdown(f"""
     <style>
-    /* Main Background */
+    /* 1. Main Background */
     .stApp {{ background-color: #fde4f2; }}
     
-    /* Sidebar Background */
+    /* 2. Sidebar Background */
     [data-testid="stSidebar"] {{
         background-color: #ddfffc !important;
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* UPDATED: Hall of Wizards Font Color to #eecbff */
-    /* This targets the header, the tabs, and the table text in the sidebar */
+    /* 3. PINK BACKGROUND FOR SUBJECT & GRADE SELECTION */
+    /* Targets the dropdown and radio button containers in the sidebar */
+    div[data-testid="stSelectbox"], 
+    div[data-testid="stVerticalBlock"] > div[style*="flex-direction: column"] > div[data-testid="stMarkdownContainer"] + div {{
+        background-color: #ffdef2 !important;
+        padding: 15px;
+        border-radius: 15px;
+        border: 2px solid #eecbff;
+        margin-bottom: 10px;
+    }}
+
+    /* 4. RADIO BUTTONS: PERIWINKLE WHEN SELECTED */
+    /* Outer circle */
+    div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
+        border-color: #7b7dbd !important;
+    }}
+    /* The selected dot (Periwinkle #c6c7ff) */
+    div[role="radiogroup"] div[data-selection="true"] div {{
+        background-color: #c6c7ff !important;
+    }}
+
+    /* 5. Hall of Wizards Font Color (#eecbff) */
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
     [data-testid="stSidebar"] .stTabs button,
@@ -37,7 +57,7 @@ st.markdown(f"""
         color: #eecbff !important;
     }}
     
-    /* Keeping main interface text purple for readability */
+    /* Global Text & Question Container */
     .question-container h1, .question-container h3, label p {{ 
         color: #7b7dbd !important; 
         font-family: 'Helvetica', sans-serif;
@@ -177,7 +197,7 @@ try:
     scores_df = conn.read(ttl=0)
     if not scores_df.empty:
         scores_df['Date'] = pd.to_datetime(scores_df['Date'])
-        now = datetime.datetime.now()
+        now = datetime.now()
         tab_w, tab_m, tab_y = st.sidebar.tabs(["Week", "Month", "Year"])
         with tab_w:
             w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
@@ -221,7 +241,7 @@ if st.button("🪄 Cast Spell!"):
             time.sleep(0.5)
             try:
                 df = conn.read(ttl=0)
-                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.now().strftime("%Y-%m-%d")}])
                 conn.update(data=pd.concat([df, new_row], ignore_index=True))
                 st.success("✨ Score recorded! ✨")
                 time.sleep(2.0)
