@@ -27,7 +27,7 @@ st.markdown(f"""
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* UPDATED: Hall of Wizards Font Color to #ffdef2 */
+    /* UPDATED: Hall of Wizards Font Color to #eecbff */
     /* This targets the header, the tabs, and the table text in the sidebar */
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
