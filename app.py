@@ -71,7 +71,7 @@ st.markdown(f"""
     .success-box h2 {{
         color: #f2e2ff !important;
         text-shadow: 1px 1px 2px #7b7dbd;
-        margin: 0; 
+        margin: -100; 
         font-size: 24px;
     }}
 
@@ -175,7 +175,8 @@ if "player_name" not in st.session_state:
         st.write("Enter your name to begin your journey:")
 
     # Text input with an empty label to keep the spacing tight
-    name = st.text_input("", placeholder="Type your name here...")
+    name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
+
     
     if st.button("Enter Realm"):
         if name:
