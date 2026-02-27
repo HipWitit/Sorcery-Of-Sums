@@ -88,7 +88,11 @@ st.markdown(f"""
     div[role="radiogroup"] div[data-selection="true"] div {{
         background-color: #c6c7ff !important;
     }}
-    
+        /* Tighter fit for the login name plate */
+    div[data-testid="stTextInput"] {
+        margin-top: -65px;
+    }
+
     .question-container {{
         background-color: white; 
         padding: 30px; 
