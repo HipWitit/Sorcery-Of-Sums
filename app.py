@@ -88,11 +88,17 @@ st.markdown(f"""
     div[role="radiogroup"] div[data-selection="true"] div {{
         background-color: #c6c7ff !important;
     }}
-        /* Tighter fit for the login name plate */
-    div[data-testid="stTextInput"] 
-    {{     
-        margin-top: -65px;
+         /* 1. Pull the top logo down */
+    div[data-testid="stImage"] {{
+        margin-bottom: -60px;
     }}
+
+    /* 2. Pull the name plate up */
+    div[data-testid="stTextInput"] {{
+        margin-top: -110px;
+    }}
+   
+    
 
     .question-container {{
         background-color: white; 
@@ -176,6 +182,7 @@ if "player_name" not in st.session_state:
 
     # Text input with an empty label to keep the spacing tight
     name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
+
 
     
     if st.button("Enter Realm"):
