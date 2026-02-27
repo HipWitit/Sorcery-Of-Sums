@@ -157,15 +157,27 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 # --- 4. LOGIN SCREEN ---
 if "player_name" not in st.session_state:
     try:
+        # Main Logo
         st.image("Sorcerer Login.png")
     except:
         st.write("✨ **Portal Opening...** ✨")
-    name = st.text_input("Enter your name to begin your journey:")
+    
+    # NEW: Your custom "Enter your name" image
+    try:
+        st.image("namefp.png", use_container_width=True)
+    except:
+        # Fallback text if the image file isn't found
+        st.write("Enter your name to begin your journey:")
+
+    # Text input with an empty label to keep the spacing tight
+    name = st.text_input("", placeholder="Type your name here...")
+    
     if st.button("Enter Realm"):
         if name:
             st.session_state.player_name = name
             st.rerun()
     st.stop()
+
 
 # --- 5. MATH LOGIC WITH PLOTLY INTERACTIVITY ---
 def generate_spell(unit, level):
