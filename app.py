@@ -95,7 +95,7 @@ st.markdown(f"""
 
     /* 2. Pull the name plate up */
     div[data-testid="stTextInput"] {{
-        margin-top: 75px;
+        margin-top: 100px;
     }}
    
     
