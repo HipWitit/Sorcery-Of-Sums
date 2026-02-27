@@ -90,7 +90,7 @@ st.markdown(f"""
     }}
          /* 1. Pull the top logo down */
     div[data-testid="stImage"] {{
-        margin-bottom: -40px;
+        margin-bottom: -50px;
     }}
 
     /* 2. Pull the name plate up */
