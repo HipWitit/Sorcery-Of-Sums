@@ -94,10 +94,19 @@ st.markdown(f"""
         margin-bottom: -45px;
     }}
 
-    img[src*="namefp.png"] {{
+    /* Make namefp.png bigger than container */
+div[data-testid="stImage"] img[src*="namefp.png"] 
     width: 120% !important;
+    max-width: none !important;
     display: block !important;
     margin: 0 auto -10px auto !important;
+    }}
+
+/* Ensure container doesn’t clip the image */
+div[data-testid="stImage"] 
+    max-width: none !important;
+    overflow: visible !important;
+
     }}
 
      /* 9. PULL THE NAME PLATE UP */
