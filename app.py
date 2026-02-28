@@ -105,14 +105,6 @@ st.markdown(f"""
 
     }}
 
-    /* Banner Resize */
-    img[src*="namefp.png"] {{
-        width: 110% !important;
-        display: block !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        margin-bottom: -10px !important; 
-    }}
 
     /* 9. PULL THE NAME PLATE UP */
     div[data-testid="stTextInput"] {{
