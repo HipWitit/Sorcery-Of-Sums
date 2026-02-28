@@ -107,7 +107,7 @@ st.markdown(f"""
 
     /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
     div[data-testid="stTextInput"] {{
-        margin-top: 15px;
+        margin-top: 20px;
         position: relative;
         z-index: 10;
     }}
