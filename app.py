@@ -112,7 +112,7 @@ st.markdown(f"""
         z-index: 10;
     }}
 
-        /* 10. LOGIN BUTTON STYLING (FIRST BLOCK ONLY) */
+     /* 10. LOGIN BUTTON (ONLY ON THE PORTAL SCREEN) */
     [data-testid="stAppViewBlockContainer"] > div:first-child .stButton > button {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
@@ -122,11 +122,13 @@ st.markdown(f"""
         height: 150px !important;
         border: none !important;
         background-color: transparent !important;
+        box-shadow: none !important;
+        color: transparent !important;
         margin: -40px auto 0 auto !important; 
         display: block !important;
     }}
 
-    /* THE CAST SPELL BUTTON (ANY BLOCK EXCEPT THE FIRST) */
+    /* 11. CAST SPELL BUTTON (ONLY INSIDE THE REALM) */
     [data-testid="stAppViewBlockContainer"] > div:not(:first-child) .stButton > button {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png") !important;
         background-size: contain !important;
@@ -136,18 +138,17 @@ st.markdown(f"""
         height: 150px !important;
         border: none !important;
         background-color: transparent !important;
+        box-shadow: none !important;
+        color: transparent !important;
         margin: 0 auto !important; 
         display: block !important;
     }}
 
-    /* HIDE DEFAULT BUTTON TEXT FOR ALL IMAGE BUTTONS */
+    /* HIDE BUTTON TEXT GLOBALLY */
     .stButton > button p {{
         display: none !important;
     }}
 
-    div.stButton > button:hover {{
-        transform: scale(1.05);
-    }}
 
     div.stButton > button p {{
         display: none !important;
