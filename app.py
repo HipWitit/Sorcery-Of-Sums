@@ -149,7 +149,6 @@ st.markdown(f"""
     }}
 
 
-    }}
 
     /* 9. THE BIG MAGIC IMAGE BUTTON - UNIVERSAL FIX */
     div.stButton > button {{
