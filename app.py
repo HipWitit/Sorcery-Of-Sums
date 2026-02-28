@@ -89,9 +89,20 @@ st.markdown(f"""
         background-color: #c6c7ff !important;
     }}
     
-    /* 8. SACRED LAYOUT POSITIONING */
+        /* 8. SACRED LAYOUT POSITIONING */
     div[data-testid="stImage"] {{
         margin-bottom: -45px;
+    }}
+
+    /* Resize the "Enter your name" banner to fill the screen */
+    img[src*="namefp.png"] {{
+        width: 140% !important;   /* Increased from 110% to 140% */
+        max-width: none !important; 
+        display: block !important;
+        margin-left: -20% !important; /* Centers the oversized image */
+        margin-right: -20% !important;
+        margin-bottom: -15px !important; 
+
     }}
 
     /* Banner Resize */
