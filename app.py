@@ -97,7 +97,40 @@ st.markdown(f"""
     div[data-testid="stTextInput"] {{
         margin-top: -20px;
     }}
-   
+   st.markdown("""
+<style>
+/* Target the button specifically */
+div.stButton > button {
+    background-image: url("app/static/assets/images/enterrealm.png"); /* Updated Path */
+    background-size: contain; /* Changed to contain so it doesn't crop */
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%; /* Spans the container width like your other images */
+    height: 80px; /* Adjust to match your image aspect ratio */
+    border: none;
+    background-color: transparent !important; /* Removes the grey default box */
+    box-shadow: none !important; /* Removes the hover shadow */
+}
+
+/* Hide the default text labels */
+div.stButton > button p {
+    display: none;
+}
+
+/* Hover effect - optional but nice */
+div.stButton > button:hover {
+    transform: scale(1.05);
+    transition: 0.3s;
+    background-color: transparent !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+if st.button("Enter Realm"):
+    if name: # Check if name is filled
+        st.session_state.player_name = name
+        st.switch_page("pages/realm.py")
+
     
 
     .question-container {{
@@ -185,11 +218,13 @@ if "player_name" not in st.session_state:
 
 
     
+        # This button is magically transformed by the CSS at Line 100
     if st.button("Enter Realm"):
         if name:
             st.session_state.player_name = name
             st.rerun()
     st.stop()
+
 
 
 # --- 5. MATH LOGIC WITH PLOTLY INTERACTIVITY ---
