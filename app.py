@@ -95,7 +95,7 @@ st.markdown(f"""
     }}
 
     img[src*="namefp.png"] {{
-    width 120% !important;
+    width: 120% !important;
     display: block !important;
     margin: 0 auto -10px auto !important;
 }}
