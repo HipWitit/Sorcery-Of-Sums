@@ -205,7 +205,7 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 if "player_name" not in st.session_state:
     try:
         # Using the new combined image you provided
-        st.image("1000037180.png", use_container_width=False)
+        st.image("sorcerersums.png", use_container_width=False)
     except:
         st.write("✨ **Portal Opening...** ✨")
     
