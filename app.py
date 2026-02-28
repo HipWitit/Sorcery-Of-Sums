@@ -112,22 +112,39 @@ st.markdown(f"""
         z-index: 10;
     }}
 
-    /* 10. THE BIG MAGIC IMAGE BUTTON */
-    div.stButton > button {{
+    /* 10. LOGIN BUTTON (ONLY WHEN TEXT IS "Enter Realm") */
+    button:has(p:contains("Enter Realm")) {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
         width: 275px !important;
-        height: 300px !important;
+        height: 150px !important;
         border: none !important;
         background-color: transparent !important;
         box-shadow: none !important;
         display: block !important;
-        margin: -120px auto 0 auto !important; 
+        margin: -40px auto 0 auto !important; 
         transition: transform 0.2s ease;
     }}
 
+    /* 11. CAST SPELL BUTTON (ONLY WHEN TEXT CONTAINS "Cast Spell") */
+    button:has(p:contains("Cast Spell")) {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png") !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        width: 275px !important;
+        height: 150px !important;
+        border: none !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        display: block !important;
+        margin: 0 auto !important; 
+        transition: transform 0.2s ease;
+    }}
+
+    /* GLOBAL BUTTON HOVER & TEXT HIDE */
     div.stButton > button:hover {{
         transform: scale(1.05);
     }}
@@ -135,6 +152,7 @@ st.markdown(f"""
     div.stButton > button p {{
         display: none !important;
     }}
+
 
     /* 11. Question Container Styling */
     .question-container {{
