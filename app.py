@@ -88,11 +88,30 @@ st.markdown(f"""
         color: #7b7dbd !important;
     }}
     
-    div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
-        border-color: #7b7dbd !important;
+    /* Pink Selectbox (Dropdown) */
+    div[data-baseweb="select"] > div {{
+        background-color: #ffdef2 !important;
+        border: 2px solid #eecbff !important;
+        border-radius: 10px !important;
     }}
+    
+    /* Selectbox Text and Arrow */
+    div[data-baseweb="select"] div {{
+        color: #7b7dbd !important;
+    }}
+    div[data-baseweb="select"] svg {{
+        fill: #7b7dbd !important; 
+    }}
+
+    /* Pink Radio Buttons */
+    div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
+        background-color: #ffdef2 !important;
+        border: 2px solid #eecbff !important;
+    }}
+    
+    /* Periwinkle Dot for Selected Radio */
     div[role="radiogroup"] div[data-selection="true"] div {{
-        background-color: #c6c7ff !important;
+        background-color: #7b7dbd !important;
     }}
     
     /* 8. NEW COMBINED HEADER POSITIONING */
