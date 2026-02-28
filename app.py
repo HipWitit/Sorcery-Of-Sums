@@ -94,19 +94,14 @@ st.markdown(f"""
         margin-bottom: -45px;
     }}
 
-    /* Resize the "Enter your name" banner to fill the screen */
     img[src*="namefp.png"] {{
-        width: 140% !important;   /* Increased from 110% to 140% */
-        max-width: none !important; 
-        display: block !important;
-        margin-left: -20% !important; /* Centers the oversized image */
-        margin-right: -20% !important;
-        margin-bottom: -15px !important; 
+    width: 90% !important;
+    max-width: 700px !important;
+    display: block !important;
+    margin: 0 auto -10px auto !important;
+}}
 
-    }}
-
-
-    /* 9. PULL THE NAME PLATE UP */
+     /* 9. PULL THE NAME PLATE UP */
     div[data-testid="stTextInput"] {{
         margin-top: -20px;
     }}
