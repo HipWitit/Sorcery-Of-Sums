@@ -109,7 +109,7 @@ st.markdown(f"""
         border: none !important;
         background-color: transparent !important;
         box-shadow: none !important;
-        margin-top: -10px !important;
+        margin-top: 0px !important;
         transition: transform 0.2s ease;
     }}
 
