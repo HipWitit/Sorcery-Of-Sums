@@ -95,7 +95,6 @@ st.markdown(f"""
         overflow: visible !important;
     }}
 
-    /* Targets your new combined login image (sorcerersums.png) */
     img[src*="1000037180"] {{
         width: 140% !important;
         max-width: none !important;
@@ -112,7 +111,7 @@ st.markdown(f"""
         z-index: 10;
     }}
 
-            /* 10. THE LOGIN BUTTON (Enter Realm) */
+    /* 10. THE LOGIN BUTTON (Enter Realm) */
     div.stButton > button[aria-label="Enter Realm"] {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
@@ -125,6 +124,7 @@ st.markdown(f"""
         box-shadow: none !important;
         display: block !important;
         margin: -40px auto 0 auto !important; 
+        transition: transform 0.2s ease;
     }}
 
     /* 11. THE CAST SPELL BUTTON (🪄 Cast Spell!) */
@@ -140,18 +140,17 @@ st.markdown(f"""
         box-shadow: none !important;
         display: block !important;
         margin: 0 auto !important; 
+        transition: transform 0.2s ease;
     }}
 
-    /* GLOBAL BUTTON HOVER & TEXT HIDE */
     div.stButton > button:hover {{
         transform: scale(1.05);
     }}
 
-    .stButton > button p {{
+    /* HIDE DEFAULT BUTTON TEXT ON BOTH */
+    div.stButton > button p {{
         display: none !important;
     }}
-
-
 
     /* 12. Question Container Styling */
     .question-container {{
@@ -221,14 +220,14 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 # --- 4. LOGIN SCREEN ---
 if "player_name" not in st.session_state:
     try:
-        # Using the new combined image you provided
         st.image("sorcerersums.png", use_container_width=False)
     except:
         st.write("✨ **Portal Opening...** ✨")
     
     name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
 
-    if st.button("Enter Realm"):
+    # Added key="login_btn" for CSS targeting
+    if st.button("Enter Realm", key="login_btn"):
         if name:
             st.session_state.player_name = name
             st.rerun()
@@ -338,6 +337,7 @@ with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
 user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
 
+# Added key="cast_btn" for CSS targeting
 if st.button("🪄 Cast Spell!", key="cast_btn"):
     try:
         if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
