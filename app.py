@@ -103,14 +103,14 @@ st.markdown(f"""
         fill: #7b7dbd !important; 
     }}
 
-    /* Pink Radio Buttons */
-    div[role="radiogroup"] div[data-testid="stRadioButtonInternalDefaultCircle"] {{
-        background-color: #ffdef2 !important;
-        border: 2px solid #eecbff !important;
+    /* Mint Radio Buttons (Outer Circle) */
+    div[role="radiogroup"] label[data-baseweb="radio"] input + div {{
+        background-color: #d4ffea !important;
+        border: 2px solid #7b7dbd !important;
     }}
     
     /* Periwinkle Dot for Selected Radio */
-    div[role="radiogroup"] div[data-selection="true"] div {{
+    div[role="radiogroup"] label[data-baseweb="radio"] input:checked + div > div {{
         background-color: #7b7dbd !important;
     }}
     
