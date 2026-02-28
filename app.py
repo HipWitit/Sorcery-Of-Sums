@@ -111,16 +111,17 @@ st.markdown(f"""
         z-index: 10;
     }}
 
-    /* --- UPDATED BUTTON LOGIC (FIXED) --- */
-    /* Container centering */
+    /* --- REPAIRED BUTTON LOGIC --- */
+    
+    /* 1. Reset the Button Container */
     div.stButton {{
-        text-align: center;
         display: flex;
         justify-content: center;
-        margin: 10px auto;
+        align-items: center;
+        margin: 20px 0;
     }}
 
-    /* Base Button Styling */
+    /* 2. Global Button Styling */
     div.stButton > button {{
         border: none !important;
         background-color: transparent !important;
@@ -132,33 +133,36 @@ st.markdown(f"""
         min-height: 120px !important;
         min-width: 280px !important;
         box-shadow: none !important;
+        display: block !important;
+        color: transparent !important; /* Hide text fallback */
         transition: transform 0.2s ease !important;
     }}
 
-    /* Specific Image for 'Enter Realm' */
-    div.stButton > button:has(div[data-testid="stMarkdownContainer"] p:contains("Enter Realm")) {{
+    /* 3. The Login Button (Using aria-label for better compatibility) */
+    div.stButton > button[aria-label="Enter Realm"] {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
     }}
 
-    /* Specific Image for 'Cast Spell' */
-    div.stButton > button:has(div[data-testid="stMarkdownContainer"] p:contains("Cast Spell")) {{
+    /* 4. The Cast Spell Button (Using part of the label string) */
+    div.stButton > button[aria-label*="Cast Spell"] {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png") !important;
     }}
 
+    /* 5. Interaction States */
     div.stButton > button:hover {{
         transform: scale(1.05) !important;
-        background-color: transparent !important;
+        background-color: rgba(255, 255, 255, 0.1) !important; /* Slight hint on hover */
     }}
 
     div.stButton > button:active {{
         transform: scale(0.95) !important;
     }}
 
-    /* Hide the original text */
-    div.stButton p {{
+    /* 6. Ensure text stays hidden */
+    div.stButton > button p {{
         display: none !important;
+        visibility: hidden !important;
     }}
-    /* ------------------------------------ */
 
     /* 12. Question Container Styling */
     .question-container {{
@@ -234,6 +238,7 @@ if "player_name" not in st.session_state:
     
     name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
 
+    # Label MUST match the aria-label used in CSS
     if st.button("Enter Realm", key="login_btn"):
         if name:
             st.session_state.player_name = name
@@ -344,6 +349,7 @@ with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
 user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
 
+# Label MUST match the partial string in the CSS [aria-label*="Cast Spell"]
 if st.button("🪄 Cast Spell!", key="cast_btn"):
     try:
         if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
