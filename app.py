@@ -112,8 +112,8 @@ st.markdown(f"""
         z-index: 10;
     }}
 
-         /* 10. LOGIN BUTTON (ONLY ON THE PORTAL SCREEN) */
-    [data-testid="stAppViewBlockContainer"] > div:first-child .stButton > button {{
+        /* 10. THE LOGIN BUTTON (REPAIRED) */
+    .stButton > button:has(div:contains("Enter Realm")) {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
@@ -122,14 +122,12 @@ st.markdown(f"""
         height: 150px !important;
         border: none !important;
         background-color: transparent !important;
-        box-shadow: none !important;
-        color: transparent !important;
         margin: -40px auto 0 auto !important; 
         display: block !important;
     }}
 
-    /* 11. CAST SPELL BUTTON (ONLY INSIDE THE REALM) */
-    [data-testid="stAppViewBlockContainer"] > div:not(:first-child) .stButton > button {{
+    /* 11. THE CAST SPELL BUTTON (REPAIRED) */
+    .stButton > button:has(div:contains("Cast Spell")) {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
@@ -138,16 +136,16 @@ st.markdown(f"""
         height: 150px !important;
         border: none !important;
         background-color: transparent !important;
-        box-shadow: none !important;
-        color: transparent !important;
         margin: 0 auto !important; 
         display: block !important;
     }}
 
-    /* HIDE BUTTON TEXT GLOBALLY - ONLY ONCE */
+    /* HIDE THE TEXT ON BOTH SO ONLY IMAGES SHOW */
     .stButton > button p {{
         display: none !important;
+        color: transparent !important;
     }}
+
       div.stButton > button p {{
         display: none !important;
     }}
