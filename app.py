@@ -105,15 +105,23 @@ st.markdown(f"""
         margin-bottom: -40px !important;
     }}
 
-    /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
-    div[data-testid="stTextInput"] {{
-        margin-top: 30px;
+        /* 9. POSITION THE BOX */
+    div[data-testid="stTextInput"] 
+        margin-top: 30px !important;
         position: relative;
         z-index: 10;
-        /* ADD THIS LINE BELOW */
+    }}
+
+    /* CHANGE THE FONT INSIDE THE BOX */
+    div[data-testid="stTextInput"] input 
         font-family: 'Comic Sans MS', 'cursive', sans-serif !important; 
-        font-size: 20px !important;
+        font-size: 24px !important; /* Made it a bit bigger for that magical feel */
         font-weight: bold !important;
+        background-color: #e6fff8 !important;
+        color: #7b7dbd !important;
+        text-align: center;
+    }}
+
     
     }}
 
