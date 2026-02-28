@@ -96,7 +96,7 @@ st.markdown(f"""
 
     /* Resize and Center the "Enter your name" banner */
     img[src*="namefp.png"] {{
-        width: 95% !important;
+        width: 110% !important;
         margin-bottom: -10px !important; 
     }}
 
