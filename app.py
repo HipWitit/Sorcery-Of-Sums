@@ -103,15 +103,52 @@ st.markdown(f"""
         fill: #7b7dbd !important; 
     }}
 
-    /* Mint Radio Buttons (Outer Circle) */
-    div[role="radiogroup"] label[data-baseweb="radio"] input + div {{
-        background-color: #d4ffea !important;
-        border: 2px solid #7b7dbd !important;
+    /* --- CUSTOM IMAGE RADIO BUTTONS --- */
+    
+    /* Hide the default BaseWeb inner dot completely */
+    div[role="radiogroup"] label[data-baseweb="radio"] input + div > div {{
+        display: none !important;
     }}
     
-    /* Periwinkle Dot for Selected Radio */
-    div[role="radiogroup"] label[data-baseweb="radio"] input:checked + div > div {{
-        background-color: #7b7dbd !important;
+    /* Hide the default Streamlit text for the radio options since the numbers are in the images! */
+    div[role="radiogroup"] label[data-baseweb="radio"] p {{
+        display: none !important;
+    }}
+
+    /* Global settings for the new image buttons */
+    div[role="radiogroup"] label[data-baseweb="radio"] input + div {{
+        background-color: transparent !important;
+        border: none !important;
+        width: 60px !important;  
+        height: 60px !important; 
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        margin-bottom: 5px; 
+    }}
+
+    /* Grade 10 (Option 1) */
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(1) input + div {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/10pink.png") !important;
+    }}
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(1) input:checked + div {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/10periwinkle.png") !important;
+    }}
+
+    /* Grade 11 (Option 2) */
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(2) input + div {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/11pink.png") !important;
+    }}
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(2) input:checked + div {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/11periwinkle.png") !important;
+    }}
+
+    /* Grade 12 (Option 3) */
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(3) input + div {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/12pink.png") !important;
+    }}
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(3) input:checked + div {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/12periwinkle.png") !important;
     }}
     
     /* 8. NEW COMBINED HEADER POSITIONING */
