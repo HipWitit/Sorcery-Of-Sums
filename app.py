@@ -102,7 +102,7 @@ st.markdown(f"""
         z-index: 10;
     }}
 
-    /* --- THE ULTIMATE BUTTON FIX --- */
+    /* --- THE BUTTON LOGIC --- */
     div.stButton {{
         text-align: center;
         margin: 20px auto;
@@ -118,17 +118,17 @@ st.markdown(f"""
         background-position: center !important;
         border: none !important;
         box-shadow: none !important;
-        color: transparent !important;
+        color: transparent !important; /* Hide label text */
         transition: transform 0.2s ease !important;
         display: inline-block !important;
     }}
 
-    /* Target: Enter Realm */
+    /* TARGETING BY TEXT CONTENT - Enter Realm */
     div.stButton > button:has(p:contains("Enter Realm")) {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
     }}
 
-    /* Target: Cast Spell (No emoji in name for cleaner match) */
+    /* TARGETING BY TEXT CONTENT - Cast Spell */
     div.stButton > button:has(p:contains("Cast Spell")) {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png") !important;
     }}
@@ -139,6 +139,7 @@ st.markdown(f"""
 
     div.stButton > button p {{
         display: none !important;
+        visibility: hidden !important;
     }}
 
     /* 12. Question Container Styling */
@@ -213,7 +214,7 @@ if "player_name" not in st.session_state:
     except:
         st.write("✨ **Portal Opening...** ✨")
     
-    name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed", key="name_input")
+    name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed", key="login_name_input")
 
     if st.button("Enter Realm", key="login_btn"):
         if name:
@@ -324,6 +325,7 @@ with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
 user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
 
+# TRIGGER THE CORRECT IMAGE
 if st.button("Cast Spell", key="cast_btn"):
     try:
         if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
@@ -336,6 +338,7 @@ if st.button("Cast Spell", key="cast_btn"):
                 conn.update(data=pd.concat([df, new_row], ignore_index=True))
             except: pass
             
+            # Refresh Question
             q, ans, img, pdf = generate_spell(unit_choice, level_choice)
             st.session_state.current_q, st.session_state.target_ans = q, ans
             st.session_state.current_image, st.session_state.current_plot = img, pdf
