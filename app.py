@@ -105,21 +105,16 @@ st.markdown(f"""
         margin-bottom: -40px !important;
     }}
 
-        /* 9. POSITION THE BOX */
-    div[data-testid="stTextInput"] 
-        margin-top: 30px !important;
+    /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
+    div[data-testid="stTextInput"] {{
+        margin-top: 30px;
         position: relative;
         z-index: 10;
-    }}
-
-    /* CHANGE THE FONT INSIDE THE BOX */
-    div[data-testid="stTextInput"] input 
+        /* ADD THIS LINE BELOW */
         font-family: 'Comic Sans MS', 'cursive', sans-serif !important; 
-        font-size: 24px !important; /* Made it a bit bigger for that magical feel */
+        font-size: 20px !important;
         font-weight: bold !important;
-        background-color: #e6fff8 !important;
-        color: #7b7dbd !important;
-        text-align: center;
+    }
     }}
 
     /* 10. THE BIG MAGIC IMAGE BUTTON */
