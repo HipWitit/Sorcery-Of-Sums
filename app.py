@@ -160,6 +160,12 @@ st.markdown(f"""
         background-color: #e6fff8 !important;
         color: #7b7dbd !important;
     }}
+       
+        .block-container {{
+    max-width: 100% !important;
+    padding-top: 2rem;
+    }}
+   
     </style>
     """, unsafe_allow_html=True)
 
