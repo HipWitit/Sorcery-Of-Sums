@@ -98,21 +98,26 @@ st.markdown(f"""
         margin-top: -20px;
     }}
 
-    /* 9. THE BIG MAGIC IMAGE BUTTON */
+    /* 9. THE BIG MAGIC IMAGE BUTTON - UNIVERSAL FIX */
     div.stButton > button {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
         width: 100% !important;
-        height: 150px !important; 
+        min-height: 180px !important; /* Increased height to force it large */
         border: none !important;
         background-color: transparent !important;
         box-shadow: none !important;
         margin-top: -10px !important;
+        transition: transform 0.2s ease;
     }}
 
-    /* Hide the default text labels */
+    div.stButton > button:hover {{
+        transform: scale(1.05); /* Slight grow on hover */
+    }}
+
+    /* Hide the default text labels for ALL buttons */
     div.stButton > button p {{
         display: none !important;
     }}
@@ -151,7 +156,6 @@ st.markdown(f"""
 
 # --- 2. THE SACRED STAR EFFECT (IFRAME PORTAL) ---
 def pastel_star_effect():
-    # This reaches out of the iframe to the parent document
     components.html(f"""
     <script>
     const colors = ["#ffd6ff","#caffbf","#fdffb6","#bdb2ff","#a0c4ff"];
@@ -180,31 +184,22 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 # --- 4. LOGIN SCREEN ---
 if "player_name" not in st.session_state:
     try:
-        # Main Logo
         st.image("Sorcerer Login.png")
     except:
         st.write("✨ **Portal Opening...** ✨")
     
-    # NEW: Your custom "Enter your name" image
     try:
         st.image("namefp.png", use_container_width=True)
     except:
-        # Fallback text if the image file isn't found
         st.write("Enter your name to begin your journey:")
 
-    # Text input with an empty label to keep the spacing tight
     name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
 
-
-    
-        # This button is magically transformed by the CSS at Line 100
     if st.button("Enter Realm"):
         if name:
             st.session_state.player_name = name
             st.rerun()
     st.stop()
-
-
 
 # --- 5. MATH LOGIC WITH PLOTLY INTERACTIVITY ---
 def generate_spell(unit, level):
@@ -313,12 +308,9 @@ user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here
 if st.button("🪄 Cast Spell!"):
     try:
         if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
-            pastel_star_effect() # LAUNCH THE STARS
+            pastel_star_effect()
             st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
-            
-            # Short pause so the script can finish injecting stars before the page clears
             time.sleep(.2) 
-            
             try:
                 df = conn.read(ttl=0)
                 new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
