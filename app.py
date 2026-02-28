@@ -101,7 +101,7 @@ st.markdown(f"""
         max-width: none !important;
         transform: scale(1.1);
         display: block !important;
-        margin-left: -15% !important; /* Pulls it left to keep it centered while oversized */
+        margin-left: 0 !important; /* Pulls it left to keep it centered while oversized */
         margin-bottom: -10px !important;
     }}
 
