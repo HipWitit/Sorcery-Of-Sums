@@ -98,7 +98,7 @@ st.markdown(f"""
     width: 120% !important;
     display: block !important;
     margin: 0 auto -10px auto !important;
-}}
+    }}
 
      /* 9. PULL THE NAME PLATE UP */
     div[data-testid="stTextInput"] {{
