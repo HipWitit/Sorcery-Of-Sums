@@ -89,25 +89,27 @@ st.markdown(f"""
         background-color: #c6c7ff !important;
     }}
     
-    /* 8. SACRED LAYOUT POSITIONING - FIXED SYNTAX */
+    /* 8. NEW COMBINED HEADER POSITIONING */
     div[data-testid="stImage"] {{
         margin-bottom: -45px;
         overflow: visible !important;
     }}
 
-    /* The Banner Breakout */
-    img[src*="namefp.png"] {{
-        width: 130% !important;
+    /* Targets your new combined login image (sorcerersums.png) */
+    img[src*="1000037180"] {{
+        width: 140% !important;
         max-width: none !important;
-        transform: scale(1.1);
+        transform: scale(1.05);
         display: block !important;
-        margin-left: 0 !important; /* Pulls it left to keep it centered while oversized */
-        margin-bottom: -10px !important;
+        margin-left: -20% !important; 
+        margin-bottom: -40px !important;
     }}
 
-    /* 9. PULL THE NAME PLATE UP */
+    /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
     div[data-testid="stTextInput"] {{
-        margin-top: -20px;
+        margin-top: -10px;
+        position: relative;
+        z-index: 10;
     }}
 
     /* 10. THE BIG MAGIC IMAGE BUTTON */
@@ -116,13 +118,13 @@ st.markdown(f"""
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
-        width: 220px !important;
-        height: 110px !important;
+        width: 240px !important;
+        height: 120px !important;
         border: none !important;
         background-color: transparent !important;
         box-shadow: none !important;
         display: block !important;
-        margin: -25px auto 0 auto !important; 
+        margin: -30px auto 0 auto !important; 
         transition: transform 0.2s ease;
     }}
 
@@ -163,10 +165,11 @@ st.markdown(f"""
     div[data-testid="stTextInput"] input {{
         background-color: #e6fff8 !important;
         color: #7b7dbd !important;
+        text-align: center;
     }}
        
     .block-container {{
-        max-width: 800px !important; /* Kept centered for mobile focus */
+        max-width: 800px !important; 
         padding-top: 2rem;
     }}
     </style>
@@ -201,16 +204,11 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 # --- 4. LOGIN SCREEN ---
 if "player_name" not in st.session_state:
     try:
-        st.image("Sorcerer Login.png")
+        # Using the new combined image you provided
+        st.image("1000037180.png", use_container_width=False)
     except:
         st.write("✨ **Portal Opening...** ✨")
     
-    try:
-        # Standard st.image - the CSS now handles making it huge
-        st.image("namefp.png", use_container_width=False)
-    except:
-        st.write("Enter your name to begin your journey:")
-
     name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
 
     if st.button("Enter Realm"):
@@ -219,7 +217,7 @@ if "player_name" not in st.session_state:
             st.rerun()
     st.stop()
 
-# --- 5. MATH LOGIC (Same as before) ---
+# --- 5. MATH LOGIC ---
 def generate_spell(unit, level):
     prog = int(level) - 9 
     fig = None
@@ -321,7 +319,7 @@ with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
         st.plotly_chart(st.session_state.current_plot, use_container_width=True, config={'displayModeBar': False})
 
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
-user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...")
+user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
 
 if st.button("🪄 Cast Spell!"):
     try:
