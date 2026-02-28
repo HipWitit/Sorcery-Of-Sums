@@ -122,9 +122,6 @@ st.markdown(f"""
         text-align: center;
     }}
 
-    
-    }}
-
     /* 10. THE BIG MAGIC IMAGE BUTTON */
     div.stButton > button {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
