@@ -10,7 +10,7 @@ import streamlit.components.v1 as components
 from streamlit_gsheets import GSheetsConnection
 
 # --- 1. SETTINGS & THEMING ---
-st.set_page_config(page_title="Sorcery Sums", page_icon="🪄", layout="wide")
+st.set_page_config(page_title="Sorcery Sums", page_icon="🪄", layout="centered")
 
 # Autorefresh for Leaderboard
 try:
@@ -89,27 +89,23 @@ st.markdown(f"""
         background-color: #c6c7ff !important;
     }}
     
-        /* 8. SACRED LAYOUT POSITIONING */
+    /* 8. SACRED LAYOUT POSITIONING - FIXED SYNTAX */
     div[data-testid="stImage"] {{
         margin-bottom: -45px;
+        overflow: visible !important;
     }}
 
-    /* Make namefp.png bigger than container */
-div[data-testid="stImage"] img[src*="namefp.png"] 
-    width: 120% !important;
-    max-width: none !important;
-    display: block !important;
-    margin: 0 auto -10px auto !important;
+    /* The Banner Breakout */
+    img[src*="namefp.png"] {{
+        width: 130% !important;
+        max-width: none !important;
+        transform: scale(1.1);
+        display: block !important;
+        margin-left: -15% !important; /* Pulls it left to keep it centered while oversized */
+        margin-bottom: -10px !important;
     }}
 
-/* Ensure container doesn’t clip the image */
-div[data-testid="stImage"] 
-    max-width: none !important;
-    overflow: visible !important;
-
-    }}
-
-     /* 9. PULL THE NAME PLATE UP */
+    /* 9. PULL THE NAME PLATE UP */
     div[data-testid="stTextInput"] {{
         margin-top: -20px;
     }}
@@ -134,7 +130,6 @@ div[data-testid="stImage"]
         transform: scale(1.05);
     }}
 
-    /* Hide default button text */
     div.stButton > button p {{
         display: none !important;
     }}
@@ -170,11 +165,10 @@ div[data-testid="stImage"]
         color: #7b7dbd !important;
     }}
        
-        .block-container {{
-    max-width: 100% !important;
-    padding-top: 2rem;
+    .block-container {{
+        max-width: 800px !important; /* Kept centered for mobile focus */
+        padding-top: 2rem;
     }}
-   
     </style>
     """, unsafe_allow_html=True)
 
@@ -212,6 +206,7 @@ if "player_name" not in st.session_state:
         st.write("✨ **Portal Opening...** ✨")
     
     try:
+        # Standard st.image - the CSS now handles making it huge
         st.image("namefp.png", use_container_width=False)
     except:
         st.write("Enter your name to begin your journey:")
@@ -224,7 +219,7 @@ if "player_name" not in st.session_state:
             st.rerun()
     st.stop()
 
-# --- 5. MATH LOGIC ---
+# --- 5. MATH LOGIC (Same as before) ---
 def generate_spell(unit, level):
     prog = int(level) - 9 
     fig = None
@@ -346,3 +341,4 @@ if st.button("🪄 Cast Spell!"):
             st.rerun()
         else: st.error("The magic failed!")
     except: st.warning("Enter a number!")
+
