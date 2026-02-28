@@ -112,20 +112,37 @@ st.markdown(f"""
         z-index: 10;
     }}
 
-    /* 10. THE BIG MAGIC IMAGE BUTTON */
-    div.stButton > button {{
+        /* 10. LOGIN BUTTON STYLING (FIRST BLOCK ONLY) */
+    [data-testid="stAppViewBlockContainer"] > div:first-child .stButton > button {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
         width: 275px !important;
-        height: 300px !important;
+        height: 150px !important;
         border: none !important;
         background-color: transparent !important;
-        box-shadow: none !important;
+        margin: -40px auto 0 auto !important; 
         display: block !important;
-        margin: -120px auto 0 auto !important; 
-        transition: transform 0.2s ease;
+    }}
+
+    /* THE CAST SPELL BUTTON (ANY BLOCK EXCEPT THE FIRST) */
+    [data-testid="stAppViewBlockContainer"] > div:not(:first-child) .stButton > button {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png") !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        width: 275px !important;
+        height: 150px !important;
+        border: none !important;
+        background-color: transparent !important;
+        margin: 0 auto !important; 
+        display: block !important;
+    }}
+
+    /* HIDE DEFAULT BUTTON TEXT FOR ALL IMAGE BUTTONS */
+    .stButton > button p {{
+        display: none !important;
     }}
 
     div.stButton > button:hover {{
