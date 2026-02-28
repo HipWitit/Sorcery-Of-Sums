@@ -22,7 +22,7 @@ except:
 st.markdown(f"""
     <style>
     /* 1. Main Background */
-    .stApp {{ background-color: #fde4f2; }}
+    .stApp {{ background-color: #f2e2ff; }}
     
     /* 2. Sidebar Background */
     [data-testid="stSidebar"] {{
