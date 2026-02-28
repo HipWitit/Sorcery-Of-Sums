@@ -124,7 +124,7 @@ st.markdown(f"""
         background-color: transparent !important;
         box-shadow: none !important;
         display: block !important;
-        margin: 30px auto 0 auto !important; 
+        margin: 5px auto -15 auto !important; 
         transition: transform 0.2s ease;
     }}
 
