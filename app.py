@@ -89,24 +89,64 @@ st.markdown(f"""
         background-color: #c6c7ff !important;
     }}
     
-    /* 8. SACRED LAYOUT POSITIONING */
-div[data-testid="stImage"] {
-    margin-bottom: -45px;
-}
+        /* 8. SACRED LAYOUT POSITIONING */
+    div[data-testid="stImage"] {{
+        margin-bottom: -45px;
+    }}
 
-/* Resize the "Enter your name" banner */
-img[src*="namefp.png"] {
-    width: 65% !important;   /* Adjust this % to get the perfect size */
-    display: block !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    margin-bottom: -10px !important; /* Pulls the input box closer */
-}
+    /* Resize and Center the "Enter your name" banner */
+    img[src*="namefp.png"] {{
+        width: 65% !important;   
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-bottom: -10px !important; 
+    }}
 
-/* 9. PULL THE NAME PLATE UP */
-div[data-testid="stTextInput"] {
-    margin-top: -20px;
-}
+    /* 9. PULL THE NAME PLATE UP */
+    div[data-testid="stTextInput"] {{
+        margin-top: -20px;
+    }}
+
+    /* 10. THE BIG MAGIC IMAGE BUTTON */
+    div.stButton > button {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        width: 200px !important;
+        height: 100px !important;
+        border: none !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        
+        /* Centering and Nudging Up */
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-top: -30px !important; 
+        transition: transform 0.2s ease;
+    }}
+
+    div.stButton > button:hover {{
+        transform: scale(1.05);
+    }}
+
+    /* Hide default button text */
+    div.stButton > button p {{
+        display: none !important;
+    }}
+
+    /* 11. Question Container Styling */
+    .question-container {{
+        background-color: white; 
+        padding: 30px; 
+        border-radius: 20px; 
+        border: 4px solid #c6c7ff; 
+        text-align: center; 
+        margin-bottom: 20px;
+    }}
+
 
     }}
 
