@@ -98,16 +98,25 @@ st.markdown(f"""
         margin-top: -20px;
     }}
 
-    /* 3. The Magic Image Button (Enter Realm) */
+    /* 3. The BIG Magic Image Button */
     div.stButton > button {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png");
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
         width: 100%;
-        height: 80px;
+        height: 120px; /* Increased from 80px for extra chonk */
         border: none !important;
         background-color: transparent !important;
+        box-shadow: none !important;
+        margin-top: -10px;
+    }}
+
+    /* Hide the default text labels */
+    div.stButton > button p {{
+        display: none;
+    }}
+
         box-shadow: none !important;
         margin-top: -15px;
     }}
