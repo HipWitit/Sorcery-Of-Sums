@@ -89,60 +89,54 @@ st.markdown(f"""
         background-color: #c6c7ff !important;
     }}
     
-    /* 8. HEADER POSITIONING */
+    /* 8. NEW COMBINED HEADER POSITIONING */
     div[data-testid="stImage"] {{
         margin-bottom: -45px;
         overflow: visible !important;
     }}
 
-    /* 9. PULL THE NAME PLATE UP */
+    /* Targets your new combined login image (sorcerersums.png) */
+    img[src*="1000037180"] {{
+        width: 140% !important;
+        max-width: none !important;
+        transform: scale(1.05);
+        display: block !important;
+        margin-left: -20% !important; 
+        margin-bottom: -40px !important;
+    }}
+
+    /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
     div[data-testid="stTextInput"] {{
         margin-top: 30px;
         position: relative;
         z-index: 10;
     }}
 
-    /* --- THE BUTTON LOGIC --- */
-    div.stButton {{
-        text-align: center;
-        margin: 20px auto;
-        display: block;
-    }}
-
+    /* 10. THE BIG MAGIC IMAGE BUTTON */
     div.stButton > button {{
-        width: 280px !important;
-        height: 120px !important;
-        background-color: transparent !important;
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
+        width: 275px !important;
+        height: 300px !important;
         border: none !important;
+        background-color: transparent !important;
         box-shadow: none !important;
-        color: transparent !important; /* Hide label text */
-        transition: transform 0.2s ease !important;
-        display: inline-block !important;
-    }}
-
-    /* TARGETING BY TEXT CONTENT - Enter Realm */
-    div.stButton > button:has(p:contains("Enter Realm")) {{
-        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
-    }}
-
-    /* TARGETING BY TEXT CONTENT - Cast Spell */
-    div.stButton > button:has(p:contains("Cast Spell")) {{
-        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png") !important;
+        display: block !important;
+        margin: -120px auto 0 auto !important; 
+        transition: transform 0.2s ease;
     }}
 
     div.stButton > button:hover {{
-        transform: scale(1.05) !important;
+        transform: scale(1.05);
     }}
 
     div.stButton > button p {{
         display: none !important;
-        visibility: hidden !important;
     }}
 
-    /* 12. Question Container Styling */
+    /* 11. Question Container Styling */
     .question-container {{
         background-color: white; 
         padding: 30px; 
@@ -210,13 +204,14 @@ conn = st.connection("gsheets", type=GSheetsConnection)
 # --- 4. LOGIN SCREEN ---
 if "player_name" not in st.session_state:
     try:
+        # Using the new combined image you provided
         st.image("sorcerersums.png", use_container_width=False)
     except:
         st.write("✨ **Portal Opening...** ✨")
     
-    name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed", key="login_name_input")
+    name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
 
-    if st.button("Enter Realm", key="login_btn"):
+    if st.button("Enter Realm"):
         if name:
             st.session_state.player_name = name
             st.rerun()
@@ -229,7 +224,8 @@ def generate_spell(unit, level):
     
     def apply_sacred_style(fig):
         fig.update_layout(
-            plot_bgcolor='white', paper_bgcolor='white',
+            plot_bgcolor='white',
+            paper_bgcolor='white',
             margin=dict(l=20, r=20, t=20, b=20),
             xaxis=dict(showgrid=True, gridcolor='lightgray', zeroline=True, zerolinecolor='black'),
             yaxis=dict(showgrid=True, gridcolor='lightgray', zeroline=True, zerolinecolor='black'),
@@ -300,7 +296,7 @@ try:
         t1, t2, t3 = st.sidebar.tabs(["Week", "Month", "Year"])
         with t1:
             w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
-            if not w_data.empty: st.sidebar.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+            if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
 except:
     st.sidebar.write("The scrolls are sleeping.")
 
@@ -325,8 +321,7 @@ with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
 user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
 
-# TRIGGER THE CORRECT IMAGE
-if st.button("Cast Spell", key="cast_btn"):
+if st.button("🪄 Cast Spell!"):
     try:
         if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
             pastel_star_effect()
@@ -338,7 +333,6 @@ if st.button("Cast Spell", key="cast_btn"):
                 conn.update(data=pd.concat([df, new_row], ignore_index=True))
             except: pass
             
-            # Refresh Question
             q, ans, img, pdf = generate_spell(unit_choice, level_choice)
             st.session_state.current_q, st.session_state.target_ans = q, ans
             st.session_state.current_image, st.session_state.current_plot = img, pdf
