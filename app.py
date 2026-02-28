@@ -118,8 +118,8 @@ st.markdown(f"""
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
-        width: 200px !important;
-        height: 200px !important;
+        width: 0px !important;
+        height: 300px !important;
         border: none !important;
         background-color: transparent !important;
         box-shadow: none !important;
