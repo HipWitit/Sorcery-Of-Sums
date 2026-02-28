@@ -90,12 +90,24 @@ st.markdown(f"""
     }}
     
     /* 8. SACRED LAYOUT POSITIONING */
-    div[data-testid="stImage"] {{
-        margin-bottom: -45px;
-    }}
+div[data-testid="stImage"] {
+    margin-bottom: -45px;
+}
 
-    div[data-testid="stTextInput"] {{
-        margin-top: -20px;
+/* Resize the "Enter your name" banner */
+img[src*="namefp.png"] {
+    width: 65% !important;   /* Adjust this % to get the perfect size */
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-bottom: -10px !important; /* Pulls the input box closer */
+}
+
+/* 9. PULL THE NAME PLATE UP */
+div[data-testid="stTextInput"] {
+    margin-top: -20px;
+}
+
     }}
 
     /* 9. THE BIG MAGIC IMAGE BUTTON - UNIVERSAL FIX */
