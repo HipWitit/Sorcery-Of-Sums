@@ -112,7 +112,7 @@ st.markdown(f"""
         z-index: 10;
     }}
 
-     /* 10. LOGIN BUTTON (ONLY ON THE PORTAL SCREEN) */
+         /* 10. LOGIN BUTTON (ONLY ON THE PORTAL SCREEN) */
     [data-testid="stAppViewBlockContainer"] > div:first-child .stButton > button {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
@@ -144,13 +144,11 @@ st.markdown(f"""
         display: block !important;
     }}
 
-    /* HIDE BUTTON TEXT GLOBALLY */
+    /* HIDE BUTTON TEXT GLOBALLY - ONLY ONCE */
     .stButton > button p {{
         display: none !important;
     }}
-
-
-    div.stButton > button p {{
+      div.stButton > button p {{
         display: none !important;
     }}
 
