@@ -10,7 +10,7 @@ import streamlit.components.v1 as components
 from streamlit_gsheets import GSheetsConnection
 
 # --- 1. SETTINGS & THEMING ---
-st.set_page_config(page_title="Sorcery Sums", page_icon="🪄")
+st.set_page_config(page_title="Sorcery Sums", page_icon="🪄", layout="wide")
 
 # Autorefresh for Leaderboard
 try:
@@ -96,7 +96,6 @@ st.markdown(f"""
 
     img[src*="namefp.png"] {{
     width 120% !important;
-    max-width: 700px !important;
     display: block !important;
     margin: 0 auto -10px auto !important;
 }}
