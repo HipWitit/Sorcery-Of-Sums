@@ -110,6 +110,11 @@ st.markdown(f"""
         margin-top: 30px;
         position: relative;
         z-index: 10;
+        /* ADD THIS LINE BELOW */
+        font-family: 'Comic Sans MS', 'cursive', sans-serif !important; 
+        font-size: 20px !important;
+        font-weight: bold !important;
+    }
     }}
 
     /* 10. THE BIG MAGIC IMAGE BUTTON */
