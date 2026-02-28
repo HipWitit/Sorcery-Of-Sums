@@ -89,79 +89,57 @@ st.markdown(f"""
         background-color: #c6c7ff !important;
     }}
     
-    /* 8. NEW COMBINED HEADER POSITIONING */
+    /* 8. HEADER POSITIONING */
     div[data-testid="stImage"] {{
         margin-bottom: -45px;
         overflow: visible !important;
     }}
 
-    img[src*="1000037180"] {{
-        width: 140% !important;
-        max-width: none !important;
-        transform: scale(1.05);
-        display: block !important;
-        margin-left: -20% !important; 
-        margin-bottom: -40px !important;
-    }}
-
-    /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
-    div[data-testid="stTextInput"] {{
-        margin-top: 30px;
-        position: relative;
-        z-index: 10;
-    }}
-
-    /* --- REPAIRED BUTTON LOGIC --- */
+    /* --- THE ULTIMATE BUTTON FIX --- */
     
-    /* 1. Reset the Button Container */
+    /* Center all buttons */
     div.stButton {{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 20px 0;
+        text-align: center;
+        margin: 20px auto;
+        display: block;
     }}
 
-    /* 2. Global Button Styling */
+    /* Reset button defaults and apply sizing */
     div.stButton > button {{
-        border: none !important;
-        background-color: transparent !important;
-        background-repeat: no-repeat !important;
-        background-position: center !important;
-        background-size: contain !important;
         width: 280px !important;
         height: 120px !important;
-        min-height: 120px !important;
-        min-width: 280px !important;
+        background-color: transparent !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        border: none !important;
         box-shadow: none !important;
-        display: block !important;
-        color: transparent !important; /* Hide text fallback */
+        color: transparent !important; /* Hide fallback text */
         transition: transform 0.2s ease !important;
+        display: inline-block !important;
     }}
 
-    /* 3. The Login Button (Using aria-label for better compatibility) */
-    div.stButton > button[aria-label="Enter Realm"] {{
+    /* TARGET BY STREAMLIT KEY: login_btn */
+    div.stButton > button[data-testid="baseButton-secondary"]:has(p:contains("Enter Realm")),
+    div.stButton > button[key="login_btn"] {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
     }}
 
-    /* 4. The Cast Spell Button (Using part of the label string) */
-    div.stButton > button[aria-label*="Cast Spell"] {{
+    /* TARGET BY STREAMLIT KEY: cast_btn */
+    div.stButton > button[data-testid="baseButton-secondary"]:has(p:contains("Cast Spell")),
+    div.stButton > button[key="cast_btn"] {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png") !important;
     }}
 
-    /* 5. Interaction States */
+    /* Hover effects */
     div.stButton > button:hover {{
         transform: scale(1.05) !important;
-        background-color: rgba(255, 255, 255, 0.1) !important; /* Slight hint on hover */
+        background-color: transparent !important;
     }}
 
-    div.stButton > button:active {{
-        transform: scale(0.95) !important;
-    }}
-
-    /* 6. Ensure text stays hidden */
+    /* Completely hide the text P tag inside the button */
     div.stButton > button p {{
         display: none !important;
-        visibility: hidden !important;
     }}
 
     /* 12. Question Container Styling */
@@ -238,7 +216,7 @@ if "player_name" not in st.session_state:
     
     name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
 
-    # Label MUST match the aria-label used in CSS
+    # Important: 'key' here must match the CSS selector logic
     if st.button("Enter Realm", key="login_btn"):
         if name:
             st.session_state.player_name = name
@@ -349,7 +327,7 @@ with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
 user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
 
-# Label MUST match the partial string in the CSS [aria-label*="Cast Spell"]
+# Important: 'key' here must match the CSS selector logic
 if st.button("🪄 Cast Spell!", key="cast_btn"):
     try:
         if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
