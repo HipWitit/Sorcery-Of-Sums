@@ -242,7 +242,7 @@ if "player_name" not in st.session_state:
         st.write("✨ **Portal Opening...** ✨")
     
     try:
-        st.image("namefp.png", use_container_width=True)
+        st.image("namefp.png", use_container_width=False)
     except:
         st.write("Enter your name to begin your journey:")
 
