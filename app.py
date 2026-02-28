@@ -88,17 +88,17 @@ st.markdown(f"""
     div[role="radiogroup"] div[data-selection="true"] div {{
         background-color: #c6c7ff !important;
     }}
-             /* 1. Pull the top logo down */
+    
+    /* 8. SACRED LAYOUT POSITIONING */
     div[data-testid="stImage"] {{
         margin-bottom: -45px;
     }}
 
-    /* 2. Pull the name plate up */
     div[data-testid="stTextInput"] {{
         margin-top: -20px;
     }}
 
-    /* 3. The BIG Magic Image Button */
+    /* 9. THE BIG MAGIC IMAGE BUTTON */
     div.stButton > button {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
@@ -117,7 +117,7 @@ st.markdown(f"""
         display: none !important;
     }}
 
-    /* 4. Question Container Styling (For the game page) */
+    /* 10. Question Container Styling */
     .question-container {{
         background-color: white; 
         padding: 30px; 
@@ -130,19 +130,21 @@ st.markdown(f"""
         color: #7b7dbd !important;
     }}
 
+    /* THE MAGIC KEYFRAMES */
+    @keyframes floatUp {{
+        0% {{ transform: translateY(0) rotate(0deg); opacity: 1; }}
+        100% {{ transform: translateY(-110vh) rotate(360deg); opacity: 0; }}
+    }}
+
+    div[data-testid="stTextArea"] textarea {{
+        background-color: #b4a7d6 !important; 
         color: #d4ffea !important;           
         border-radius: 10px;
     }}
+    
     div[data-testid="stTextInput"] input {{
         background-color: #e6fff8 !important;
         color: #7b7dbd !important;
-    }}
-    .stButton>button {{ 
-        background-color: #c6c7ff; 
-        color: white; 
-        border-radius: 50px; 
-        width: 100%; 
-        font-weight: bold;
     }}
     </style>
     """, unsafe_allow_html=True)
