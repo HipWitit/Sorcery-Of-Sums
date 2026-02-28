@@ -6,7 +6,7 @@ import time
 import datetime
 import numpy as np
 import plotly.graph_objects as go 
-import streamlit.components.v1 as components # Required for the new star engine
+import streamlit.components.v1 as components 
 from streamlit_gsheets import GSheetsConnection
 
 # --- 1. SETTINGS & THEMING ---
@@ -71,7 +71,7 @@ st.markdown(f"""
     .success-box h2 {{
         color: #f2e2ff !important;
         text-shadow: 1px 1px 2px #7b7dbd;
-        margin: -100; 
+        margin: 0; 
         font-size: 24px;
     }}
 
@@ -89,12 +89,12 @@ st.markdown(f"""
         background-color: #c6c7ff !important;
     }}
     
-        /* 8. SACRED LAYOUT POSITIONING */
+    /* 8. SACRED LAYOUT POSITIONING */
     div[data-testid="stImage"] {{
         margin-bottom: -45px;
     }}
 
-    /* Resize and Center the "Enter your name" banner */
+    /* Banner Resize */
     img[src*="namefp.png"] {{
         width: 110% !important;
         display: block !important;
@@ -102,12 +102,13 @@ st.markdown(f"""
         margin-right: auto !important;
         margin-bottom: -10px !important; 
     }}
+
     /* 9. PULL THE NAME PLATE UP */
     div[data-testid="stTextInput"] {{
         margin-top: -20px;
     }}
 
-    /* 10. THE BIG MAGIC IMAGE BUTTON - UNIVERSAL FIX */
+    /* 10. THE BIG MAGIC IMAGE BUTTON */
     div.stButton > button {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
@@ -119,7 +120,7 @@ st.markdown(f"""
         background-color: transparent !important;
         box-shadow: none !important;
         display: block !important;
-        margin: -40px auto 0 auto !important; 
+        margin: -25px auto 0 auto !important; 
         transition: transform 0.2s ease;
     }}
 
@@ -127,11 +128,10 @@ st.markdown(f"""
         transform: scale(1.05);
     }}
 
-    /* Hide the default text labels for ALL buttons */
+    /* Hide default button text */
     div.stButton > button p {{
         display: none !important;
     }}
-    
 
     /* 11. Question Container Styling */
     .question-container {{
@@ -143,41 +143,6 @@ st.markdown(f"""
         margin-bottom: 20px;
     }}
 
-
-
-    /* 9. THE BIG MAGIC IMAGE BUTTON - UNIVERSAL FIX */
-    div.stButton > button {{
-        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
-        background-size: contain !important;
-        background-repeat: no-repeat !important;
-        background-position: center !important;
-        width: 200px !important;
-        height: 100px !important; /* Increased height to force it large */
-        border: none !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-        margin-top: -100px !important;
-        transition: transform 0.2s ease;
-    }}
-
-    div.stButton > button:hover {{
-        transform: scale(1.05); /* Slight grow on hover */
-    }}
-
-    /* Hide the default text labels for ALL buttons */
-    div.stButton > button p {{
-        display: none !important;
-    }}
-
-    /* 10. Question Container Styling */
-    .question-container {{
-        background-color: white; 
-        padding: 30px; 
-        border-radius: 20px; 
-        border: 4px solid #c6c7ff; 
-        text-align: center; 
-        margin-bottom: 20px;
-    }}
     .question-container h1, .question-container h3 {{
         color: #7b7dbd !important;
     }}
@@ -201,7 +166,7 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 2. THE SACRED STAR EFFECT (IFRAME PORTAL) ---
+# --- 2. THE SACRED STAR EFFECT ---
 def pastel_star_effect():
     components.html(f"""
     <script>
@@ -219,7 +184,6 @@ def pastel_star_effect():
         star.style.pointerEvents = "none";
         star.style.animation = "floatUp 2.5s ease-out forwards";
         window.parent.document.body.appendChild(star);
-        
         setTimeout(() => star.remove(), 2500);
     }}
     </script>
@@ -248,7 +212,7 @@ if "player_name" not in st.session_state:
             st.rerun()
     st.stop()
 
-# --- 5. MATH LOGIC WITH PLOTLY INTERACTIVITY ---
+# --- 5. MATH LOGIC ---
 def generate_spell(unit, level):
     prog = int(level) - 9 
     fig = None
@@ -303,7 +267,7 @@ def generate_spell(unit, level):
     
     return "Scroll not found", 0, "", None
 
-# --- 6. SIDEBAR: SELECTION & LEADERBOARD ---
+# --- 6. SIDEBAR ---
 st.sidebar.title("📜 Choose Your Scroll")
 unit_choice = st.sidebar.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
 level_choice = st.sidebar.radio("Select Grade Level", ["10", "11", "12"])
