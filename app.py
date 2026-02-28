@@ -105,7 +105,7 @@ st.markdown(f"""
         background-repeat: no-repeat !important;
         background-position: center !important;
         width: 400px !important;
-        height: 20px !important; /* Increased height to force it large */
+        height: 200px !important; /* Increased height to force it large */
         border: none !important;
         background-color: transparent !important;
         box-shadow: none !important;
