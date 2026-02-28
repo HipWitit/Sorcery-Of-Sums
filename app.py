@@ -111,50 +111,54 @@ st.markdown(f"""
         z-index: 10;
     }}
 
-    /* 10. THE LOGIN BUTTON (Enter Realm) */
-    div.stButton > button[aria-label="Enter Realm"] {{
-        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
-        background-size: contain !important;
-        background-repeat: no-repeat !important;
-        background-position: center !important;
-        width: 280px !important;
-        height: 120px !important;
-        min-height: 120px !important;
-        min-width: 280px !important;
-        border: none !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-        display: block !important;
-        margin: 10px auto !important; 
-        transition: transform 0.2s ease;
+    /* --- UPDATED BUTTON LOGIC (FIXED) --- */
+    /* Container centering */
+    div.stButton {{
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        margin: 10px auto;
     }}
 
-    /* 11. THE CAST SPELL BUTTON (🪄 Cast Spell!) */
-    div.stButton > button[aria-label="🪄 Cast Spell!"] {{
-        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png") !important;
-        background-size: contain !important;
+    /* Base Button Styling */
+    div.stButton > button {{
+        border: none !important;
+        background-color: transparent !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
+        background-size: contain !important;
         width: 280px !important;
         height: 120px !important;
         min-height: 120px !important;
         min-width: 280px !important;
-        border: none !important;
-        background-color: transparent !important;
         box-shadow: none !important;
-        display: block !important;
-        margin: 0 auto !important; 
-        transition: transform 0.2s ease;
+        transition: transform 0.2s ease !important;
+    }}
+
+    /* Specific Image for 'Enter Realm' */
+    div.stButton > button:has(div[data-testid="stMarkdownContainer"] p:contains("Enter Realm")) {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
+    }}
+
+    /* Specific Image for 'Cast Spell' */
+    div.stButton > button:has(div[data-testid="stMarkdownContainer"] p:contains("Cast Spell")) {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png") !important;
     }}
 
     div.stButton > button:hover {{
-        transform: scale(1.05);
+        transform: scale(1.05) !important;
+        background-color: transparent !important;
     }}
 
-    /* HIDE DEFAULT BUTTON TEXT ON BOTH */
-    div.stButton > button p {{
+    div.stButton > button:active {{
+        transform: scale(0.95) !important;
+    }}
+
+    /* Hide the original text */
+    div.stButton p {{
         display: none !important;
     }}
+    /* ------------------------------------ */
 
     /* 12. Question Container Styling */
     .question-container {{
