@@ -88,7 +88,7 @@ st.markdown(f"""
     div[role="radiogroup"] div[data-selection="true"] div {{
         background-color: #c6c7ff !important;
     }}
-         /* 1. Pull the top logo down */
+             /* 1. Pull the top logo down */
     div[data-testid="stImage"] {{
         margin-bottom: -45px;
     }}
@@ -100,42 +100,24 @@ st.markdown(f"""
 
     /* 3. The BIG Magic Image Button */
     div.stButton > button {{
-        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png");
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        width: 100%;
-        height: 120px; /* Increased from 80px for extra chonk */
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        width: 100% !important;
+        height: 150px !important; 
         border: none !important;
         background-color: transparent !important;
         box-shadow: none !important;
-        margin-top: -10px;
+        margin-top: -10px !important;
     }}
 
     /* Hide the default text labels */
     div.stButton > button p {{
-        display: none;
+        display: none !important;
     }}
 
-        box-shadow: none !important;
-        margin-top: -15px;
-    }}
-
-    /* Hide the default button text */
-    div.stButton > button p {{
-        display: none;
-    }}
-
-    /* 4. Question Container Styling */
-    .question-container {{
-        background-color: white; 
-        padding: 30px; 
-        border-radius: 20px; 
-        border: 4px solid #c6c7ff; 
-        text-align: center; 
-        margin-bottom: 20px;
-    }}
-
+    /* 4. Question Container Styling (For the game page) */
     .question-container {{
         background-color: white; 
         padding: 30px; 
@@ -148,14 +130,6 @@ st.markdown(f"""
         color: #7b7dbd !important;
     }}
 
-    /* THE MAGIC KEYFRAMES */
-    @keyframes floatUp {{
-        0% {{ transform: translateY(0) rotate(0deg); opacity: 1; }}
-        100% {{ transform: translateY(-110vh) rotate(360deg); opacity: 0; }}
-    }}
-
-    div[data-testid="stTextArea"] textarea {{
-        background-color: #b4a7d6 !important; 
         color: #d4ffea !important;           
         border-radius: 10px;
     }}
