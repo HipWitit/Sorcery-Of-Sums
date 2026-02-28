@@ -97,41 +97,35 @@ st.markdown(f"""
     div[data-testid="stTextInput"] {{
         margin-top: -20px;
     }}
-   st.markdown("""
-<style>
-/* Target the button specifically */
-div.stButton > button {
-    background-image: url("app/static/assets/images/enterrealm.png"); /* Updated Path */
-    background-size: contain; /* Changed to contain so it doesn't crop */
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 100%; /* Spans the container width like your other images */
-    height: 80px; /* Adjust to match your image aspect ratio */
-    border: none;
-    background-color: transparent !important; /* Removes the grey default box */
-    box-shadow: none !important; /* Removes the hover shadow */
-}
 
-/* Hide the default text labels */
-div.stButton > button p {
-    display: none;
-}
+    /* 3. The Magic Image Button (Enter Realm) */
+    div.stButton > button {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        width: 100%;
+        height: 80px;
+        border: none !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        margin-top: -15px;
+    }}
 
-/* Hover effect - optional but nice */
-div.stButton > button:hover {
-    transform: scale(1.05);
-    transition: 0.3s;
-    background-color: transparent !important;
-}
-</style>
-""", unsafe_allow_html=True)
+    /* Hide the default button text */
+    div.stButton > button p {{
+        display: none;
+    }}
 
-if st.button("Enter Realm"):
-    if name: # Check if name is filled
-        st.session_state.player_name = name
-        st.switch_page("pages/realm.py")
-
-    
+    /* 4. Question Container Styling */
+    .question-container {{
+        background-color: white; 
+        padding: 30px; 
+        border-radius: 20px; 
+        border: 4px solid #c6c7ff; 
+        text-align: center; 
+        margin-bottom: 20px;
+    }}
 
     .question-container {{
         background-color: white; 
