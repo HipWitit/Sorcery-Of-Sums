@@ -339,7 +339,7 @@ with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
 user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
 
-if st.button("🪄 Cast Spell!"):
+if st.button("🪄 Cast Spell!", key="cast_btn"):
     try:
         if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
             pastel_star_effect()
