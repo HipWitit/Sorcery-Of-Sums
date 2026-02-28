@@ -19,6 +19,12 @@ try:
 except:
     pass
 
+# Decide which button image to use based on whether they've entered the realm!
+if "player_name" not in st.session_state:
+    button_image = "https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png"
+else:
+    button_image = "https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png"
+
 st.markdown(f"""
     <style>
     /* 1. Main Background */
@@ -114,7 +120,7 @@ st.markdown(f"""
 
     /* 10. THE BIG MAGIC IMAGE BUTTON */
     div.stButton > button {{
-        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
+        background-image: url("{button_image}") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
