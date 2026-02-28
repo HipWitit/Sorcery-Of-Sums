@@ -94,11 +94,15 @@ st.markdown(f"""
         margin-bottom: -45px;
     }}
 
-    /* Resize and Center the "Enter your name" banner */
+       /* Resize and Center the "Enter your name" banner */
     img[src*="namefp.png"] {{
-        width: 110% !important;
+        width: 95% !important;
+        display: block !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
         margin-bottom: -10px !important; 
     }}
+
 
     /* 9. PULL THE NAME PLATE UP */
     div[data-testid="stTextInput"] {{
