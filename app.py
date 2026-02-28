@@ -117,13 +117,15 @@ st.markdown(f"""
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
-        width: 275px !important;
-        height: 150px !important;
+        width: 280px !important;
+        height: 120px !important;
+        min-height: 120px !important;
+        min-width: 280px !important;
         border: none !important;
         background-color: transparent !important;
         box-shadow: none !important;
         display: block !important;
-        margin: -40px auto 0 auto !important; 
+        margin: 10px auto !important; 
         transition: transform 0.2s ease;
     }}
 
@@ -133,8 +135,10 @@ st.markdown(f"""
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
-        width: 275px !important;
-        height: 150px !important;
+        width: 280px !important;
+        height: 120px !important;
+        min-height: 120px !important;
+        min-width: 280px !important;
         border: none !important;
         background-color: transparent !important;
         box-shadow: none !important;
@@ -226,7 +230,6 @@ if "player_name" not in st.session_state:
     
     name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
 
-    # Added key="login_btn" for CSS targeting
     if st.button("Enter Realm", key="login_btn"):
         if name:
             st.session_state.player_name = name
@@ -337,7 +340,6 @@ with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
 st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
 user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
 
-# Added key="cast_btn" for CSS targeting
 if st.button("🪄 Cast Spell!", key="cast_btn"):
     try:
         if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
