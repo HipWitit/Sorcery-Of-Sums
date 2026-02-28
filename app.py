@@ -102,30 +102,24 @@ st.markdown(f"""
         margin-right: auto !important;
         margin-bottom: -10px !important; 
     }}
-
-
     /* 9. PULL THE NAME PLATE UP */
     div[data-testid="stTextInput"] {{
         margin-top: -20px;
     }}
 
-    /* 10. THE BIG MAGIC IMAGE BUTTON */
+    /* 10. THE BIG MAGIC IMAGE BUTTON - UNIVERSAL FIX */
     div.stButton > button {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
-        width: 200px !important;
-        height: 100px !important;
+        width: 220px !important;
+        height: 110px !important;
         border: none !important;
         background-color: transparent !important;
         box-shadow: none !important;
-        
-        /* Centering and Nudging Up */
         display: block !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        margin-top: -30px !important; 
+        margin: -40px auto 0 auto !important; 
         transition: transform 0.2s ease;
     }}
 
@@ -133,10 +127,11 @@ st.markdown(f"""
         transform: scale(1.05);
     }}
 
-    /* Hide default button text */
+    /* Hide the default text labels for ALL buttons */
     div.stButton > button p {{
         display: none !important;
     }}
+    
 
     /* 11. Question Container Styling */
     .question-container {{
