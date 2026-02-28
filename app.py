@@ -150,6 +150,7 @@ st.markdown(f"""
         border: 4px solid #c6c7ff; 
         text-align: center; 
         margin-bottom: 20px;
+        margin-top: 60px; /* Pushes the box down so it doesn't overlap the image! */
     }}
 
     .question-container h1, .question-container h3 {{
