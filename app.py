@@ -112,8 +112,8 @@ st.markdown(f"""
         z-index: 10;
     }}
 
-    /* 10. LOGIN BUTTON (ONLY WHEN TEXT IS "Enter Realm") */
-    button:has(p:contains("Enter Realm")) {{
+        /* 10. THE LOGIN BUTTON (Enter Realm) */
+    div.stButton > button[aria-label="Enter Realm"] {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
@@ -125,11 +125,10 @@ st.markdown(f"""
         box-shadow: none !important;
         display: block !important;
         margin: -40px auto 0 auto !important; 
-        transition: transform 0.2s ease;
     }}
 
-    /* 11. CAST SPELL BUTTON (ONLY WHEN TEXT CONTAINS "Cast Spell") */
-    button:has(p:contains("Cast Spell")) {{
+    /* 11. THE CAST SPELL BUTTON (🪄 Cast Spell!) */
+    div.stButton > button[aria-label="🪄 Cast Spell!"] {{
         background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
@@ -141,8 +140,13 @@ st.markdown(f"""
         box-shadow: none !important;
         display: block !important;
         margin: 0 auto !important; 
-        transition: transform 0.2s ease;
     }}
+
+    /* HIDE THE DEFAULT BUTTON TEXT */
+    .stButton > button p {{
+        display: none !important;
+    }}
+
 
     /* GLOBAL BUTTON HOVER & TEXT HIDE */
     div.stButton > button:hover {{
