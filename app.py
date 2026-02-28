@@ -105,11 +105,17 @@ st.markdown(f"""
         margin-bottom: -40px !important;
     }}
 
-    /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
-    div[data-testid="stTextInput"] {{
-        margin-top: 30px;
-        position: relative;
-        z-index: 10;
+        /* 9. PULL THE NAME PLATE UP & CHANGE FONT */
+    div[data-testid="stTextInput"] input 
+        background-color: #e6fff8 !important;
+        color: #7b7dbd !important;
+        text-align: center;
+        
+        /* ADD THIS LINE BELOW */
+        font-family: 'Comic Sans MS', 'cursive', sans-serif !important; 
+        font-size: 20px !important;
+        font-weight: bold !important;
+
     }}
 
     /* 10. THE BIG MAGIC IMAGE BUTTON */
