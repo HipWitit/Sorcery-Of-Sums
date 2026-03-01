@@ -12,10 +12,6 @@ from streamlit_gsheets import GSheetsConnection
 # --- 1. SETTINGS & THEMING ---
 st.set_page_config(page_title="Sorcery Sums", page_icon="🪄", layout="centered")
 
-# Initialize Session States for the Journey stages
-if "app_stage" not in st.session_state:
-    st.session_state.app_stage = "login"
-
 # Autorefresh for Leaderboard
 try:
     from streamlit_autorefresh import st_autorefresh
@@ -23,8 +19,8 @@ try:
 except:
     pass
 
-# Decide which button image to use based on the stage
-if st.session_state.app_stage == "login":
+# Decide which button image to use based on whether they've entered the realm!
+if "player_name" not in st.session_state:
     button_image = "https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png"
 else:
     button_image = "https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png"
@@ -40,7 +36,7 @@ st.markdown(f"""
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* 3. PINK PODS FOR SELECTION (Original) */
+    /* 3. PINK PODS FOR SELECTION */
     div[data-testid="stSelectbox"], 
     div[role="radiogroup"] {{
         background-color: #ffdef2 !important;
@@ -107,66 +103,61 @@ st.markdown(f"""
         fill: #7b7dbd !important; 
     }}
 
-    /* --- THE 12 RECTANGULAR SUBJECT BUTTONS (New Selection Stage) --- */
-    /* We use 'secondary' buttons for the grid selection */
-    div.stButton > button[kind="secondary"] {{
-        background-color: transparent !important;
-        border: none !important;
-        color: transparent !important;
-        background-size: contain !important;
-        background-repeat: no-repeat !important;
-        background-position: center !important;
-        width: 100% !important;
-        height: 85px !important;
-        transition: transform 0.2s ease;
-        box-shadow: none !important;
-    }}
-    div.stButton > button[kind="secondary"]:hover {{
-        transform: scale(1.05);
-    }}
-
-    /* Mapping the 12 Rectangles */
-    button[key="alg10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/algebra10.png") !important; }}
-    button[key="alg11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/algebra11.png") !important; }}
-    button[key="alg12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/algebra12.png") !important; }}
+    /* --- CUSTOM IMAGE RADIO BUTTONS --- */
     
-    button[key="quad10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/quadratics10.png") !important; }}
-    button[key="quad11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/quadratics11.png") !important; }}
-    button[key="quad12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/quadratics12.png") !important; }}
+    /* 1. Completely hide Streamlit's default drawn circle */
+    div[role="radiogroup"] div[role="radio"] > div:first-child {{
+        display: none !important;
+    }}
+    
+    /* 2. Hide the default Streamlit text for the radio options */
+    div[role="radiogroup"] label[data-baseweb="radio"] p {{
+        display: none !important;
+    }}
 
-    button[key="func10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/functions10.png") !important; }}
-    button[key="func11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/functions11.png") !important; }}
-    button[key="func12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/functions12.png") !important; }}
-
-    button[key="geo10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/geometry10.png") !important; }}
-    button[key="geo11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/geometry11.png") !important; }}
-    button[key="geo12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/geometry12.png") !important; }}
-
-    /* --- THE BIG MAGIC IMAGE BUTTON (Login/Cast) --- */
-    div.stButton > button:not([kind="secondary"]) {{
-        background-image: url("{button_image}") !important;
+    /* 3. Global settings to turn the radio wrapper into our image container */
+    div[role="radiogroup"] div[role="radio"] {{
+        background-color: transparent !important;
+        border: none !important;
+        width: 60px !important;  
+        height: 60px !important; 
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
-        width: 275px !important;
-        height: 300px !important;
-        border: none !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-        display: block !important;
-        margin: -120px auto 0 auto !important; 
-        transition: transform 0.2s ease;
+        margin-bottom: 5px; 
     }}
 
-    div.stButton > button:hover {{ transform: scale(1.05); }}
-    div.stButton > button p {{ display: none !important; }}
+    /* Grade 10 (Option 1) */
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(1) div[role="radio"] {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/10pink.png") !important;
+    }}
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(1) div[role="radio"][aria-checked="true"] {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/10periwinkle.png") !important;
+    }}
 
+    /* Grade 11 (Option 2) */
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(2) div[role="radio"] {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/11pink.png") !important;
+    }}
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(2) div[role="radio"][aria-checked="true"] {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/11periwinkle.png") !important;
+    }}
+
+    /* Grade 12 (Option 3) */
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(3) div[role="radio"] {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/12pink.png") !important;
+    }}
+    div[role="radiogroup"] label[data-baseweb="radio"]:nth-of-type(3) div[role="radio"][aria-checked="true"] {{
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/12periwinkle.png") !important;
+    }}
+    
     /* 8. NEW COMBINED HEADER POSITIONING */
     div[data-testid="stImage"] {{
         margin-bottom: -45px;
         overflow: visible !important;
     }}
 
+    /* Targets your new combined login image (sorcerersums.png) */
     img[src*="1000037180"] {{
         width: 140% !important;
         max-width: none !important;
@@ -183,6 +174,30 @@ st.markdown(f"""
         z-index: 10;
     }}
 
+    /* 10. THE BIG MAGIC IMAGE BUTTON */
+    div.stButton > button {{
+        background-image: url("{button_image}") !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        width: 275px !important;
+        height: 300px !important;
+        border: none !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        display: block !important;
+        margin: -120px auto 0 auto !important; 
+        transition: transform 0.2s ease;
+    }}
+
+    div.stButton > button:hover {{
+        transform: scale(1.05);
+    }}
+
+    div.stButton > button p {{
+        display: none !important;
+    }}
+
     /* 11. Question Container Styling */
     .question-container {{
         background-color: white; 
@@ -191,9 +206,12 @@ st.markdown(f"""
         border: 4px solid #c6c7ff; 
         text-align: center; 
         margin-bottom: 20px;
-        margin-top: 60px;
+        margin-top: 60px; /* Pushes the box down so it doesn't overlap the image! */
     }}
-    .question-container h1, .question-container h3 {{ color: #7b7dbd !important; }}
+
+    .question-container h1, .question-container h3 {{
+        color: #7b7dbd !important;
+    }}
 
     /* THE MAGIC KEYFRAMES */
     @keyframes floatUp {{
@@ -246,14 +264,31 @@ def pastel_star_effect():
 # --- 3. DATABASE CONNECTION ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 
-# --- 4. MATH LOGIC (Untouched original logic) ---
+# --- 4. LOGIN SCREEN ---
+if "player_name" not in st.session_state:
+    try:
+        # Using the new combined image you provided
+        st.image("sorcerersums.png", use_container_width=False)
+    except:
+        st.write("✨ **Portal Opening...** ✨")
+    
+    name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
+
+    if st.button("Enter Realm"):
+        if name:
+            st.session_state.player_name = name
+            st.rerun()
+    st.stop()
+
+# --- 5. MATH LOGIC ---
 def generate_spell(unit, level):
     prog = int(level) - 9 
     fig = None
     
     def apply_sacred_style(fig):
         fig.update_layout(
-            plot_bgcolor='white', paper_bgcolor='white',
+            plot_bgcolor='white',
+            paper_bgcolor='white',
             margin=dict(l=20, r=20, t=20, b=20),
             xaxis=dict(showgrid=True, gridcolor='lightgray', zeroline=True, zerolinecolor='black'),
             yaxis=dict(showgrid=True, gridcolor='lightgray', zeroline=True, zerolinecolor='black'),
@@ -300,114 +335,70 @@ def generate_spell(unit, level):
     
     return "Scroll not found", 0, "", None
 
-# --- STAGE 1: LOGIN SCREEN ---
-if st.session_state.app_stage == "login":
-    try:
-        st.image("sorcerersums.png", use_container_width=False)
-    except:
-        st.write("✨ **Portal Opening...** ✨")
-    
-    name = st.text_input("", placeholder="Type your name here...", key="login_input", label_visibility="collapsed")
+# --- 6. SIDEBAR ---
+st.sidebar.title("📜 Choose Your Scroll")
+unit_choice = st.sidebar.selectbox("Select Subject", ["Algebra", "Quadratics", "Functions", "Geometry"])
+level_choice = st.sidebar.radio("Select Grade Level", ["10", "11", "12"])
 
-    if st.button("Enter Realm"):
-        if name:
-            st.session_state.player_name = name
-            st.session_state.app_stage = "selection"
+if ("last_unit" not in st.session_state or 
+    st.session_state.last_unit != unit_choice or 
+    st.session_state.last_level != level_choice):
+    st.session_state.last_unit = unit_choice
+    st.session_state.last_level = level_choice
+    q, ans, img, pdf = generate_spell(unit_choice, level_choice)
+    st.session_state.current_q, st.session_state.target_ans = q, ans
+    st.session_state.current_image, st.session_state.current_plot = img, pdf
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("# 🏆 Hall of Wizards")
+try:
+    scores_df = conn.read(ttl=0)
+    if not scores_df.empty:
+        scores_df['Date'] = pd.to_datetime(scores_df['Date'])
+        now = datetime.datetime.now()
+        t1, t2, t3 = st.sidebar.tabs(["Week", "Month", "Year"])
+        with t1:
+            w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
+            if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+except:
+    st.sidebar.write("The scrolls are sleeping.")
+
+# --- 7. MAIN INTERFACE ---
+try:
+    st.image("Sorcery Sums.png")
+except:
+    st.title("Sorcery Sums")
+
+st.markdown(f"""
+    <div class="question-container">
+        <h3>Grade {level_choice} {unit_choice}</h3>
+        <h1>{st.session_state.current_q}</h1>
+    </div>
+""", unsafe_allow_html=True)
+
+with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
+    st.write(st.session_state.get('current_image', 'No visual found.'))
+    if st.session_state.current_plot is not None:
+        st.plotly_chart(st.session_state.current_plot, use_container_width=True, config={'displayModeBar': False})
+
+st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
+user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
+
+if st.button("🪄 Cast Spell!"):
+    try:
+        if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
+            pastel_star_effect()
+            st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
+            time.sleep(.2) 
+            try:
+                df = conn.read(ttl=0)
+                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                conn.update(data=pd.concat([df, new_row], ignore_index=True))
+            except: pass
+            
+            q, ans, img, pdf = generate_spell(unit_choice, level_choice)
+            st.session_state.current_q, st.session_state.target_ans = q, ans
+            st.session_state.current_image, st.session_state.current_plot = img, pdf
             st.rerun()
-    st.stop()
-
-# --- STAGE 2: THE SCROLL ROOM (Subject Selection Grid) ---
-elif st.session_state.app_stage == "selection":
-    try:
-        st.image("choose_subject_title.png")
-    except:
-        st.title("Choose Your Subject")
-    
-    # Define Subjects and their keys for CSS mapping
-    grid_items = [
-        ("Algebra", "alg"), ("Quadratics", "quad"), 
-        ("Functions", "func"), ("Geometry", "geo")
-    ]
-
-    for label, sub_key in grid_items:
-        st.markdown(f"### {label}")
-        cols = st.columns(3)
-        for i, grade in enumerate(["10", "11", "12"]):
-            btn_key = f"{sub_key}{grade}"
-            # These buttons trigger the game stage and set selection variables
-            if cols[i].button(f"{label} {grade}", key=btn_key, kind="secondary"):
-                st.session_state.unit_choice = label
-                st.session_state.level_choice = grade
-                # Force initial question generation
-                q, ans, img, pdf = generate_spell(label, grade)
-                st.session_state.current_q, st.session_state.target_ans = q, ans
-                st.session_state.current_image, st.session_state.current_plot = img, pdf
-                st.session_state.app_stage = "game"
-                st.rerun()
-
-# --- STAGE 3: THE SPELL CHAMBER (The Game) ---
-elif st.session_state.app_stage == "game":
-
-    # --- 6. SIDEBAR (Original Leaderboard Logic) ---
-    st.sidebar.title("📜 Realm Info")
-    st.sidebar.write(f"Wizard: **{st.session_state.player_name}**")
-    
-    if st.sidebar.button("⬅ Back to Scroll Room"):
-        st.session_state.app_stage = "selection"
-        st.rerun()
-
-    st.sidebar.markdown("---")
-    st.sidebar.markdown("# 🏆 Hall of Wizards")
-    try:
-        scores_df = conn.read(ttl=0)
-        if not scores_df.empty:
-            scores_df['Date'] = pd.to_datetime(scores_df['Date'])
-            now = datetime.datetime.now()
-            t1, t2, t3 = st.sidebar.tabs(["Week", "Month", "Year"])
-            with t1:
-                w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
-                if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-    except:
-        st.sidebar.write("The scrolls are sleeping.")
-
-    # --- 7. MAIN INTERFACE (Original Gameplay Logic) ---
-    try:
-        st.image("Sorcery Sums.png")
-    except:
-        st.title("Sorcery Sums")
-
-    st.markdown(f"""
-        <div class="question-container">
-            <h3>Grade {st.session_state.level_choice} {st.session_state.unit_choice}</h3>
-            <h1>{st.session_state.current_q}</h1>
-        </div>
-    """, unsafe_allow_html=True)
-
-    with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
-        st.write(st.session_state.get('current_image', 'No visual found.'))
-        if st.session_state.current_plot is not None:
-            st.plotly_chart(st.session_state.current_plot, use_container_width=True, config={'displayModeBar': False})
-
-    st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
-    user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
-
-    if st.button("🪄 Cast Spell!"):
-        try:
-            if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
-                pastel_star_effect()
-                st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
-                time.sleep(.2) 
-                try:
-                    df = conn.read(ttl=0)
-                    new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
-                    conn.update(data=pd.concat([df, new_row], ignore_index=True))
-                except: pass
-                
-                # Update for next question
-                q, ans, img, pdf = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
-                st.session_state.current_q, st.session_state.target_ans = q, ans
-                st.session_state.current_image, st.session_state.current_plot = img, pdf
-                st.rerun()
-            else: st.error("The magic failed!")
-        except: st.warning("Enter a number!")
-
+        else: st.error("The magic failed!")
+    except: st.warning("Enter a number!")
