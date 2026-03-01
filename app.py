@@ -8,7 +8,7 @@ import numpy as np
 import plotly.graph_objects as go 
 import streamlit.components.v1 as components 
 from streamlit_gsheets import GSheetsConnection
-import sympy as sp 
+import sympy as sp # Added SymPy for the Altar
 
 # --- 1. SETTINGS & THEMING ---
 st.set_page_config(page_title="Cypher Lite", page_icon="🪄", layout="centered")
@@ -24,7 +24,7 @@ try:
 except:
     pass
 
-# Determine the main magic button asset based on stage 
+# Determine the main magic button asset based on stage using your original working links
 if st.session_state.app_stage == "login":
     button_image = "https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png"
 else:
@@ -67,13 +67,15 @@ st.markdown(f"""
     div.element-container:has(.beacon) {{
         display: none !important;
     }}
-
     /* --- THE RECTANGULAR & MAGIC BUTTON BASE --- */
+    
+    /* 1. Remove max-width from the Streamlit wrapper div */
     div[data-testid="stElementContainer"]:has(.beacon) + div,
     div.element-container:has(.beacon) + div {{
         max-width: none !important;
     }}
 
+    /* 2. Style the actual buttons to break out of the columns */
     div[data-testid="stElementContainer"]:has(.beacon) + div button,
     div.element-container:has(.beacon) + div button {{
         background-color: transparent !important;
@@ -82,10 +84,10 @@ st.markdown(f"""
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
-        width: 125% !important;       
-        max-width: none !important;   
-        margin-left: -12.5% !important; 
-        height: 110px !important;     
+        width: 1400% !important;       /* Expand beyond the tight column */
+        max-width: none !important;   /* YOUR TRICK: Force it to ignore limits */
+        margin-left: -125% !important; /* Perfectly center the oversized button */
+        height: 110px !important;     /* Adjusted to fit the wider aspect ratio */
         box-shadow: none !important;
         transition: transform 0.2s ease;
         display: block !important;
@@ -98,33 +100,32 @@ st.markdown(f"""
 
     div[data-testid="stElementContainer"]:has(.beacon) + div button:hover,
     div.element-container:has(.beacon) + div button:hover {{
-        transform: scale(1.08); 
-    }}
+        transform: scale(1.08); /* Slightly larger hover pop */
 
-    /* Force Algebra 11 to match */
-    div[data-testid="stElementContainer"]:has(#alg11) + div button,
-    div.element-container:has(#alg11) + div button {{ 
-        background-size: 85% !important; 
     }}
 
     /* --- MAP THE EXACT IMAGES TO THE BEACON IDs --- */
+    /* Algebra */
     div.element-container:has(#alg10) + div button, div[data-testid="stElementContainer"]:has(#alg10) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/algebra10.png") !important; }}
     div.element-container:has(#alg11) + div button, div[data-testid="stElementContainer"]:has(#alg11) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/algebra11.png") !important; }}
     div.element-container:has(#alg12) + div button, div[data-testid="stElementContainer"]:has(#alg12) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/algebra12.png") !important; }}
 
+    /* Quadratics */
     div.element-container:has(#quad10) + div button, div[data-testid="stElementContainer"]:has(#quad10) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/quadratics10.png") !important; }}
     div.element-container:has(#quad11) + div button, div[data-testid="stElementContainer"]:has(#quad11) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/quadratics11.png") !important; }}
     div.element-container:has(#quad12) + div button, div[data-testid="stElementContainer"]:has(#quad12) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/quadratics12.png") !important; }}
 
+    /* Functions */
     div.element-container:has(#func10) + div button, div[data-testid="stElementContainer"]:has(#func10) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/function10.png") !important; }}
     div.element-container:has(#func11) + div button, div[data-testid="stElementContainer"]:has(#func11) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/functions11.png") !important; }}
     div.element-container:has(#func12) + div button, div[data-testid="stElementContainer"]:has(#func12) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/functions12.png") !important; }}
 
+    /* Geometry */
     div.element-container:has(#geo10) + div button, div[data-testid="stElementContainer"]:has(#geo10) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/geometry10.png") !important; }}
     div.element-container:has(#geo11) + div button, div[data-testid="stElementContainer"]:has(#geo11) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/geometry11.png") !important; }}
     div.element-container:has(#geo12) + div button, div[data-testid="stElementContainer"]:has(#geo12) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/geometry12.png") !important; }}
 
-    /* --- THE BIG MAGIC BUTTONS --- */
+    /* --- THE BIG MAGIC BUTTONS (Enter Realm / Cast Spell) --- */
     div.element-container:has(#magic_btn) + div button, div[data-testid="stElementContainer"]:has(#magic_btn) + div button {{
         background-image: url("{button_image}") !important;
         width: 275px !important;
@@ -132,6 +133,7 @@ st.markdown(f"""
         margin: -120px auto 0 auto !important; 
     }}
 
+    /* 8. NEW COMBINED HEADER POSITIONING */
     div[data-testid="stImage"] {{ margin-bottom: -45px; overflow: visible !important; }}
     img[src*="1000037180"], img[src*="sorcerersums.png"] {{
         width: 140% !important; max-width: none !important;
@@ -139,15 +141,23 @@ st.markdown(f"""
         margin-left: -20% !important; margin-bottom: -40px !important;
     }}
 
+    /* Selection Page Title Tweaks */
     img[src*="schoolstudy.png"] {{
         width: 100% !important; max-width: 100% !important;
-        transform: none !important; margin-left: 0 !important; 
-        margin-top: -30px !important; margin-bottom: -15px !important;
+        transform: none !important; margin-left: 0 !important; margin-bottom: 40px !important;
     }}
 
+    /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
     div[data-testid="stTextInput"] {{ margin-top: 30px; position: relative; z-index: 10; }}
 
-    /* --- ALCHEMICAL ALTAR CSS --- */
+    /* 10. Question Container Styling */
+    .question-container {{
+        background-color: white; padding: 30px; border-radius: 20px; 
+        border: 4px solid #c6c7ff; text-align: center; margin-bottom: 20px; margin-top: 60px;
+    }}
+    .question-container h1, .question-container h3 {{ color: #7b7dbd !important; }}
+
+    /* --- 11. ALCHEMICAL ALTAR CSS --- */
     .equation-container {{
         background-color: white; padding: 40px; border-radius: 20px; 
         border: 5px solid #c6c7ff; text-align: center; margin-top: 30px; margin-bottom: 30px;
@@ -155,12 +165,8 @@ st.markdown(f"""
     .equation-text {{ font-size: 40px; color: #7b7dbd !important; font-weight: bold; }}
     div[data-testid="stForm"] {{ background-color: #eecbff; padding: 20px; border-radius: 15px; border: 2px solid #b4a7d6; margin-bottom: 20px;}}
 
-    .question-container {{
-        background-color: white; padding: 30px; border-radius: 20px; 
-        border: 4px solid #c6c7ff; text-align: center; margin-bottom: 20px; margin-top: 60px;
-    }}
-    .question-container h1, .question-container h3 {{ color: #7b7dbd !important; }}
 
+    /* THE MAGIC KEYFRAMES */
     @keyframes floatUp {{
         0% {{ transform: translateY(0) rotate(0deg); opacity: 1; }}
         100% {{ transform: translateY(-110vh) rotate(360deg); opacity: 0; }}
@@ -278,29 +284,34 @@ def generate_spell(unit, level):
     return "Scroll not found", 0, "", None, None, None
 
 
-# --- GLOBAL NAVIGATION SIDEBAR (If not logging in) ---
+# --- GLOBALLY RENDER LEADERBOARD IN SIDEBAR (If not logging in) ---
 if st.session_state.app_stage != "login":
-    st.sidebar.markdown("### 🗺️ Realm Map")
-    if st.session_state.app_stage != "great_hall":
-        if st.sidebar.button("🏆 The Great Hall"):
-            st.session_state.previous_stage = st.session_state.app_stage
-            st.session_state.app_stage = "great_hall"
-            st.rerun()
-    else:
-        if st.sidebar.button("⬅️ Return to Realm"):
-            st.session_state.app_stage = st.session_state.get("previous_stage", "selection")
-            st.rerun()
     st.sidebar.markdown("---")
+    st.sidebar.markdown("# 🏆 Hall of Wizards")
+    try:
+        scores_df = conn.read(ttl=0)
+        if not scores_df.empty:
+            scores_df['Date'] = pd.to_datetime(scores_df['Date'])
+            now = datetime.datetime.now()
+            t1, t2, t3 = st.sidebar.tabs(["Week", "Month", "Year"])
+            with t1:
+                w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
+                if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+    except:
+        st.sidebar.write("The scrolls are sleeping.")
 
 
 # --- STAGE 1: LOGIN SCREEN ---
 if st.session_state.app_stage == "login":
     try:
+        # Reverted back to your original local logo file
         st.image("sorcerersums.png", use_container_width=False)
     except:
         st.write("✨ **Portal Opening...** ✨")
     
     name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
+
+    # Drop the beacon right before the button so the CSS finds it!
     st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
     
     if st.button("Enter Realm"):
@@ -309,22 +320,33 @@ if st.session_state.app_stage == "login":
             st.session_state.app_stage = "selection"
             st.rerun()
 
-
-# --- STAGE 2: SUBJECT SELECTION ---
+# --- STAGE 2: SUBJECT SELECTION (The 12 Rectangles with Beacons) ---
 elif st.session_state.app_stage == "selection":
+    
+    # Render the exact Title Image using the Raw URL
     st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/schoolstudy.png")
+    
+    # Render the 4x3 Grid
     subjects = [("Algebra", "alg"), ("Quadratics", "quad"), ("Functions", "func"), ("Geometry", "geo")]
-    st.write("") 
+    
+    st.write("") # Spacing
 
     for label, sub_key in subjects:
+        # THE SUBJECT TITLES ARE GONE!
         cols = st.columns(3)
         for i, grade in enumerate(["10", "11", "12"]):
             beacon_id = f"{sub_key}{grade}"
+            
             with cols[i]:
+                # 1. Drop the invisible HTML beacon
                 st.markdown(f'<div class="beacon" id="{beacon_id}"></div>', unsafe_allow_html=True)
+                
+                # 2. Render the Streamlit button immediately after it
+                # We use a unique key so Streamlit doesn't get confused by multiple buttons
                 if st.button(f"{label} {grade}", key=f"btn_{beacon_id}"):
                     st.session_state.unit_choice = label
                     st.session_state.level_choice = grade
+                    # Generate the very first question
                     q, ans, img, pdf, lhs, rhs = generate_spell(label, grade)
                     st.session_state.current_q, st.session_state.target_ans = q, ans
                     st.session_state.current_image, st.session_state.current_plot = img, pdf
@@ -339,248 +361,113 @@ elif st.session_state.app_stage == "selection":
 
 # --- STAGE 3: THE MAIN GAME ---
 elif st.session_state.app_stage == "game":
-    st.sidebar.title("📜 Choose Your Scroll")
-    if st.sidebar.button("⬅️ Change Subject"):
-        st.session_state.app_stage = "selection"
-        st.rerun()
-
-    try:
-        st.image("Sorcery Sums.png")
-    except:
-        st.title("Cypher Lite")
-
-    st.markdown(f"""
-        <div class="question-container">
-            <h3>Grade {st.session_state.level_choice} {st.session_state.unit_choice}</h3>
-            <h1>{st.session_state.current_q}</h1>
-        </div>
-    """, unsafe_allow_html=True)
-
-    with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
-        st.write(st.session_state.get('current_image', 'No visual found.'))
-        if st.session_state.current_plot is not None:
-            st.plotly_chart(st.session_state.current_plot, use_container_width=True, config={'displayModeBar': False})
-
-    # --- ALCHEMICAL ALTAR (For Algebra Only) ---
-    if st.session_state.unit_choice == "Algebra":
-        
-        # 1. Victory Check
-        if st.session_state.puzzle_lhs == x_sym and st.session_state.puzzle_rhs == st.session_state.target_ans:
-            pastel_star_effect()
-            st.markdown('<div class="success-box"><h2>Correct! The equation is balanced! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
-            time.sleep(1.5) 
-            try:
-                df = conn.read(ttl=0)
-                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
-                conn.update(data=pd.concat([df, new_row], ignore_index=True))
-            except:
-                pass
-            
-            # Auto-Generate Next
-            q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
-            st.session_state.current_q, st.session_state.target_ans = q, ans
-            st.session_state.current_image, st.session_state.current_plot = img, pdf
-            st.session_state.puzzle_lhs, st.session_state.puzzle_rhs = lhs, rhs
-            st.rerun()
-
-        # 2. Render Altar
-        st.markdown(f'<div class="equation-container"><span class="equation-text">${sp.latex(st.session_state.puzzle_lhs)} = {sp.latex(st.session_state.puzzle_rhs)}$</span></div>', unsafe_allow_html=True)
-        
-        with st.form("balancing_act"):
-            # Expanded Operations for advanced magic!
-            op = st.selectbox("Select Operation", ["Add (+)", "Subtract (-)", "Multiply (×)", "Divide (÷)", "Power (^)", "Apply Base (b^x)"])
-            value_raw = st.text_input("Enter Value")
-            apply_magic = st.form_submit_button("🧪 Apply Balancing Spell!")
-            
-        if apply_magic and value_raw:
-            magic_success = False
-            try:
-                mod_val = sp.sympify(value_raw)
-                curr_lhs = st.session_state.puzzle_lhs
-                curr_rhs = st.session_state.puzzle_rhs
-                
-                if op == "Add (+)": new_lhs, new_rhs = curr_lhs + mod_val, curr_rhs + mod_val
-                elif op == "Subtract (-)": new_lhs, new_rhs = curr_lhs - mod_val, curr_rhs - mod_val
-                elif op == "Multiply (×)": new_lhs, new_rhs = curr_lhs * mod_val, curr_rhs * mod_val
-                elif op == "Divide (÷)":
-                    if mod_val == 0: st.stop()
-                    new_lhs, new_rhs = curr_lhs / mod_val, curr_rhs / mod_val
-                elif op == "Power (^)":
-                    new_lhs, new_rhs = curr_lhs ** mod_val, curr_rhs ** mod_val
-                elif op == "Apply Base (b^x)":
-                    new_lhs, new_rhs = mod_val ** curr_lhs, mod_val ** curr_rhs
-                
-                st.session_state.puzzle_lhs = sp.simplify(new_lhs)
-                st.session_state.puzzle_rhs = sp.simplify(new_rhs)
-                magic_success = True
-            except Exception:
-                st.error("Invalid arcane value! Use numbers only.")
-                
-            if magic_success: st.rerun()
-
-    # --- STANDARD INPUT (For Non-Algebra Units) ---
-    else:
-        st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
-        user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
-        st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
-
-        if st.button("🪄 Cast Spell!"):
-            try:
-                if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
-                    pastel_star_effect()
-                    st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
-                    time.sleep(.2) 
-                    try:
-                        df = conn.read(ttl=0)
-                        new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
-                        conn.update(data=pd.concat([df, new_row], ignore_index=True))
-                    except:
-                        pass
-                    
-                    q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
-                    st.session_state.current_q, st.session_state.target_ans = q, ans
-                    st.session_state.current_image, st.session_state.current_plot = img, pdf
-                    st.rerun()
-                else: st.error("The magic failed!")
-            except: st.warning("Enter a number!")
-
-
-# --- STAGE 3: THE MAIN GAME ---
-elif st.session_state.app_stage == "game":
-    st.sidebar.title("📜 Choose Your Scroll")
-    if st.sidebar.button("⬅️ Change Subject"):
-        st.session_state.app_stage = "selection"
-        st.rerun()
-
-    try:
-        st.image("Sorcery Sums.png")
-    except:
-        st.title("Cypher Lite")
-
-    st.markdown(f"""
-        <div class="question-container">
-            <h3>Grade {st.session_state.level_choice} {st.session_state.unit_choice}</h3>
-            <h1>{st.session_state.current_q}</h1>
-        </div>
-    """, unsafe_allow_html=True)
-
-    with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
-        st.write(st.session_state.get('current_image', 'No visual found.'))
-        if st.session_state.current_plot is not None:
-            st.plotly_chart(st.session_state.current_plot, use_container_width=True, config={'displayModeBar': False})
-
-    # --- ALCHEMICAL ALTAR (For Algebra Only) ---
-    if st.session_state.unit_choice == "Algebra":
-        
-        # 1. Victory Check
-        if st.session_state.puzzle_lhs == x_sym and st.session_state.puzzle_rhs == st.session_state.target_ans:
-            pastel_star_effect()
-            st.markdown('<div class="success-box"><h2>Correct! The equation is balanced! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
-            time.sleep(1.5) 
-            try:
-                df = conn.read(ttl=0)
-                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
-                conn.update(data=pd.concat([df, new_row], ignore_index=True))
-            except:
-                pass
-            
-            # Auto-Generate Next
-            q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
-            st.session_state.current_q, st.session_state.target_ans = q, ans
-            st.session_state.current_image, st.session_state.current_plot = img, pdf
-            st.session_state.puzzle_lhs, st.session_state.puzzle_rhs = lhs, rhs
-            st.rerun()
-
-        # 2. Render Altar
-        st.markdown(f'<div class="equation-container"><span class="equation-text">${sp.latex(st.session_state.puzzle_lhs)} = {sp.latex(st.session_state.puzzle_rhs)}$</span></div>', unsafe_allow_html=True)
-        
-        with st.form("balancing_act"):
-            # Expanded Operations for advanced magic!
-            op = st.selectbox("Select Operation", ["Add (+)", "Subtract (-)", "Multiply (×)", "Divide (÷)", "Power (^)", "Apply Base (b^x)"])
-            value_raw = st.text_input("Enter Value")
-            apply_magic = st.form_submit_button("🧪 Apply Balancing Spell!")
-            
-        if apply_magic and value_raw:
-            magic_success = False
-            try:
-                mod_val = sp.sympify(value_raw)
-                curr_lhs = st.session_state.puzzle_lhs
-                curr_rhs = st.session_state.puzzle_rhs
-                
-                if op == "Add (+)": new_lhs, new_rhs = curr_lhs + mod_val, curr_rhs + mod_val
-                elif op == "Subtract (-)": new_lhs, new_rhs = curr_lhs - mod_val, curr_rhs - mod_val
-                elif op == "Multiply (×)": new_lhs, new_rhs = curr_lhs * mod_val, curr_rhs * mod_val
-                elif op == "Divide (÷)":
-                    if mod_val == 0: st.stop()
-                    new_lhs, new_rhs = curr_lhs / mod_val, curr_rhs / mod_val
-                elif op == "Power (^)":
-                    new_lhs, new_rhs = curr_lhs ** mod_val, curr_rhs ** mod_val
-                elif op == "Apply Base (b^x)":
-                    new_lhs, new_rhs = mod_val ** curr_lhs, mod_val ** curr_rhs
-                
-                st.session_state.puzzle_lhs = sp.simplify(new_lhs)
-                st.session_state.puzzle_rhs = sp.simplify(new_rhs)
-                magic_success = True
-            except Exception:
-                st.error("Invalid arcane value! Use numbers only.")
-                
-            if magic_success: st.rerun()
-
-    # --- STANDARD INPUT (For Non-Algebra Units) ---
-    else:
-        st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
-        user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
-        st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
-
-        if st.button("🪄 Cast Spell!"):
-            try:
-                if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
-                    pastel_star_effect()
-                    st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
-                    time.sleep(.2) 
-                    try:
-                        df = conn.read(ttl=0)
-                        new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
-                        conn.update(data=pd.concat([df, new_row], ignore_index=True))
-                    except:
-                        pass
-                    
-                    q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
-                    st.session_state.current_q, st.session_state.target_ans = q, ans
-                    st.session_state.current_image, st.session_state.current_plot = img, pdf
-                    st.rerun()
-                else: st.error("The magic failed!")
-            except: st.warning("Enter a number!")
-
-
-# --- STAGE 4: THE GREAT HALL OF WITCHES AND WIZARDS ---
-elif st.session_state.app_stage == "great_hall":
-    try:
-        st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/greathall.png")
-    except:
-        st.markdown("<h1 style='text-align: center; color: #7b7dbd;'>🏆 The Great Hall Of Witches and Wizards</h1>", unsafe_allow_html=True)
-        
-    st.markdown("<p style='text-align: center; color: #7b7dbd; font-size: 18px;'>Behold the most powerful magic casters in the realm!</p>", unsafe_allow_html=True)
-    st.write("") 
     
+    # Add a back button to the sidebar
+    st.sidebar.title("📜 Choose Your Scroll")
+    if st.sidebar.button("⬅️ Change Subject"):
+        st.session_state.app_stage = "selection"
+        st.rerun()
+
+    # Reverted back to your original local file name
     try:
-        scores_df = conn.read(ttl=0)
-        if not scores_df.empty:
-            scores_df['Date'] = pd.to_datetime(scores_df['Date'])
-            now = datetime.datetime.now()
-            t1, t2, t3 = st.tabs(["🌟 This Week", "🌙 This Month", "☀️ All Time"])
-            
-            with t1:
-                w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
-                if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-                else: st.info("The scrolls are blank this week.")
-            
-            with t2:
-                m_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=30))]
-                if not m_data.empty: st.table(m_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-                else: st.info("The scrolls are blank this month.")
-                    
-            with t3:
-                st.table(scores_df.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+        st.image("Sorcery Sums.png")
     except:
-        st.error("The Hall's magic is currently sleeping (Database error).")
+        st.title("Cypher Lite")
+
+    st.markdown(f"""
+        <div class="question-container">
+            <h3>Grade {st.session_state.level_choice} {st.session_state.unit_choice}</h3>
+            <h1>{st.session_state.current_q}</h1>
+        </div>
+    """, unsafe_allow_html=True)
+
+    with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
+        st.write(st.session_state.get('current_image', 'No visual found.'))
+        if st.session_state.current_plot is not None:
+            st.plotly_chart(st.session_state.current_plot, use_container_width=True, config={'displayModeBar': False})
+
+    # --- ALCHEMICAL ALTAR (For Algebra Only) ---
+    if st.session_state.unit_choice == "Algebra":
+        
+        # 1. Victory Check
+        if st.session_state.puzzle_lhs == x_sym and st.session_state.puzzle_rhs == st.session_state.target_ans:
+            pastel_star_effect()
+            st.markdown('<div class="success-box"><h2>Correct! The equation is balanced! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
+            time.sleep(1.5) 
+            try:
+                df = conn.read(ttl=0)
+                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                conn.update(data=pd.concat([df, new_row], ignore_index=True))
+            except:
+                pass
+            
+            # Auto-Generate Next
+            q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
+            st.session_state.current_q, st.session_state.target_ans = q, ans
+            st.session_state.current_image, st.session_state.current_plot = img, pdf
+            st.session_state.puzzle_lhs, st.session_state.puzzle_rhs = lhs, rhs
+            st.rerun()
+
+        # 2. Render Altar
+        st.markdown(f'<div class="equation-container"><span class="equation-text">${sp.latex(st.session_state.puzzle_lhs)} = {sp.latex(st.session_state.puzzle_rhs)}$</span></div>', unsafe_allow_html=True)
+        
+        with st.form("balancing_act"):
+            # Expanded Operations for advanced magic!
+            op = st.selectbox("Select Operation", ["Add (+)", "Subtract (-)", "Multiply (×)", "Divide (÷)", "Power (^)", "Apply Base (b^x)"])
+            value_raw = st.text_input("Enter Value")
+            apply_magic = st.form_submit_button("🧪 Apply Balancing Spell!")
+            
+        if apply_magic and value_raw:
+            magic_success = False
+            try:
+                mod_val = sp.sympify(value_raw)
+                curr_lhs = st.session_state.puzzle_lhs
+                curr_rhs = st.session_state.puzzle_rhs
+                
+                if op == "Add (+)": new_lhs, new_rhs = curr_lhs + mod_val, curr_rhs + mod_val
+                elif op == "Subtract (-)": new_lhs, new_rhs = curr_lhs - mod_val, curr_rhs - mod_val
+                elif op == "Multiply (×)": new_lhs, new_rhs = curr_lhs * mod_val, curr_rhs * mod_val
+                elif op == "Divide (÷)":
+                    if mod_val == 0: st.stop()
+                    new_lhs, new_rhs = curr_lhs / mod_val, curr_rhs / mod_val
+                elif op == "Power (^)":
+                    new_lhs, new_rhs = curr_lhs ** mod_val, curr_rhs ** mod_val
+                elif op == "Apply Base (b^x)":
+                    new_lhs, new_rhs = mod_val ** curr_lhs, mod_val ** curr_rhs
+                
+                st.session_state.puzzle_lhs = sp.simplify(new_lhs)
+                st.session_state.puzzle_rhs = sp.simplify(new_rhs)
+                magic_success = True
+            except Exception:
+                st.error("Invalid arcane value! Use numbers only.")
+                
+            if magic_success: st.rerun()
+
+    # --- STANDARD INPUT (For Non-Algebra Units) ---
+    else:
+        st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
+        user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
+
+        # Drop the beacon right before the Cast Spell button
+        st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
+
+        if st.button("🪄 Cast Spell!"):
+            try:
+                if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
+                    pastel_star_effect()
+                    st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
+                    time.sleep(.2) 
+                    try:
+                        df = conn.read(ttl=0)
+                        new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                        conn.update(data=pd.concat([df, new_row], ignore_index=True))
+                    except:
+                        pass
+                    
+                    q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
+                    st.session_state.current_q, st.session_state.target_ans = q, ans
+                    st.session_state.current_image, st.session_state.current_plot = img, pdf
+                    st.rerun()
+                else: st.error("The magic failed!")
+            except: st.warning("Enter a number!")
+
