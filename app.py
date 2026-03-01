@@ -187,7 +187,6 @@ def pastel_star_effect():
     }}
     </script>
     """, height=0)
-
 # --- 3. DATABASE CONNECTION ---
 conn = st.connection("gsheets", type=GSheetsConnection)
 
@@ -244,6 +243,7 @@ def generate_spell(unit, level):
     
     return "Scroll not found", 0, "", None
 
+
 # --- GLOBALLY RENDER LEADERBOARD IN SIDEBAR (If not logging in) ---
 if st.session_state.app_stage != "login":
     st.sidebar.markdown("---")
@@ -270,7 +270,7 @@ if st.session_state.app_stage == "login":
     
     name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
 
-    # Flawless targeting using help="magic_btn"
+    # The magic_btn tag connects to our CSS!
     if st.button("Enter Realm", help="magic_btn"):
         if name:
             st.session_state.player_name = name
@@ -280,8 +280,11 @@ if st.session_state.app_stage == "login":
 # --- STAGE 2: SUBJECT SELECTION (The 12 Rectangles) ---
 elif st.session_state.app_stage == "selection":
     
-    # ⚠️ UPDATE THIS URL TO MATCH YOUR EXACT TITLE FILENAME ⚠️
-    st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/choose_subject_title.png")
+    try:
+        # Note: If this image name is slightly different in your repo, just change the URL!
+        st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/choose_subject_title.png")
+    except:
+        st.title("Choose Your Subject")
     
     # Render the 4x3 Grid
     subjects = [("Algebra", "alg"), ("Quadratics", "quad"), ("Functions", "func"), ("Geometry", "geo")]
@@ -292,7 +295,7 @@ elif st.session_state.app_stage == "selection":
         for i, grade in enumerate(["10", "11", "12"]):
             btn_key = f"{sub_key}{grade}"
             
-            # Flawless targeting using help=btn_key
+            # The help=btn_key gives Streamlit an exact target for your CSS rectangle images!
             if cols[i].button(f"{label} {grade}", help=btn_key):
                 st.session_state.unit_choice = label
                 st.session_state.level_choice = grade
@@ -334,7 +337,7 @@ elif st.session_state.app_stage == "game":
     st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
     user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
 
-    # Flawless targeting using help="magic_btn"
+    # The magic_btn tag connects to our CSS so your custom image shows up!
     if st.button("🪄 Cast Spell!", help="magic_btn"):
         try:
             if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
