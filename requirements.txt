@@ -5,3 +5,4 @@ streamlit-autorefresh
 matplotlib
 plotly
 numpy
+sympy
