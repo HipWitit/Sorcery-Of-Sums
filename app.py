@@ -1,64 +1,71 @@
 import streamlit as st
 
-st.set_page_config(page_title="Grid Test", layout="centered")
+st.set_page_config(page_title="Beacon Test", layout="centered")
 
-# --- THE SACRED LAYOUT CSS ---
 st.markdown("""
     <style>
-    /* 1. The Pink Selection Pods */
-    div[role="radiogroup"] {
-        background-color: #ffdef2 !important;
-        padding: 25px;
-        border-radius: 15px;
-        border: 3px solid #eecbff;
-        margin-bottom: 15px;
-    }
-    
-    /* 2. Pod Text Styling */
-    div[role="radiogroup"] label {
-        color: #7b7dbd !important;
-        font-weight: bold !important;
-        font-size: 18px !important;
+    /* 1. Hide the beacon container so it doesn't mess up your spacing */
+    div[data-testid="stElementContainer"]:has(.beacon), 
+    div.element-container:has(.beacon) {
+        display: none !important;
     }
 
-    /* 3. Hide annoying Streamlit Header Anchor Links */
-    h3 a { display: none !important; }
-
-    /* 4. Giant 'Unroll Scroll' Button */
-    button[kind="primary"] {
-        background-color: #ddfffc !important;
-        border: 3px solid #c6c7ff !important;
-        color: #7b7dbd !important;
-        font-size: 24px !important;
-        font-weight: bold !important;
-        border-radius: 15px !important;
-        height: 70px !important;
+    /* 2. Style the button immediately following ANY beacon */
+    div[data-testid="stElementContainer"]:has(.beacon) + div button,
+    div.element-container:has(.beacon) + div button {
+        background-color: transparent !important;
+        border: none !important;
+        color: transparent !important;
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
         width: 100% !important;
+        height: 85px !important;
+        box-shadow: none !important;
         transition: transform 0.2s ease;
     }
-    button[kind="primary"]:hover {
+    
+    div[data-testid="stElementContainer"]:has(.beacon) + div button p,
+    div.element-container:has(.beacon) + div button p {
+        display: none !important;
+    }
+
+    div[data-testid="stElementContainer"]:has(.beacon) + div button:hover,
+    div.element-container:has(.beacon) + div button:hover {
         transform: scale(1.05);
-        background-color: #e6fff8 !important;
+    }
+
+    /* 3. Map the exact images using the specific beacon IDs */
+    div.element-container:has(#alg10) + div button, div[data-testid="stElementContainer"]:has(#alg10) + div button { 
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/algebra10.png") !important; 
+    }
+    div.element-container:has(#alg11) + div button, div[data-testid="stElementContainer"]:has(#alg11) + div button { 
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/algebra11.png") !important; 
+    }
+    div.element-container:has(#alg12) + div button, div[data-testid="stElementContainer"]:has(#alg12) + div button { 
+        background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/algebra12.png") !important; 
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- STAGE 2: SUBJECT SELECTION ---
+# Title Image
 st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/choose_subject_title.png")
 
-st.write("") # Spacing
+# Render Row 1: Algebra
+cols = st.columns(3)
 
-col1, col2 = st.columns(2)
+with cols[0]:
+    # Drop the invisible beacon right before the button
+    st.markdown('<div class="beacon" id="alg10"></div>', unsafe_allow_html=True)
+    if st.button("Algebra 10"):
+        st.success("Algebra 10 Magic Works!")
 
-with col1:
-    st.markdown("### 📜 Select Subject")
-    unit = st.radio("Subject", ["Algebra", "Quadratics", "Functions", "Geometry"], label_visibility="collapsed")
+with cols[1]:
+    st.markdown('<div class="beacon" id="alg11"></div>', unsafe_allow_html=True)
+    if st.button("Algebra 11"):
+        st.success("Algebra 11 Magic Works!")
 
-with col2:
-    st.markdown("### 🎚️ Select Grade")
-    level = st.radio("Grade", ["10", "11", "12"], label_visibility="collapsed")
-
-st.write("") # Spacing
-
-if st.button("Unroll Scroll ✨", type="primary"):
-    st.success(f"Magic activated! You chose Grade {level} {unit}.")
+with cols[2]:
+    st.markdown('<div class="beacon" id="alg12"></div>', unsafe_allow_html=True)
+    if st.button("Algebra 12"):
+        st.success("Algebra 12 Magic Works!")
