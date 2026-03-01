@@ -78,10 +78,11 @@ st.markdown(f"""
         background-repeat: no-repeat !important;
         background-position: center !important;
         width: 100% !important;
-        height: 85px !important;
+        height: 180px !important; /* *** HUGE MASSIVE UNROLLED SCROLL SIZE *** */
         box-shadow: none !important;
         transition: transform 0.2s ease;
         display: block !important;
+        margin: 0 auto !important; /* Centers the large buttons */
     }}
     
     div[data-testid="stElementContainer"]:has(.beacon) + div button p,
@@ -238,6 +239,8 @@ def generate_spell(unit, level):
         return f"A square has a side of {side}. Find Perimeter.", ans, f"A square with side {side}.", None
     
     return "Scroll not found", 0, "", None
+
+
 # --- GLOBALLY RENDER LEADERBOARD IN SIDEBAR (If not logging in) ---
 if st.session_state.app_stage != "login":
     st.sidebar.markdown("---")
@@ -283,8 +286,10 @@ elif st.session_state.app_stage == "selection":
     # Render the 4x3 Grid
     subjects = [("Algebra", "alg"), ("Quadratics", "quad"), ("Functions", "func"), ("Geometry", "geo")]
     
+    st.write("") # Spacing
+
     for label, sub_key in subjects:
-        st.markdown(f"### {label}")
+        # THE SUBJECT TITLES ARE GONE!
         cols = st.columns(3)
         for i, grade in enumerate(["10", "11", "12"]):
             beacon_id = f"{sub_key}{grade}"
@@ -357,3 +362,4 @@ elif st.session_state.app_stage == "game":
                 st.rerun()
             else: st.error("The magic failed!")
         except: st.warning("Enter a number!")
+
