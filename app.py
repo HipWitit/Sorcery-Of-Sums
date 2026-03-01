@@ -66,9 +66,15 @@ st.markdown(f"""
     div.element-container:has(.beacon) {{
         display: none !important;
     }}
-
     /* --- THE RECTANGULAR & MAGIC BUTTON BASE --- */
-    /* Target the button immediately following ANY beacon */
+    
+    /* 1. Remove max-width from the Streamlit wrapper div */
+    div[data-testid="stElementContainer"]:has(.beacon) + div,
+    div.element-container:has(.beacon) + div {{
+        max-width: none !important;
+    }}
+
+    /* 2. Style the actual buttons to break out of the columns */
     div[data-testid="stElementContainer"]:has(.beacon) + div button,
     div.element-container:has(.beacon) + div button {{
         background-color: transparent !important;
@@ -77,12 +83,13 @@ st.markdown(f"""
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
-        width: 100% !important;
-        height: 180px !important; /* *** HUGE MASSIVE UNROLLED SCROLL SIZE *** */
+        width: 125% !important;       /* Expand beyond the tight column */
+        max-width: none !important;   /* YOUR TRICK: Force it to ignore limits */
+        margin-left: -12.5% !important; /* Perfectly center the oversized button */
+        height: 110px !important;     /* Adjusted to fit the wider aspect ratio */
         box-shadow: none !important;
         transition: transform 0.2s ease;
         display: block !important;
-        margin: 0 auto !important; /* Centers the large buttons */
     }}
     
     div[data-testid="stElementContainer"]:has(.beacon) + div button p,
@@ -92,7 +99,8 @@ st.markdown(f"""
 
     div[data-testid="stElementContainer"]:has(.beacon) + div button:hover,
     div.element-container:has(.beacon) + div button:hover {{
-        transform: scale(1.05);
+        transform: scale(1.08); /* Slightly larger hover pop */
+
     }}
 
     /* --- MAP THE EXACT IMAGES TO THE BEACON IDs --- */
