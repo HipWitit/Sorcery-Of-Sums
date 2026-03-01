@@ -12,7 +12,7 @@ from streamlit_gsheets import GSheetsConnection
 # --- 1. SETTINGS & THEMING ---
 st.set_page_config(page_title="Sorcery Sums", page_icon="🪄", layout="centered")
 
-# Initialize Session States for the 3-Stage Journey
+# Initialize Session States
 if "app_stage" not in st.session_state:
     st.session_state.app_stage = "login"
 
@@ -23,7 +23,7 @@ try:
 except:
     pass
 
-# Decide which button image to use based on whether they've entered the realm!
+# Determine the main magic button asset based on stage
 if st.session_state.app_stage == "login":
     button_image = "https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png"
 else:
@@ -40,71 +40,37 @@ st.markdown(f"""
         border-right: 2px solid #c6c7ff;
     }}
 
-    /* 3. PINK PODS FOR SELECTION */
+    /* 3. PINK PODS */
     div[data-testid="stSelectbox"], 
     div[role="radiogroup"] {{
         background-color: #ffdef2 !important;
-        padding: 15px;
-        border-radius: 15px;
-        border: 2px solid #eecbff;
-        margin-bottom: 15px;
+        padding: 15px; border-radius: 15px; border: 2px solid #eecbff; margin-bottom: 15px;
     }}
 
     /* 4. WHITE GRAPH BACKGROUND FIX */
     div[data-testid="stChart"] {{
-        background-color: white !important;
-        padding: 10px;
-        border-radius: 10px;
-        border: 2px solid #7b7dbd;
+        background-color: white !important; padding: 10px; border-radius: 10px; border: 2px solid #7b7dbd;
     }}
 
     /* 5. PERIWINKLE CRYSTAL BALL FONT */
-    .stExpander {{
-        background-color: rgba(255, 255, 255, 0.5);
-        border-radius: 15px;
-    }}
-    .stExpander p, .stExpander span, .stExpander label {{
-        color: #7b7dbd !important;
-        font-weight: bold;
-    }}
+    .stExpander {{ background-color: rgba(255, 255, 255, 0.5); border-radius: 15px; }}
+    .stExpander p, .stExpander span, .stExpander label {{ color: #7b7dbd !important; font-weight: bold; }}
 
     /* 6. YELLOW SUCCESS BOX FONT FIX */
     .success-box {{
-        background-color: #ffffe3; 
-        border: 3px solid #b4a7d6; 
-        border-radius: 20px; 
-        padding: 20px; 
-        text-align: center; 
-        margin-top: 15px; 
-        margin-bottom: 15px;
+        background-color: #ffffe3; border: 3px solid #b4a7d6; border-radius: 20px; 
+        padding: 20px; text-align: center; margin-top: 15px; margin-bottom: 15px;
     }}
-    .success-box h2 {{
-        color: #f2e2ff !important;
-        text-shadow: 1px 1px 2px #7b7dbd;
-        margin: 0; 
-        font-size: 24px;
-    }}
+    .success-box h2 {{ color: #f2e2ff !important; text-shadow: 1px 1px 2px #7b7dbd; margin: 0; font-size: 24px; }}
 
-    /* 7. GLOBAL SIDEBAR TEXT & RADIOS */
-    [data-testid="stSidebar"] h1, 
-    [data-testid="stSidebar"] h2, 
-    [data-testid="stSidebar"] label p {{
+    /* 7. GLOBAL SIDEBAR TEXT */
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] label p {{
         color: #7b7dbd !important;
     }}
-    
-    /* Pink Selectbox (Dropdown) */
-    div[data-baseweb="select"] > div {{
-        background-color: #ffdef2 !important;
-        border: 2px solid #eecbff !important;
-        border-radius: 10px !important;
-    }}
-    
-    div[data-baseweb="select"] div {{ color: #7b7dbd !important; }}
-    div[data-baseweb="select"] svg {{ fill: #7b7dbd !important; }}
 
-    /* --- THE 12 RECTANGULAR SUBJECT BUTTONS (Stage 2) --- */
-    /* We target them by making them "Primary" type buttons */
-    button[kind="primary"] {{
+    /* --- THE 12 RECTANGULAR SUBJECT BUTTONS --- */
+    /* Target ONLY buttons that have a title starting with our custom keys */
+    button[title^="alg"], button[title^="quad"], button[title^="func"], button[title^="geo"] {{
         background-color: transparent !important;
         border: none !important;
         color: transparent !important;
@@ -117,29 +83,35 @@ st.markdown(f"""
         box-shadow: none !important;
         display: block !important;
     }}
-    button[kind="primary"]:hover {{ transform: scale(1.05); }}
-    button[kind="primary"] p {{ display: none !important; }}
-
-    /* Flawless Mapping using aria-label (Finds the exact button by name) */
-    button[aria-label="Algebra 10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/algebra10.png") !important; }}
-    button[aria-label="Algebra 11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/algebra11.png") !important; }}
-    button[aria-label="Algebra 12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/algebra12.png") !important; }}
     
-    button[aria-label="Quadratics 10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/quadratics10.png") !important; }}
-    button[aria-label="Quadratics 11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/quadratics11.png") !important; }}
-    button[aria-label="Quadratics 12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/quadratics12.png") !important; }}
+    button[title^="alg"]:hover, button[title^="quad"]:hover, button[title^="func"]:hover, button[title^="geo"]:hover {{
+        transform: scale(1.05);
+    }}
+    
+    /* Hide the text inside these specific buttons */
+    button[title^="alg"] p, button[title^="quad"] p, button[title^="func"] p, button[title^="geo"] p {{
+        display: none !important;
+    }}
 
-    button[aria-label="Functions 10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/functions10.png") !important; }}
-    button[aria-label="Functions 11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/functions11.png") !important; }}
-    button[aria-label="Functions 12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/functions12.png") !important; }}
+    /* Flawless Image Mapping */
+    button[title="alg10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/algebra10.png") !important; }}
+    button[title="alg11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/algebra11.png") !important; }}
+    button[title="alg12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/algebra12.png") !important; }}
+    
+    button[title="quad10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/quadratics10.png") !important; }}
+    button[title="quad11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/quadratics11.png") !important; }}
+    button[title="quad12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/quadratics12.png") !important; }}
 
-    button[aria-label="Geometry 10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/geometry10.png") !important; }}
-    button[aria-label="Geometry 11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/geometry11.png") !important; }}
-    button[aria-label="Geometry 12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/geometry12.png") !important; }}
+    button[title="func10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/functions10.png") !important; }}
+    button[title="func11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/functions11.png") !important; }}
+    button[title="func12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/functions12.png") !important; }}
 
-    /* --- THE BIG PRIMARY MAGIC BUTTONS (Login / Cast Spell) --- */
-    /* Target only "secondary" buttons in the main area to avoid hiding the text */
-    div.stButton > button[kind="secondary"] {{
+    button[title="geo10"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/geometry10.png") !important; }}
+    button[title="geo11"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/geometry11.png") !important; }}
+    button[title="geo12"] {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/geometry12.png") !important; }}
+
+    /* --- THE BIG MAGIC BUTTONS (Enter Realm / Cast Spell) --- */
+    button[title="magic_btn"] {{
         background-image: url("{button_image}") !important;
         background-size: contain !important;
         background-repeat: no-repeat !important;
@@ -153,21 +125,8 @@ st.markdown(f"""
         margin: -120px auto 0 auto !important; 
         transition: transform 0.2s ease;
     }}
-    div.stButton > button[kind="secondary"]:hover {{ transform: scale(1.05); }}
-    div.stButton > button[kind="secondary"] p {{ display: none !important; }}
-
-    /* Sidebar Button Reset (Keeps "Change Scroll" looking normal) */
-    [data-testid="stSidebar"] div.stButton > button {{
-        background-image: none !important;
-        background-color: #ffdef2 !important;
-        border: 2px solid #eecbff !important;
-        color: #7b7dbd !important;
-        width: 100% !important;
-        height: auto !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-    }}
-    [data-testid="stSidebar"] div.stButton > button p {{ display: block !important; }}
+    button[title="magic_btn"]:hover {{ transform: scale(1.05); }}
+    button[title="magic_btn"] p {{ display: none !important; }}
 
     /* 8. NEW COMBINED HEADER POSITIONING */
     div[data-testid="stImage"] {{ margin-bottom: -45px; overflow: visible !important; }}
@@ -175,6 +134,12 @@ st.markdown(f"""
         width: 140% !important; max-width: none !important;
         transform: scale(1.05); display: block !important;
         margin-left: -20% !important; margin-bottom: -40px !important;
+    }}
+
+    /* Selection Page Title Tweaks */
+    img[src*="choose_subject"] {{
+        width: 100% !important; max-width: 100% !important;
+        transform: none !important; margin-left: 0 !important; margin-bottom: 10px !important;
     }}
 
     /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
@@ -233,9 +198,7 @@ def generate_spell(unit, level):
     
     def apply_sacred_style(fig):
         fig.update_layout(
-            plot_bgcolor='white',
-            paper_bgcolor='white',
-            margin=dict(l=20, r=20, t=20, b=20),
+            plot_bgcolor='white', paper_bgcolor='white', margin=dict(l=20, r=20, t=20, b=20),
             xaxis=dict(showgrid=True, gridcolor='lightgray', zeroline=True, zerolinecolor='black'),
             yaxis=dict(showgrid=True, gridcolor='lightgray', zeroline=True, zerolinecolor='black'),
             height=400
@@ -307,9 +270,8 @@ if st.session_state.app_stage == "login":
     
     name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
 
-    # This is a standard button (which Streamlit classifies as "secondary")
-    # Our CSS correctly maps the giant Portal magic image to it!
-    if st.button("Enter Realm"):
+    # Flawless targeting using help="magic_btn"
+    if st.button("Enter Realm", help="magic_btn"):
         if name:
             st.session_state.player_name = name
             st.session_state.app_stage = "selection"
@@ -317,24 +279,25 @@ if st.session_state.app_stage == "login":
 
 # --- STAGE 2: SUBJECT SELECTION (The 12 Rectangles) ---
 elif st.session_state.app_stage == "selection":
-    try:
-        st.image("choose_subject_title.png")
-    except:
-        st.title("Choose Your Subject")
+    
+    # ⚠️ UPDATE THIS URL TO MATCH YOUR EXACT TITLE FILENAME ⚠️
+    st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/choose_subject_title.png")
     
     # Render the 4x3 Grid
-    subjects = ["Algebra", "Quadratics", "Functions", "Geometry"]
+    subjects = [("Algebra", "alg"), ("Quadratics", "quad"), ("Functions", "func"), ("Geometry", "geo")]
     
-    for sub in subjects:
-        st.markdown(f"### {sub}")
+    for label, sub_key in subjects:
+        st.markdown(f"### {label}")
         cols = st.columns(3)
         for i, grade in enumerate(["10", "11", "12"]):
-            # We use type="primary" here so the CSS knows to apply the rectangle images!
-            if cols[i].button(f"{sub} {grade}", type="primary"):
-                st.session_state.unit_choice = sub
+            btn_key = f"{sub_key}{grade}"
+            
+            # Flawless targeting using help=btn_key
+            if cols[i].button(f"{label} {grade}", help=btn_key):
+                st.session_state.unit_choice = label
                 st.session_state.level_choice = grade
                 # Generate the very first question
-                q, ans, img, pdf = generate_spell(sub, grade)
+                q, ans, img, pdf = generate_spell(label, grade)
                 st.session_state.current_q, st.session_state.target_ans = q, ans
                 st.session_state.current_image, st.session_state.current_plot = img, pdf
                 st.session_state.app_stage = "game"
@@ -371,8 +334,8 @@ elif st.session_state.app_stage == "game":
     st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
     user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
 
-    # This button triggers the giant "Cast Spell" graphic!
-    if st.button("🪄 Cast Spell!"):
+    # Flawless targeting using help="magic_btn"
+    if st.button("🪄 Cast Spell!", help="magic_btn"):
         try:
             if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
                 pastel_star_effect()
@@ -390,4 +353,3 @@ elif st.session_state.app_stage == "game":
                 st.rerun()
             else: st.error("The magic failed!")
         except: st.warning("Enter a number!")
-
