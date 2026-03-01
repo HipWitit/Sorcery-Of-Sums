@@ -209,13 +209,34 @@ def generate_spell(unit, level):
         )
         return fig
 
-    if "Algebra" in unit:
-        a = random.randint(2, 5 * prog)
-        b = random.randint(1, 10 * prog)
-        x = random.randint(1, 12)
-        c = (a * x) + b
-        image_tag = f"Imagine a balance scale. Side A: {a} mystery boxes (x) + {b} gems. Side B: {c} gems."
-        return f"Solve for x: {a}x + {b} = {c}", x, image_tag, None
+       if "Algebra" in unit:
+        if level == "10":
+            # Grade 10: Variables on both sides (ax + b = cx + d)
+            x = random.randint(1, 12)
+            c_val = random.randint(2, 5)
+            a = c_val + random.randint(1, 5) # Ensures 'a' is always larger than 'c_val'
+            b = random.randint(1, 15)
+            d = (a * x) + b - (c_val * x)
+            image_tag = f"A shifting scale! {a} boxes and {b} gems balances perfectly with {c_val} boxes and {d} gems."
+            return f"Solve for x: {a}x + {b} = {c_val}x + {d}", x, image_tag, None
+            
+        elif level == "11":
+            # Grade 11: Radical Equations ( √(x + b) = c )
+            c_val = random.randint(3, 9)
+            b = random.randint(1, 20)
+            x = (c_val**2) - b
+            image_tag = f"Pierce the veil! The square root of the mystery box plus {b} equals {c_val}."
+            return f"Solve for x: √(x + {b}) = {c_val}", x, image_tag, None
+            
+        elif level == "12":
+            # Grade 12: Logarithmic Equations ( log_base(x - c) = a )
+            base = random.randint(2, 4)
+            a = random.randint(2, 4) # The exponent
+            c_val = random.randint(1, 10)
+            x = (base**a) + c_val
+            image_tag = f"Decipher the ancient logarithm! Base {base} reaches power {a} to reveal x minus {c_val}."
+            return f"Solve for x: log_{base}(x - {c_val}) = {a}", x, image_tag, None
+
 
     elif "Quadratics" in unit:
         h, k = random.randint(-3, 3), random.randint(1, 5)
