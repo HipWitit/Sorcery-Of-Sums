@@ -143,7 +143,7 @@ st.markdown(f"""
     /* Selection Page Title Tweaks */
     img[src*="schoolstudy.png"] {{
         width: 100% !important; max-width: 100% !important;
-        transform: none !important; margin-left: 0 !important; margin-bottom: 0px !important;
+        transform: none !important; margin-left: 0 !important; margin-bottom: -25px !important;
     }}
 
     /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
