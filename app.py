@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 import streamlit.components.v1 as components 
 from streamlit_gsheets import GSheetsConnection
 import sympy as sp # Added SymPy for the Altar
+from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application
 
 # --- 1. SETTINGS & THEMING ---
 st.set_page_config(page_title="Cypher Lite", page_icon="🪄", layout="centered")
@@ -304,12 +305,13 @@ if st.session_state.app_stage != "login":
 # --- STAGE 1: LOGIN SCREEN ---
 if st.session_state.app_stage == "login":
     try:
-        # Reverted back to your original local logo file
-        st.image("sorcerersums.png", use_container_width=False)
+        # Dropped the deprecated use_container_width warning here!
+        st.image("sorcerersums.png")
     except:
         st.write("✨ **Portal Opening...** ✨")
     
-    name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
+    # Patched the label warning by adding "Player Name"
+    name = st.text_input("Player Name", placeholder="Type your name here...", label_visibility="collapsed")
 
     # Drop the beacon right before the button so the CSS finds it!
     st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
@@ -323,7 +325,6 @@ if st.session_state.app_stage == "login":
 # --- STAGE 2: SUBJECT SELECTION (The 12 Rectangles with Beacons) ---
 elif st.session_state.app_stage == "selection":
     
-    # Render the exact Title Image using the Raw URL
     st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/schoolstudy.png")
     
     # Render the 4x3 Grid
@@ -332,26 +333,20 @@ elif st.session_state.app_stage == "selection":
     st.write("") # Spacing
 
     for label, sub_key in subjects:
-        # THE SUBJECT TITLES ARE GONE!
         cols = st.columns(3)
         for i, grade in enumerate(["10", "11", "12"]):
             beacon_id = f"{sub_key}{grade}"
             
             with cols[i]:
-                # 1. Drop the invisible HTML beacon
                 st.markdown(f'<div class="beacon" id="{beacon_id}"></div>', unsafe_allow_html=True)
                 
-                # 2. Render the Streamlit button immediately after it
-                # We use a unique key so Streamlit doesn't get confused by multiple buttons
                 if st.button(f"{label} {grade}", key=f"btn_{beacon_id}"):
                     st.session_state.unit_choice = label
                     st.session_state.level_choice = grade
-                    # Generate the very first question
                     q, ans, img, pdf, lhs, rhs = generate_spell(label, grade)
                     st.session_state.current_q, st.session_state.target_ans = q, ans
                     st.session_state.current_image, st.session_state.current_plot = img, pdf
                     
-                    # Store SymPy equations for the Altar
                     st.session_state.puzzle_lhs = lhs
                     st.session_state.puzzle_rhs = rhs
                     
@@ -362,13 +357,11 @@ elif st.session_state.app_stage == "selection":
 # --- STAGE 3: THE MAIN GAME ---
 elif st.session_state.app_stage == "game":
     
-    # Add a back button to the sidebar
     st.sidebar.title("📜 Choose Your Scroll")
     if st.sidebar.button("⬅️ Change Subject"):
         st.session_state.app_stage = "selection"
         st.rerun()
 
-    # Reverted back to your original local file name
     try:
         st.image("Sorcery Sums.png")
     except:
@@ -384,7 +377,8 @@ elif st.session_state.app_stage == "game":
     with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
         st.write(st.session_state.get('current_image', 'No visual found.'))
         if st.session_state.current_plot is not None:
-            st.plotly_chart(st.session_state.current_plot, use_container_width=True, config={'displayModeBar': False})
+            # Fixed the deprecation warning by converting to width='stretch'
+            st.plotly_chart(st.session_state.current_plot, width="stretch", config={'displayModeBar': False})
 
     # --- ALCHEMICAL ALTAR (For Algebra Only) ---
     if st.session_state.unit_choice == "Algebra":
@@ -412,15 +406,18 @@ elif st.session_state.app_stage == "game":
         st.markdown(f'<div class="equation-container"><span class="equation-text">${sp.latex(st.session_state.puzzle_lhs)} = {sp.latex(st.session_state.puzzle_rhs)}$</span></div>', unsafe_allow_html=True)
         
         with st.form("balancing_act"):
-            # Expanded Operations for advanced magic!
             op = st.selectbox("Select Operation", ["Add (+)", "Subtract (-)", "Multiply (×)", "Divide (÷)", "Power (^)", "Apply Base (b^x)"])
-            value_raw = st.text_input("Enter Value")
+            
+            # Now properly accepts 'x' variables!
+            value_raw = st.text_input("Enter Arcane Value", placeholder="e.g., 5 or 5x", label_visibility="collapsed")
             apply_magic = st.form_submit_button("🧪 Apply Balancing Spell!")
             
         if apply_magic and value_raw:
             magic_success = False
             try:
-                mod_val = sp.sympify(value_raw)
+                transformations = standard_transformations + (implicit_multiplication_application,)
+                mod_val = parse_expr(value_raw, local_dict={'x': x_sym}, transformations=transformations)
+                
                 curr_lhs = st.session_state.puzzle_lhs
                 curr_rhs = st.session_state.puzzle_rhs
                 
@@ -439,14 +436,15 @@ elif st.session_state.app_stage == "game":
                 st.session_state.puzzle_rhs = sp.simplify(new_rhs)
                 magic_success = True
             except Exception:
-                st.error("Invalid arcane value! Use numbers only.")
+                st.error("Invalid arcane value! Use numbers or 'x' terms (e.g., 5, -2, 3x).")
                 
             if magic_success: st.rerun()
 
     # --- STANDARD INPUT (For Non-Algebra Units) ---
     else:
         st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
-        user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
+        # Patched the label warning here too
+        user_ans_raw = st.text_input("Your Final Answer", placeholder="Type number here...", key="user_answer", label_visibility="collapsed")
 
         # Drop the beacon right before the Cast Spell button
         st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
@@ -470,4 +468,3 @@ elif st.session_state.app_stage == "game":
                     st.rerun()
                 else: st.error("The magic failed!")
             except: st.warning("Enter a number!")
-
