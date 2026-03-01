@@ -83,7 +83,7 @@ st.markdown(f"""
         background-size: contain !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
-        width: 700% !important;       /* Expand beyond the tight column */
+        width: 1500% !important;       /* Expand beyond the tight column */
         max-width: none !important;   /* YOUR TRICK: Force it to ignore limits */
         margin-left: -12.5% !important; /* Perfectly center the oversized button */
         height: 110px !important;     /* Adjusted to fit the wider aspect ratio */
