@@ -23,11 +23,11 @@ try:
 except:
     pass
 
-# Determine the main magic button asset based on stage
+# Determine the main magic button asset based on stage using your original working links
 if st.session_state.app_stage == "login":
-    button_image = "https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/enterrealm.png"
+    button_image = "https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/enterrealm.png"
 else:
-    button_image = "https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/castspell.png"
+    button_image = "https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/castspell.png"
 
 st.markdown(f"""
     <style>
@@ -67,7 +67,7 @@ st.markdown(f"""
         display: none !important;
     }}
 
-    /* --- THE 12 RECTANGULAR SUBJECT BUTTONS --- */
+    /* --- THE RECTANGULAR & MAGIC BUTTON BASE --- */
     /* Target the button immediately following ANY beacon */
     div[data-testid="stElementContainer"]:has(.beacon) + div button,
     div.element-container:has(.beacon) + div button {{
@@ -105,7 +105,7 @@ st.markdown(f"""
     div.element-container:has(#quad11) + div button, div[data-testid="stElementContainer"]:has(#quad11) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/quadratics11.png") !important; }}
     div.element-container:has(#quad12) + div button, div[data-testid="stElementContainer"]:has(#quad12) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/quadratics12.png") !important; }}
 
-    /* Functions (Note: function10 is singular based on your repo!) */
+    /* Functions */
     div.element-container:has(#func10) + div button, div[data-testid="stElementContainer"]:has(#func10) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/function10.png") !important; }}
     div.element-container:has(#func11) + div button, div[data-testid="stElementContainer"]:has(#func11) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/functions11.png") !important; }}
     div.element-container:has(#func12) + div button, div[data-testid="stElementContainer"]:has(#func12) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/functions12.png") !important; }}
@@ -116,22 +116,12 @@ st.markdown(f"""
     div.element-container:has(#geo12) + div button, div[data-testid="stElementContainer"]:has(#geo12) + div button {{ background-image: url("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/geometry12.png") !important; }}
 
     /* --- THE BIG MAGIC BUTTONS (Enter Realm / Cast Spell) --- */
-    button[title="magic_btn"] {{
+    div.element-container:has(#magic_btn) + div button, div[data-testid="stElementContainer"]:has(#magic_btn) + div button {{
         background-image: url("{button_image}") !important;
-        background-size: contain !important;
-        background-repeat: no-repeat !important;
-        background-position: center !important;
         width: 275px !important;
         height: 300px !important;
-        border: none !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-        display: block !important;
         margin: -120px auto 0 auto !important; 
-        transition: transform 0.2s ease;
     }}
-    button[title="magic_btn"]:hover {{ transform: scale(1.05); }}
-    button[title="magic_btn"] p {{ display: none !important; }}
 
     /* 8. NEW COMBINED HEADER POSITIONING */
     div[data-testid="stImage"] {{ margin-bottom: -45px; overflow: visible !important; }}
@@ -268,14 +258,17 @@ if st.session_state.app_stage != "login":
 # --- STAGE 1: LOGIN SCREEN ---
 if st.session_state.app_stage == "login":
     try:
-        st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/sorcerersums.png", use_container_width=False)
+        # Reverted back to your original local logo file
+        st.image("sorcerersums.png", use_container_width=False)
     except:
         st.write("✨ **Portal Opening...** ✨")
     
     name = st.text_input("", placeholder="Type your name here...", label_visibility="collapsed")
 
-    # The magic_btn tag connects to our CSS for the giant custom portal button!
-    if st.button("Enter Realm", help="magic_btn"):
+    # Drop the beacon right before the button so the CSS finds it!
+    st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
+    
+    if st.button("Enter Realm"):
         if name:
             st.session_state.player_name = name
             st.session_state.app_stage = "selection"
@@ -322,9 +315,9 @@ elif st.session_state.app_stage == "game":
         st.session_state.app_stage = "selection"
         st.rerun()
 
-    # Original UI Logic
+    # Reverted back to your original local file name
     try:
-        st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/59bba3415a91b29eaced863600dde0c807bd6a7a/assets/images/Sorcery Sums.png")
+        st.image("Sorcery Sums.png")
     except:
         st.title("Sorcery Sums")
 
@@ -343,8 +336,10 @@ elif st.session_state.app_stage == "game":
     st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
     user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
 
-    # The magic_btn tag connects to our CSS so your giant Cast Spell image shows up!
-    if st.button("🪄 Cast Spell!", help="magic_btn"):
+    # Drop the beacon right before the Cast Spell button
+    st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
+
+    if st.button("🪄 Cast Spell!"):
         try:
             if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
                 pastel_star_effect()
