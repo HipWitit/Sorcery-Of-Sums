@@ -373,7 +373,8 @@ elif st.session_state.app_stage == "game":
                 df = conn.read(ttl=0)
                 new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
                 conn.update(data=pd.concat([df, new_row], ignore_index=True))
-            except: pass
+            except:
+                pass
             
             # Auto-Generate Next
             q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
@@ -407,4 +408,179 @@ elif st.session_state.app_stage == "game":
                 elif op == "Power (^)":
                     new_lhs, new_rhs = curr_lhs ** mod_val, curr_rhs ** mod_val
                 elif op == "Apply Base (b^x)":
-                    new
+                    new_lhs, new_rhs = mod_val ** curr_lhs, mod_val ** curr_rhs
+                
+                st.session_state.puzzle_lhs = sp.simplify(new_lhs)
+                st.session_state.puzzle_rhs = sp.simplify(new_rhs)
+                magic_success = True
+            except Exception:
+                st.error("Invalid arcane value! Use numbers only.")
+                
+            if magic_success: st.rerun()
+
+    # --- STANDARD INPUT (For Non-Algebra Units) ---
+    else:
+        st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
+        user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
+        st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
+
+        if st.button("🪄 Cast Spell!"):
+            try:
+                if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
+                    pastel_star_effect()
+                    st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
+                    time.sleep(.2) 
+                    try:
+                        df = conn.read(ttl=0)
+                        new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                        conn.update(data=pd.concat([df, new_row], ignore_index=True))
+                    except:
+                        pass
+                    
+                    q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
+                    st.session_state.current_q, st.session_state.target_ans = q, ans
+                    st.session_state.current_image, st.session_state.current_plot = img, pdf
+                    st.rerun()
+                else: st.error("The magic failed!")
+            except: st.warning("Enter a number!")
+
+
+# --- STAGE 3: THE MAIN GAME ---
+elif st.session_state.app_stage == "game":
+    st.sidebar.title("📜 Choose Your Scroll")
+    if st.sidebar.button("⬅️ Change Subject"):
+        st.session_state.app_stage = "selection"
+        st.rerun()
+
+    try:
+        st.image("Sorcery Sums.png")
+    except:
+        st.title("Cypher Lite")
+
+    st.markdown(f"""
+        <div class="question-container">
+            <h3>Grade {st.session_state.level_choice} {st.session_state.unit_choice}</h3>
+            <h1>{st.session_state.current_q}</h1>
+        </div>
+    """, unsafe_allow_html=True)
+
+    with st.expander("🔮 Peer into the Crystal Ball (Visual Aid)"):
+        st.write(st.session_state.get('current_image', 'No visual found.'))
+        if st.session_state.current_plot is not None:
+            st.plotly_chart(st.session_state.current_plot, use_container_width=True, config={'displayModeBar': False})
+
+    # --- ALCHEMICAL ALTAR (For Algebra Only) ---
+    if st.session_state.unit_choice == "Algebra":
+        
+        # 1. Victory Check
+        if st.session_state.puzzle_lhs == x_sym and st.session_state.puzzle_rhs == st.session_state.target_ans:
+            pastel_star_effect()
+            st.markdown('<div class="success-box"><h2>Correct! The equation is balanced! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
+            time.sleep(1.5) 
+            try:
+                df = conn.read(ttl=0)
+                new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                conn.update(data=pd.concat([df, new_row], ignore_index=True))
+            except:
+                pass
+            
+            # Auto-Generate Next
+            q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
+            st.session_state.current_q, st.session_state.target_ans = q, ans
+            st.session_state.current_image, st.session_state.current_plot = img, pdf
+            st.session_state.puzzle_lhs, st.session_state.puzzle_rhs = lhs, rhs
+            st.rerun()
+
+        # 2. Render Altar
+        st.markdown(f'<div class="equation-container"><span class="equation-text">${sp.latex(st.session_state.puzzle_lhs)} = {sp.latex(st.session_state.puzzle_rhs)}$</span></div>', unsafe_allow_html=True)
+        
+        with st.form("balancing_act"):
+            # Expanded Operations for advanced magic!
+            op = st.selectbox("Select Operation", ["Add (+)", "Subtract (-)", "Multiply (×)", "Divide (÷)", "Power (^)", "Apply Base (b^x)"])
+            value_raw = st.text_input("Enter Value")
+            apply_magic = st.form_submit_button("🧪 Apply Balancing Spell!")
+            
+        if apply_magic and value_raw:
+            magic_success = False
+            try:
+                mod_val = sp.sympify(value_raw)
+                curr_lhs = st.session_state.puzzle_lhs
+                curr_rhs = st.session_state.puzzle_rhs
+                
+                if op == "Add (+)": new_lhs, new_rhs = curr_lhs + mod_val, curr_rhs + mod_val
+                elif op == "Subtract (-)": new_lhs, new_rhs = curr_lhs - mod_val, curr_rhs - mod_val
+                elif op == "Multiply (×)": new_lhs, new_rhs = curr_lhs * mod_val, curr_rhs * mod_val
+                elif op == "Divide (÷)":
+                    if mod_val == 0: st.stop()
+                    new_lhs, new_rhs = curr_lhs / mod_val, curr_rhs / mod_val
+                elif op == "Power (^)":
+                    new_lhs, new_rhs = curr_lhs ** mod_val, curr_rhs ** mod_val
+                elif op == "Apply Base (b^x)":
+                    new_lhs, new_rhs = mod_val ** curr_lhs, mod_val ** curr_rhs
+                
+                st.session_state.puzzle_lhs = sp.simplify(new_lhs)
+                st.session_state.puzzle_rhs = sp.simplify(new_rhs)
+                magic_success = True
+            except Exception:
+                st.error("Invalid arcane value! Use numbers only.")
+                
+            if magic_success: st.rerun()
+
+    # --- STANDARD INPUT (For Non-Algebra Units) ---
+    else:
+        st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
+        user_ans_raw = st.text_input("Your Final Answer:", placeholder="Type number here...", key="user_answer")
+        st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
+
+        if st.button("🪄 Cast Spell!"):
+            try:
+                if math.isclose(float(user_ans_raw), st.session_state.target_ans, rel_tol=0.1):
+                    pastel_star_effect()
+                    st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
+                    time.sleep(.2) 
+                    try:
+                        df = conn.read(ttl=0)
+                        new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                        conn.update(data=pd.concat([df, new_row], ignore_index=True))
+                    except:
+                        pass
+                    
+                    q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
+                    st.session_state.current_q, st.session_state.target_ans = q, ans
+                    st.session_state.current_image, st.session_state.current_plot = img, pdf
+                    st.rerun()
+                else: st.error("The magic failed!")
+            except: st.warning("Enter a number!")
+
+
+# --- STAGE 4: THE GREAT HALL OF WITCHES AND WIZARDS ---
+elif st.session_state.app_stage == "great_hall":
+    try:
+        st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/greathall.png")
+    except:
+        st.markdown("<h1 style='text-align: center; color: #7b7dbd;'>🏆 The Great Hall Of Witches and Wizards</h1>", unsafe_allow_html=True)
+        
+    st.markdown("<p style='text-align: center; color: #7b7dbd; font-size: 18px;'>Behold the most powerful magic casters in the realm!</p>", unsafe_allow_html=True)
+    st.write("") 
+    
+    try:
+        scores_df = conn.read(ttl=0)
+        if not scores_df.empty:
+            scores_df['Date'] = pd.to_datetime(scores_df['Date'])
+            now = datetime.datetime.now()
+            t1, t2, t3 = st.tabs(["🌟 This Week", "🌙 This Month", "☀️ All Time"])
+            
+            with t1:
+                w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
+                if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+                else: st.info("The scrolls are blank this week.")
+            
+            with t2:
+                m_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=30))]
+                if not m_data.empty: st.table(m_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+                else: st.info("The scrolls are blank this month.")
+                    
+            with t3:
+                st.table(scores_df.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+    except:
+        st.error("The Hall's magic is currently sleeping (Database error).")
