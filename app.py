@@ -253,7 +253,7 @@ def generate_spell(unit, level):
             image_tag = f"Decipher the ancient logarithm! Base {base} reaches power {a} to reveal x minus {c_val}."
             return f"Balance the equation to reveal x:", x, image_tag, None, lhs, rhs
 
-        elif "Quadratics" in unit:
+    if "Quadratics" in unit:
         if level == "10":
             # Grade 10: Area Model (Algebra Tiles) for (x + a)(x + b)
             a = random.randint(2, 5)
