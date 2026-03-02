@@ -544,3 +544,37 @@ elif st.session_state.app_stage == "game":
                     st.rerun()
                 else: st.error("The magic failed!")
             except: st.warning("Enter a number!")
+
+            # --- STAGE 4: THE HALL OF GREAT WITCHES AND WIZARDS ---
+elif st.session_state.app_stage == "great_hall":
+    try:
+        # Your beautiful new banner!
+        st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/TheGH.png")
+    except:
+        st.markdown("<h1 style='text-align: center; color: #7b7dbd;'>🏆 The Hall Of Great Witches And Wizards</h1>", unsafe_allow_html=True)
+        
+    st.markdown("<p style='text-align: center; color: #7b7dbd; font-size: 18px; font-weight: bold;'>Behold the most powerful magic casters in the realm!</p>", unsafe_allow_html=True)
+    st.write("") 
+    
+    try:
+        scores_df = conn.read(ttl=0)
+        if not scores_df.empty:
+            scores_df['Date'] = pd.to_datetime(scores_df['Date'])
+            now = datetime.datetime.now()
+            t1, t2, t3 = st.tabs(["🌟 This Week", "🌙 This Month", "☀️ All Time"])
+            
+            with t1:
+                w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
+                if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+                else: st.info("The scrolls are blank this week.")
+            
+            with t2:
+                m_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=30))]
+                if not m_data.empty: st.table(m_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+                else: st.info("The scrolls are blank this month.")
+                    
+            with t3:
+                st.table(scores_df.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
+    except:
+        st.error("The Hall's magic is currently sleeping (Database error).")
+
