@@ -141,10 +141,24 @@ st.markdown(f"""
         margin-left: -20% !important; margin-bottom: -40px !important;
     }}
 
-    /* Selection Page & Great Hall Title Tweaks */
-    img[src*="schoolstudy.png"], img[src*="TheGH.png"], img[src*="beholdpowerful.png"] {{
+    /* 1. Selection Page Title Tweaks */
+    img[src*="schoolstudy.png"] {{
         width: 100% !important; max-width: 100% !important;
-        transform: none !important; margin-left: 0 !important; margin-bottom: 30px !important;
+        transform: none !important; margin-left: 0 !important; margin-bottom: 40px !important;
+    }}
+
+    /* 2. Great Hall Top Banner (Removes the gap underneath!) */
+    img[src*="TheGH.png"] {{
+        width: 100% !important; max-width: 100% !important;
+        transform: none !important; margin-left: 0 !important; 
+        margin-bottom: -20px !important; /* Pulls the Behold scroll up */
+    }}
+
+    /* 3. Behold Scroll Banner (Pushes the leaderboard down) */
+    img[src*="beholdpowerful.png"] {{
+        width: 100% !important; max-width: 100% !important;
+        transform: none !important; margin-left: 0 !important; 
+        margin-bottom: -10px !important; /* Pulls the leaderboard tabs up! */
     }}
 
     /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
@@ -195,6 +209,24 @@ st.markdown(f"""
         color: #7b7dbd !important;
         text-align: center !important;
         font-weight: bold;
+    }}
+
+    /* --- 13. GREAT HALL TABS (Week, Month, All Time) --- */
+    /* Unselected Tab Text */
+    button[data-baseweb="tab"] p {{
+        color: #b4a7d6 !important; 
+        font-weight: bold !important;
+        font-size: 18px !important;
+    }}
+    
+    /* Selected/Active Tab Text */
+    button[data-baseweb="tab"][aria-selected="true"] p {{
+        color: #7b7dbd !important; 
+    }}
+    
+    /* The Animated Underline */
+    div[data-baseweb="tab-highlight"] {{
+        background-color: #7b7dbd !important; 
     }}
 
     </style>
@@ -275,62 +307,71 @@ def generate_spell(unit, level):
 
     elif "Quadratics" in unit:
         if level == "10":
-            # Grade 10: Area Model (Algebra Tiles) for (x + a)(x + b)
-            a = random.randint(2, 5)
-            b = random.randint(2, 5)
+            # Phase 1: Area Model - Combining the middle 'x' terms
+            a = random.choice([-5, -4, -3, -2, 2, 3, 4, 5])
+            b = random.choice([-5, -4, -3, -2, 2, 3, 4, 5])
+            
+            abs_a = abs(a)
+            abs_b = abs(b)
             
             fig = go.Figure()
             
-            # Your Sacred Pastel Colors
             c_green = "#d4ffea"
             c_yellow = "#ffffe3"
             c_blue = "#e4fffe"
             c_gray = "#e2eeff"
             text_color = "#7b7dbd"
             
-            # 1. Top-Left Box: x² (One big 4x4 box)
             fig.add_shape(type="rect", x0=0, y0=0, x1=4, y1=4, fillcolor=c_green, line=dict(color="white", width=4), layer="below")
             fig.add_annotation(x=2, y=2, text="x²", showarrow=False, font=dict(size=24, color=text_color, weight="bold"))
             
-            # 2. Top-Right Boxes: a * x (Individual vertical yellow strips)
-            for i in range(a):
+            a_label = "x" if a > 0 else "-x"
+            for i in range(abs_a):
                 fig.add_shape(type="rect", x0=4+i, y0=0, x1=5+i, y1=4, fillcolor=c_yellow, line=dict(color="white", width=4), layer="below")
-                fig.add_annotation(x=4.5+i, y=2, text="x", showarrow=False, font=dict(size=18, color=text_color, weight="bold"))
+                fig.add_annotation(x=4.5+i, y=2, text=a_label, showarrow=False, font=dict(size=18, color=text_color, weight="bold"))
                 
-            # 3. Bottom-Left Boxes: b * x (Individual horizontal blue strips)
-            for j in range(b):
+            b_label = "x" if b > 0 else "-x"
+            for j in range(abs_b):
                 fig.add_shape(type="rect", x0=0, y0=-1-j, x1=4, y1=-j, fillcolor=c_blue, line=dict(color="white", width=4), layer="below")
-                fig.add_annotation(x=2, y=-0.5-j, text="x", showarrow=False, font=dict(size=18, color=text_color, weight="bold"))
+                fig.add_annotation(x=2, y=-0.5-j, text=b_label, showarrow=False, font=dict(size=18, color=text_color, weight="bold"))
                 
-            # 4. Bottom-Right Boxes: a * b (Individual grey unit squares!)
-            for i in range(a):
-                for j in range(b):
+            for i in range(abs_a):
+                for j in range(abs_b):
                     fig.add_shape(type="rect", x0=4+i, y0=-1-j, x1=5+i, y1=-j, fillcolor=c_gray, line=dict(color="white", width=4), layer="below")
             
-            # The Giant Mystery Question Mark floating over the grey grid
-            fig.add_annotation(x=4+(a/2), y=-(b/2), text="?", showarrow=False, font=dict(size=40, color=text_color, weight="bold"))
+            fig.add_annotation(x=4+(abs_a/2), y=-(abs_b/2), text="?", showarrow=False, font=dict(size=40, color=text_color, weight="bold"))
             
-            # Outside Labels (The lengths of the sides)
+            a_side = f"+ {a}" if a > 0 else f"- {abs_a}"
+            b_side = f"+ {b}" if b > 0 else f"- {abs_b}"
+            
             fig.add_annotation(x=2, y=4.6, text="x", showarrow=False, font=dict(size=22, color=text_color, weight="bold"))
-            fig.add_annotation(x=4+(a/2), y=4.6, text=f"+ {a}", showarrow=False, font=dict(size=22, color=text_color, weight="bold"))
+            fig.add_annotation(x=4+(abs_a/2), y=4.6, text=a_side, showarrow=False, font=dict(size=22, color=text_color, weight="bold"))
             fig.add_annotation(x=-0.8, y=2, text="x", showarrow=False, font=dict(size=22, color=text_color, weight="bold"))
-            fig.add_annotation(x=-0.8, y=-(b/2), text=f"+ {b}", showarrow=False, font=dict(size=22, color=text_color, weight="bold"))
+            fig.add_annotation(x=-0.8, y=-(abs_b/2), text=b_side, showarrow=False, font=dict(size=22, color=text_color, weight="bold"))
             
-            # Lock the view so the blocks perfectly scale
             fig.update_layout(
-                xaxis=dict(visible=False, range=[-1.5, 5.5+a]),
-                yaxis=dict(visible=False, range=[-1.5-b, 5.5]),
+                xaxis=dict(visible=False, range=[-1.5, 5.5+abs_a]),
+                yaxis=dict(visible=False, range=[-1.5-abs_b, 5.5]),
                 margin=dict(l=0, r=0, t=0, b=0),
-                plot_bgcolor='white', paper_bgcolor='white',
-                height=380
+                plot_bgcolor='white', paper_bgcolor='white', height=380
             )
             
-            ans = a * b
-            image_tag = "Count the tiles! Scry the total number of small grey boxes."
-            return f"Multiply (x + {a})(x + {b}). What is the value of the grey area?", ans, image_tag, fig, None, None
+            ans_val = a + b 
+            ans = f"{ans_val}x"
+            const_val = a * b
+            const_str = f"+ {const_val}" if const_val > 0 else f"- {abs(const_val)}"
             
+            # Generate 5 multiple choice options! We pass these through 'rhs'
+            opts = {ans, f"{a*b}x", f"{-ans_val}x"}
+            while len(opts) < 5:
+                opts.add(f"{ans_val + random.choice([-3, -2, -1, 1, 2, 3])}x")
+            options_list = list(opts)
+            random.shuffle(options_list)
+            
+            image_tag = "Scry the tiles! Combine the yellow and blue areas."
+            return f"Expand (x {a_side})(x {b_side}) = x² + [ ? ]x {const_str}. What is the middle term?", ans, image_tag, fig, None, options_list
+
         elif level == "11":
-            # Grade 11: Vertex form (Interactive Graph)
             h, k = random.randint(-3, 3), random.randint(1, 5)
             x_vals = np.linspace(h-5, h+5, 100)
             y_vals = (x_vals - h)**2 + k
@@ -341,22 +382,30 @@ def generate_spell(unit, level):
             h_str = f"- {h}" if h > 0 else (f"+ {abs(h)}" if h < 0 else "")
             eq_str = f"y = (x {h_str})² + {k}" if h != 0 else f"y = x² + {k}"
             
+            ans = k
+            opts = {ans, h, -k, k+1, k-1}
+            while len(opts) < 5: opts.add(ans + random.choice([-2, 2, 3]))
+            options_list = list(opts)
+            random.shuffle(options_list)
+            
             image_tag = "Hover to scry the point! Locate the vertex (the lowest point of the curve)."
-            return f"Given {eq_str}, find the vertex y-coordinate:", k, image_tag, fig, None, None
+            return f"Given {eq_str}, find the vertex y-coordinate:", ans, image_tag, fig, None, options_list
 
         elif level == "12":
-            # Grade 12: The Discriminant (b² - 4ac)
-            a = random.randint(1, 3)
-            b = random.randint(-5, 5)
-            c = random.randint(-5, 5)
+            a = random.randint(1, 3); b = random.randint(-5, 5); c = random.randint(-5, 5)
             ans = (b**2) - (4 * a * c)
             
             b_str = f"- {abs(b)}x " if b < 0 else (f"+ {b}x " if b > 0 else "")
             c_str = f"- {abs(c)}" if c < 0 else (f"+ {c}" if c > 0 else "")
             eq_string = f"{a}x² {b_str}{c_str}".strip() + " = 0"
             
+            opts = {ans, (b**2) + (4 * a * c), -ans}
+            while len(opts) < 5: opts.add(ans + random.choice([-5, -2, 2, 5]))
+            options_list = list(opts)
+            random.shuffle(options_list)
+            
             image_tag = "Consult the discriminant (b² - 4ac) to predict the spell's nature!"
-            return f"Calculate the discriminant of {eq_string}", ans, image_tag, None, None, None
+            return f"Calculate the discriminant of {eq_string}", ans, image_tag, None, None, options_list
 
 
     elif "Functions" in unit:
@@ -539,13 +588,48 @@ elif st.session_state.app_stage == "game":
                 
             if magic_success: st.rerun()
 
-    # --- STANDARD INPUT (For Non-Algebra Units) ---
-    else:
+    # --- MULTIPLE CHOICE INPUT (For Quadratics Only) ---
+    elif st.session_state.unit_choice == "Quadratics":
         st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
-        # Patched the label warning here too
-        user_ans_raw = st.text_input("Your Final Answer", placeholder="Type number here...", key="user_answer", label_visibility="collapsed")
+        
+        # Grab the 5 options we generated in the logic above
+        options_list = st.session_state.puzzle_rhs
+        
+        # Display the 5 choices
+        st.markdown("<h4 style='color: #7b7dbd; text-align: center;'>🔮 Select your answer:</h4>", unsafe_allow_html=True)
+        user_choice = st.radio("Select answer", options_list, index=None, label_visibility="collapsed")
 
         # Drop the beacon right before the Cast Spell button
+        st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
+
+        if st.button("🪄 Cast Spell!"):
+            if user_choice is None:
+                st.warning("Please select a spell component before casting!")
+            else:
+                if str(user_choice) == str(st.session_state.target_ans):
+                    pastel_star_effect()
+                    st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
+                    time.sleep(1.5) 
+                    try:
+                        df = conn.read(ttl=0)
+                        new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                        conn.update(data=pd.concat([df, new_row], ignore_index=True))
+                    except:
+                        pass
+                    
+                    q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
+                    st.session_state.current_q, st.session_state.target_ans = q, ans
+                    st.session_state.current_image, st.session_state.current_plot = img, pdf
+                    st.session_state.puzzle_lhs, st.session_state.puzzle_rhs = lhs, rhs
+                    st.rerun()
+                else: 
+                    st.error("The magic failed! Try a different option.")
+
+    # --- STANDARD INPUT (For Functions & Geometry) ---
+    else:
+        st.text_area("Spellbook Scratchpad:", placeholder="Work out equations...", height=100, key="scratchpad")
+        user_ans_raw = st.text_input("Your Final Answer", placeholder="Type number here...", key="user_answer", label_visibility="collapsed")
+
         st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
 
         if st.button("🪄 Cast Spell!"):
@@ -584,8 +668,6 @@ elif st.session_state.app_stage == "great_hall":
         # If the image isn't on GitHub yet, show a red warning so we know why!
         st.markdown("<p style='text-align: center; color: red; font-weight: bold;'>⚠️ Waiting for beholdpowerful.png to be uploaded to GitHub...</p>", unsafe_allow_html=True)
     
-    st.write("") 
-    
     try:
         scores_df = conn.read(ttl=0)
         if not scores_df.empty:
@@ -607,4 +689,3 @@ elif st.session_state.app_stage == "great_hall":
                 st.table(scores_df.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
     except:
         st.error("The Hall's magic is currently sleeping (Database error).")
-
