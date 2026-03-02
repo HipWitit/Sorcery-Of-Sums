@@ -180,7 +180,7 @@ st.markdown(f"""
     /* --- 12. GREAT HALL LEADERBOARD TABLES --- */
     [data-testid="stTable"] {{
         background-color: white;
-        border-radius: 15px;
+        border-radius: 0px;
         overflow: hidden;
         border: 3px solid #b4a7d6;
     }}
