@@ -545,7 +545,9 @@ elif st.session_state.app_stage == "game":
                 else: st.error("The magic failed!")
             except: st.warning("Enter a number!")
 
-            # --- STAGE 4: THE HALL OF GREAT WITCHES AND WIZARDS ---
+ 
+ 
+# --- STAGE 4: THE HALL OF GREAT WITCHES AND WIZARDS ---
 elif st.session_state.app_stage == "great_hall":
     try:
         # Your beautiful new banner!
