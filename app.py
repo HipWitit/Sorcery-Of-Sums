@@ -164,12 +164,21 @@ st.markdown(f"""
     /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
     div[data-testid="stTextInput"] {{ margin-top: 30px; position: relative; z-index: 10; }}
 
-    /* 10. Question Container Styling */
+        /* 10. Question Container Styling */
     .question-container {{
         background-color: white; padding: 30px; border-radius: 20px; 
         border: 4px solid #c6c7ff; text-align: center; margin-bottom: 20px; margin-top: 60px;
     }}
-    .question-container h1, .question-container h3 {{ color: #7b7dbd !important; }}
+    .question-container h3 {{ 
+        color: #7b7dbd !important; 
+        font-size: 18px !important; 
+    }}
+    .question-container h1 {{ 
+        color: #7b7dbd !important; 
+        font-size: 26px !important; 
+        line-height: 1.4 !important; 
+    }}
+
 
     /* --- 11. ALCHEMICAL ALTAR CSS --- */
     .equation-container {{
