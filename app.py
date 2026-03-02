@@ -12,7 +12,7 @@ import sympy as sp # Added SymPy for the Altar
 from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application
 
 # --- 1. SETTINGS & THEMING ---
-st.set_page_config(page_title="Cypher Lite", page_icon="🪄", layout="centered")
+st.set_page_config(page_title="Sorcery Sums", page_icon="🪄", layout="centered")
 
 # Initialize Session States
 if "app_stage" not in st.session_state:
@@ -102,7 +102,6 @@ st.markdown(f"""
     div[data-testid="stElementContainer"]:has(.beacon) + div button:hover,
     div.element-container:has(.beacon) + div button:hover {{
         transform: scale(1.08); /* Slightly larger hover pop */
-
     }}
 
     /* --- MAP THE EXACT IMAGES TO THE BEACON IDs --- */
@@ -142,10 +141,10 @@ st.markdown(f"""
         margin-left: -20% !important; margin-bottom: -40px !important;
     }}
 
-    /* Selection Page Title Tweaks */
-    img[src*="schoolstudy.png"] {{
+    /* Selection Page & Great Hall Title Tweaks */
+    img[src*="schoolstudy.png"], img[src*="TheGH.png"], img[src*="beholdpowerful.png"] {{
         width: 100% !important; max-width: 100% !important;
-        transform: none !important; margin-left: 0 !important; margin-bottom: 40px !important;
+        transform: none !important; margin-left: 0 !important; margin-bottom: 60px !important;
     }}
 
     /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
@@ -178,7 +177,7 @@ st.markdown(f"""
        
     .block-container {{ max-width: 800px !important; padding-top: 2rem; }}
                                             
-/* --- 12. GREAT HALL LEADERBOARD TABLES --- */
+    /* --- 12. GREAT HALL LEADERBOARD TABLES --- */
     [data-testid="stTable"] {{
         background-color: white;
         border-radius: 15px;
@@ -274,7 +273,7 @@ def generate_spell(unit, level):
             image_tag = f"Decipher the ancient logarithm! Base {base} reaches power {a} to reveal x minus {c_val}."
             return f"Balance the equation to reveal x:", x, image_tag, None, lhs, rhs
 
-    if "Quadratics" in unit:
+    elif "Quadratics" in unit:
         if level == "10":
             # Grade 10: Area Model (Algebra Tiles) for (x + a)(x + b)
             a = random.randint(2, 5)
@@ -382,7 +381,7 @@ def generate_spell(unit, level):
     return "Scroll not found", 0, "", None, None, None
 
 
- # --- GLOBAL NAVIGATION SIDEBAR (If not logging in) ---
+# --- GLOBAL NAVIGATION SIDEBAR (If not logging in) ---
 if st.session_state.app_stage != "login":
     st.sidebar.markdown("### 🗺️ Realm Map")
     
@@ -400,7 +399,6 @@ if st.session_state.app_stage != "login":
             st.session_state.app_stage = st.session_state.get("previous_stage", "selection")
             st.rerun()
     st.sidebar.markdown("---")
-
 
 
 # --- STAGE 1: LOGIN SCREEN ---
@@ -466,7 +464,7 @@ elif st.session_state.app_stage == "game":
     try:
         st.image("Sorcery Sums.png")
     except:
-        st.title("Cypher Lite")
+        st.title("Sorcery Sums")
 
     st.markdown(f"""
         <div class="question-container">
@@ -570,18 +568,21 @@ elif st.session_state.app_stage == "game":
                 else: st.error("The magic failed!")
             except: st.warning("Enter a number!")
 
- 
- 
+
 # --- STAGE 4: THE HALL OF GREAT WITCHES AND WIZARDS ---
 elif st.session_state.app_stage == "great_hall":
     try:
-        # Your beautiful new banner!
+        # 1. Main Great Hall Banner
         st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/TheGH.png")
     except:
         st.markdown("<h1 style='text-align: center; color: #7b7dbd;'>🏆 The Hall Of Great Witches And Wizards</h1>", unsafe_allow_html=True)
         
-    # Add the target image using the provided URL
-    st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/Great_Hall_Scroll.png", use_container_width=True)
+    try:
+        # 2. Your NEW "Behold" Scroll Image!
+        st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/beholdpowerful.png", use_container_width=True)
+    except Exception as e:
+        # If the image isn't on GitHub yet, show a red warning so we know why!
+        st.markdown("<p style='text-align: center; color: red; font-weight: bold;'>⚠️ Waiting for beholdpowerful.png to be uploaded to GitHub...</p>", unsafe_allow_html=True)
     
     st.write("") 
     
@@ -606,3 +607,4 @@ elif st.session_state.app_stage == "great_hall":
                 st.table(scores_df.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
     except:
         st.error("The Hall's magic is currently sleeping (Database error).")
+
