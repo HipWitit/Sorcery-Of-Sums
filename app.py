@@ -179,24 +179,24 @@ st.markdown(f"""
     .block-container {{ max-width: 800px !important; padding-top: 2rem; }}
                                             
 /* --- 12. GREAT HALL LEADERBOARD TABLES --- */
-    [data-testid="stTable"] {
+    [data-testid="stTable"] {{
         background-color: white;
         border-radius: 15px;
         overflow: hidden;
         border: 3px solid #b4a7d6;
-    }
-    [data-testid="stTable"] th {
+    }}
+    [data-testid="stTable"] th {{
         background-color: #e2eeff !important;
         color: #7b7dbd !important;
         font-size: 18px;
         text-align: center !important;
         border-bottom: 2px solid #b4a7d6 !important;
-    }
-    [data-testid="stTable"] td {
+    }}
+    [data-testid="stTable"] td {{
         color: #7b7dbd !important;
         text-align: center !important;
         font-weight: bold;
-    }
+    }}
 
     </style>
     """, unsafe_allow_html=True)
