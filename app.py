@@ -580,7 +580,9 @@ elif st.session_state.app_stage == "great_hall":
     except:
         st.markdown("<h1 style='text-align: center; color: #7b7dbd;'>🏆 The Hall Of Great Witches And Wizards</h1>", unsafe_allow_html=True)
         
-    st.markdown("<p style='text-align: center; color: #7b7dbd; font-size: 18px; font-weight: bold;'>Behold the most powerful magic casters in the realm!</p>", unsafe_allow_html=True)
+    # Add the target image using the provided URL
+    st.image("https://raw.githubusercontent.com/HipWitit/Sorcery-Of-Sums/main/assets/images/Great_Hall_Scroll.png", use_container_width=True)
+    
     st.write("") 
     
     try:
@@ -604,4 +606,3 @@ elif st.session_state.app_stage == "great_hall":
                 st.table(scores_df.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
     except:
         st.error("The Hall's magic is currently sleeping (Database error).")
-
