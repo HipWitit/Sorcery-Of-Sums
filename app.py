@@ -177,6 +177,27 @@ st.markdown(f"""
     div[data-testid="stTextInput"] input {{ background-color: #e6fff8 !important; color: #7b7dbd !important; text-align: center; }}
        
     .block-container {{ max-width: 800px !important; padding-top: 2rem; }}
+                                            
+/* --- 12. GREAT HALL LEADERBOARD TABLES --- */
+    [data-testid="stTable"] {
+        background-color: white;
+        border-radius: 15px;
+        overflow: hidden;
+        border: 3px solid #b4a7d6;
+    }
+    [data-testid="stTable"] th {
+        background-color: #e2eeff !important;
+        color: #7b7dbd !important;
+        font-size: 18px;
+        text-align: center !important;
+        border-bottom: 2px solid #b4a7d6 !important;
+    }
+    [data-testid="stTable"] td {
+        color: #7b7dbd !important;
+        text-align: center !important;
+        font-weight: bold;
+    }
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -361,21 +382,25 @@ def generate_spell(unit, level):
     return "Scroll not found", 0, "", None, None, None
 
 
-# --- GLOBALLY RENDER LEADERBOARD IN SIDEBAR (If not logging in) ---
+ # --- GLOBAL NAVIGATION SIDEBAR (If not logging in) ---
 if st.session_state.app_stage != "login":
+    st.sidebar.markdown("### 🗺️ Realm Map")
+    
+    # If they are NOT in the Great Hall, show the portal to go there
+    if st.session_state.app_stage != "great_hall":
+        if st.sidebar.button("🏆 The Great Hall"):
+            # Remember where they were so we can send them back!
+            st.session_state.previous_stage = st.session_state.app_stage
+            st.session_state.app_stage = "great_hall"
+            st.rerun()
+            
+    # If they ARE in the Great Hall, show a button to go back to the scrolls
+    else:
+        if st.sidebar.button("⬅️ Return to Realm"):
+            st.session_state.app_stage = st.session_state.get("previous_stage", "selection")
+            st.rerun()
     st.sidebar.markdown("---")
-    st.sidebar.markdown("# 🏆 Hall of Wizards")
-    try:
-        scores_df = conn.read(ttl=0)
-        if not scores_df.empty:
-            scores_df['Date'] = pd.to_datetime(scores_df['Date'])
-            now = datetime.datetime.now()
-            t1, t2, t3 = st.sidebar.tabs(["Week", "Month", "Year"])
-            with t1:
-                w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
-                if not w_data.empty: st.table(w_data.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
-    except:
-        st.sidebar.write("The scrolls are sleeping.")
+
 
 
 # --- STAGE 1: LOGIN SCREEN ---
