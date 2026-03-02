@@ -253,15 +253,91 @@ def generate_spell(unit, level):
             image_tag = f"Decipher the ancient logarithm! Base {base} reaches power {a} to reveal x minus {c_val}."
             return f"Balance the equation to reveal x:", x, image_tag, None, lhs, rhs
 
-    elif "Quadratics" in unit:
-        h, k = random.randint(-3, 3), random.randint(1, 5)
-        x_vals = np.linspace(h-5, h+5, 100)
-        y_vals = (x_vals - h)**2 + k
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=x_vals, y=y_vals, mode='lines', line=dict(color='black', width=3), name="Spell Path"))
-        fig = apply_sacred_style(fig)
-        image_tag = "Hover to scry the point! Locate the vertex (the lowest point of the curve)."
-        return f"Find the vertex y-coordinate:", k, image_tag, fig, None, None
+        elif "Quadratics" in unit:
+        if level == "10":
+            # Grade 10: Area Model (Algebra Tiles) for (x + a)(x + b)
+            a = random.randint(2, 5)
+            b = random.randint(2, 5)
+            
+            fig = go.Figure()
+            
+            # Your Sacred Pastel Colors
+            c_green = "#d4ffea"
+            c_yellow = "#ffffe3"
+            c_blue = "#e4fffe"
+            c_gray = "#e2eeff"
+            text_color = "#7b7dbd"
+            
+            # 1. Top-Left Box: x² (One big 4x4 box)
+            fig.add_shape(type="rect", x0=0, y0=0, x1=4, y1=4, fillcolor=c_green, line=dict(color="white", width=4), layer="below")
+            fig.add_annotation(x=2, y=2, text="x²", showarrow=False, font=dict(size=24, color=text_color, weight="bold"))
+            
+            # 2. Top-Right Boxes: a * x (Individual vertical yellow strips)
+            for i in range(a):
+                fig.add_shape(type="rect", x0=4+i, y0=0, x1=5+i, y1=4, fillcolor=c_yellow, line=dict(color="white", width=4), layer="below")
+                fig.add_annotation(x=4.5+i, y=2, text="x", showarrow=False, font=dict(size=18, color=text_color, weight="bold"))
+                
+            # 3. Bottom-Left Boxes: b * x (Individual horizontal blue strips)
+            for j in range(b):
+                fig.add_shape(type="rect", x0=0, y0=-1-j, x1=4, y1=-j, fillcolor=c_blue, line=dict(color="white", width=4), layer="below")
+                fig.add_annotation(x=2, y=-0.5-j, text="x", showarrow=False, font=dict(size=18, color=text_color, weight="bold"))
+                
+            # 4. Bottom-Right Boxes: a * b (Individual grey unit squares!)
+            for i in range(a):
+                for j in range(b):
+                    fig.add_shape(type="rect", x0=4+i, y0=-1-j, x1=5+i, y1=-j, fillcolor=c_gray, line=dict(color="white", width=4), layer="below")
+            
+            # The Giant Mystery Question Mark floating over the grey grid
+            fig.add_annotation(x=4+(a/2), y=-(b/2), text="?", showarrow=False, font=dict(size=40, color=text_color, weight="bold"))
+            
+            # Outside Labels (The lengths of the sides)
+            fig.add_annotation(x=2, y=4.6, text="x", showarrow=False, font=dict(size=22, color=text_color, weight="bold"))
+            fig.add_annotation(x=4+(a/2), y=4.6, text=f"+ {a}", showarrow=False, font=dict(size=22, color=text_color, weight="bold"))
+            fig.add_annotation(x=-0.8, y=2, text="x", showarrow=False, font=dict(size=22, color=text_color, weight="bold"))
+            fig.add_annotation(x=-0.8, y=-(b/2), text=f"+ {b}", showarrow=False, font=dict(size=22, color=text_color, weight="bold"))
+            
+            # Lock the view so the blocks perfectly scale
+            fig.update_layout(
+                xaxis=dict(visible=False, range=[-1.5, 5.5+a]),
+                yaxis=dict(visible=False, range=[-1.5-b, 5.5]),
+                margin=dict(l=0, r=0, t=0, b=0),
+                plot_bgcolor='white', paper_bgcolor='white',
+                height=380
+            )
+            
+            ans = a * b
+            image_tag = "Count the tiles! Scry the total number of small grey boxes."
+            return f"Multiply (x + {a})(x + {b}). What is the value of the grey area?", ans, image_tag, fig, None, None
+            
+        elif level == "11":
+            # Grade 11: Vertex form (Interactive Graph)
+            h, k = random.randint(-3, 3), random.randint(1, 5)
+            x_vals = np.linspace(h-5, h+5, 100)
+            y_vals = (x_vals - h)**2 + k
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(x=x_vals, y=y_vals, mode='lines', line=dict(color='black', width=3), name="Spell Path"))
+            fig = apply_sacred_style(fig)
+            
+            h_str = f"- {h}" if h > 0 else (f"+ {abs(h)}" if h < 0 else "")
+            eq_str = f"y = (x {h_str})² + {k}" if h != 0 else f"y = x² + {k}"
+            
+            image_tag = "Hover to scry the point! Locate the vertex (the lowest point of the curve)."
+            return f"Given {eq_str}, find the vertex y-coordinate:", k, image_tag, fig, None, None
+
+        elif level == "12":
+            # Grade 12: The Discriminant (b² - 4ac)
+            a = random.randint(1, 3)
+            b = random.randint(-5, 5)
+            c = random.randint(-5, 5)
+            ans = (b**2) - (4 * a * c)
+            
+            b_str = f"- {abs(b)}x " if b < 0 else (f"+ {b}x " if b > 0 else "")
+            c_str = f"- {abs(c)}" if c < 0 else (f"+ {c}" if c > 0 else "")
+            eq_string = f"{a}x² {b_str}{c_str}".strip() + " = 0"
+            
+            image_tag = "Consult the discriminant (b² - 4ac) to predict the spell's nature!"
+            return f"Calculate the discriminant of {eq_string}", ans, image_tag, None, None, None
+
 
     elif "Functions" in unit:
         m = random.randint(1, 3); b_val = random.randint(-2, 2)
