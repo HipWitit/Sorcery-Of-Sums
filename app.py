@@ -591,7 +591,7 @@ elif st.session_state.app_stage == "great_hall":
         if not scores_df.empty:
             scores_df['Date'] = pd.to_datetime(scores_df['Date'])
             now = datetime.datetime.now()
-            t1, t2, t3 = st.tabs(["🌟 This Week", "🌙 This Month", "☀️ All Time"])
+            t1, t2, t3 = st.tabs(["This Week", " This Month", " All Time"])
             
             with t1:
                 w_data = scores_df[scores_df['Date'] >= (now - datetime.timedelta(days=7))]
