@@ -320,6 +320,10 @@ def generate_spell(unit, level):
             a = random.choice([-5, -4, -3, -2, 2, 3, 4, 5])
             b = random.choice([-5, -4, -3, -2, 2, 3, 4, 5])
             
+            # --- Prevent the "0x" middle term! ---
+            while a + b == 0:
+                b = random.choice([-5, -4, -3, -2, 2, 3, 4, 5])
+            
             abs_a = abs(a)
             abs_b = abs(b)
             
@@ -609,35 +613,41 @@ elif st.session_state.app_stage == "game":
         # Grab the 5 options we generated in the logic above
         options_list = st.session_state.puzzle_rhs
         
-        # Display the 5 choices
-        st.markdown("<h4 style='color: #7b7dbd; text-align: center;'>🔮 Select your answer:</h4>", unsafe_allow_html=True)
-        user_choice = st.radio("Select answer", options_list, index=None, label_visibility="collapsed")
+        # Wrapped in a protective form so it waits for the Cast button!
+        with st.form("quadratics_mc_form"):
+            st.markdown("<h4 style='color: #7b7dbd; text-align: center;'>🔮 Select your answer:</h4>", unsafe_allow_html=True)
+            
+            # The radio options will now wait patiently
+            user_choice = st.radio("Select answer", options_list, index=None, label_visibility="collapsed")
 
-        # Drop the beacon right before the Cast Spell button
-        st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
+            # Drop the beacon right before the Cast Spell button
+            st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
 
-        if st.button("🪄 Cast Spell!"):
-            if user_choice is None:
-                st.warning("Please select a spell component before casting!")
-            else:
-                if str(user_choice) == str(st.session_state.target_ans):
-                    pastel_star_effect()
-                    st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
-                    time.sleep(1.5) 
-                    try:
-                        df = conn.read(ttl=0)
-                        new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
-                        conn.update(data=pd.concat([df, new_row], ignore_index=True))
-                    except:
-                        pass
-                    
-                    q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
-                    st.session_state.current_q, st.session_state.target_ans = q, ans
-                    st.session_state.current_image, st.session_state.current_plot = img, pdf
-                    st.session_state.puzzle_lhs, st.session_state.puzzle_rhs = lhs, rhs
-                    st.rerun()
-                else: 
-                    st.error("The magic failed! Try a different option.")
+            # This acts as our Submit button to lock in the form
+            cast_magic = st.form_submit_button("🪄 Cast Spell!")
+
+            if cast_magic:
+                if user_choice is None:
+                    st.warning("Please select a spell component before casting!")
+                else:
+                    if str(user_choice) == str(st.session_state.target_ans):
+                        pastel_star_effect()
+                        st.markdown('<div class="success-box"><h2>Correct! (｡◕‿◕｡)━☆ﾟ.*･｡ﾟ</h2></div>', unsafe_allow_html=True)
+                        time.sleep(1.5) 
+                        try:
+                            df = conn.read(ttl=0)
+                            new_row = pd.DataFrame([{"Name": st.session_state.player_name, "Score": 50, "Date": datetime.datetime.now().strftime("%Y-%m-%d")}])
+                            conn.update(data=pd.concat([df, new_row], ignore_index=True))
+                        except:
+                            pass
+                        
+                        q, ans, img, pdf, lhs, rhs = generate_spell(st.session_state.unit_choice, st.session_state.level_choice)
+                        st.session_state.current_q, st.session_state.target_ans = q, ans
+                        st.session_state.current_image, st.session_state.current_plot = img, pdf
+                        st.session_state.puzzle_lhs, st.session_state.puzzle_rhs = lhs, rhs
+                        st.rerun()
+                    else: 
+                        st.error("The magic failed! Try a different option.")
 
     # --- STANDARD INPUT (For Functions & Geometry) ---
     else:
@@ -703,3 +713,4 @@ elif st.session_state.app_stage == "great_hall":
                 st.table(scores_df.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
     except:
         st.error("The Hall's magic is currently sleeping (Database error).")
+
