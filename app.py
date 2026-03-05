@@ -164,7 +164,7 @@ st.markdown(f"""
     /* 9. PULL THE NAME PLATE UP INTO THE CLOUDS */
     div[data-testid="stTextInput"] {{ margin-top: 30px; position: relative; z-index: 10; }}
 
-        /* 10. Question Container Styling */
+    /* 10. Question Container Styling */
     .question-container {{
         background-color: white; padding: 30px; border-radius: 20px; 
         border: 4px solid #c6c7ff; text-align: center; margin-bottom: 20px; margin-top: 60px;
@@ -370,7 +370,6 @@ def generate_spell(unit, level):
             const_val = a * b
             const_str = f"+ {const_val}" if const_val > 0 else f"- {abs(const_val)}"
             
-            # Generate 5 multiple choice options! We pass these through 'rhs'
             opts = {ans, f"{a*b}x", f"{-ans_val}x"}
             while len(opts) < 5:
                 opts.add(f"{ans_val + random.choice([-3, -2, -1, 1, 2, 3])}x")
@@ -378,7 +377,9 @@ def generate_spell(unit, level):
             random.shuffle(options_list)
             
             image_tag = "Scry the tiles! Combine the yellow and blue areas."
-            return f"Expand (x {a_side})(x {b_side}) = x² + [ ? ]x {const_str}. What is the middle term?", ans, image_tag, fig, None, options_list
+            formatted_question = f"Expand:<br><span style='color: #9b9dd9;'>(x {a_side})(x {b_side}) = x² + [ ? ]x {const_str}</span><br><br><span style='font-size: 20px;'>What is the middle term?</span>"
+            
+            return formatted_question, ans, image_tag, fig, None, options_list
 
         elif level == "11":
             h, k = random.randint(-3, 3), random.randint(1, 5)
@@ -398,7 +399,9 @@ def generate_spell(unit, level):
             random.shuffle(options_list)
             
             image_tag = "Hover to scry the point! Locate the vertex (the lowest point of the curve)."
-            return f"Given {eq_str}, find the vertex y-coordinate:", ans, image_tag, fig, None, options_list
+            formatted_question = f"Given:<br><span style='color: #9b9dd9;'>{eq_str}</span><br><br><span style='font-size: 20px;'>Find the vertex y-coordinate:</span>"
+            
+            return formatted_question, ans, image_tag, fig, None, options_list
 
         elif level == "12":
             a = random.randint(1, 3); b = random.randint(-5, 5); c = random.randint(-5, 5)
@@ -414,7 +417,9 @@ def generate_spell(unit, level):
             random.shuffle(options_list)
             
             image_tag = "Consult the discriminant (b² - 4ac) to predict the spell's nature!"
-            return f"Calculate the discriminant of {eq_string}", ans, image_tag, None, None, options_list
+            formatted_question = f"Calculate the discriminant of:<br><span style='color: #9b9dd9;'>{eq_string}</span><br><br><span style='font-size: 20px;'>What is the value?</span>"
+            
+            return formatted_question, ans, image_tag, None, None, options_list
 
 
     elif "Functions" in unit:
