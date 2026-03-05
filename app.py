@@ -516,6 +516,9 @@ elif st.session_state.app_stage == "selection":
                     st.session_state.puzzle_lhs = lhs
                     st.session_state.puzzle_rhs = rhs
                     
+                    # --- NEW: Generate a unique ID for the first question! ---
+                    st.session_state.q_key = random.randint(1, 100000)
+                    
                     st.session_state.app_stage = "game"
                     st.rerun()
 
@@ -613,12 +616,15 @@ elif st.session_state.app_stage == "game":
         # Grab the 5 options we generated in the logic above
         options_list = st.session_state.puzzle_rhs
         
-        # Wrapped in a protective form so it waits for the Cast button!
-        with st.form("quadratics_mc_form"):
+        # --- NEW: Use the unique ID so the form never glitches! ---
+        with st.form(f"quadratics_mc_form_{st.session_state.q_key}"):
             st.markdown("<h4 style='color: #7b7dbd; text-align: center;'>🔮 Select your answer:</h4>", unsafe_allow_html=True)
             
-            # The radio options will now wait patiently
-            user_choice = st.radio("Select answer", options_list, index=None, label_visibility="collapsed")
+            # The radio options get a dynamic key too
+            user_choice = st.radio("Select answer", options_list, index=None, key=f"radio_{st.session_state.q_key}", label_visibility="collapsed")
+
+            # --- NEW: Add an invisible spacer so the giant button doesn't cover the options! ---
+            st.markdown("<div style='height: 130px;'></div>", unsafe_allow_html=True)
 
             # Drop the beacon right before the Cast Spell button
             st.markdown('<div class="beacon" id="magic_btn"></div>', unsafe_allow_html=True)
@@ -645,9 +651,14 @@ elif st.session_state.app_stage == "game":
                         st.session_state.current_q, st.session_state.target_ans = q, ans
                         st.session_state.current_image, st.session_state.current_plot = img, pdf
                         st.session_state.puzzle_lhs, st.session_state.puzzle_rhs = lhs, rhs
+                        
+                        # Generate a fresh ID for the next question
+                        st.session_state.q_key = random.randint(1, 100000)
+                        
                         st.rerun()
                     else: 
                         st.error("The magic failed! Try a different option.")
+
 
     # --- STANDARD INPUT (For Functions & Geometry) ---
     else:
@@ -713,4 +724,3 @@ elif st.session_state.app_stage == "great_hall":
                 st.table(scores_df.groupby("Name")["Score"].sum().sort_values(ascending=False).astype(int))
     except:
         st.error("The Hall's magic is currently sleeping (Database error).")
-
